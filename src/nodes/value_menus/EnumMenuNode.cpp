@@ -1,0 +1,79 @@
+#include "EnumMenuNode.hpp"
+
+using namespace object_collab::prelude;
+using namespace geode::prelude;
+
+EnumMenuNode* EnumMenuNode::create(const Selected& selected, Popup* popup, EnumMenu& enumMenu) {
+    EnumMenuNode* menu = new EnumMenuNode(selected, popup, enumMenu);
+
+    if (menu && menu->init(enumMenu)) {
+        menu->autorelease();
+
+        return menu;
+    } else {
+        delete menu;
+
+        return nullptr;
+    }
+}
+
+EnumMenuNode::EnumMenuNode(const Selected& selected, Popup* popup, EnumMenu& enumMenu):
+m_selected(selected),
+m_popup(popup),
+m_onValue(enumMenu.releaseOnValue()) {
+    const std::span<std::string> values = enumMenu.getValues();
+
+    m_index = values.size();
+    m_values.assign(values.begin(), values.end());
+}
+
+bool EnumMenuNode::init(EnumMenu& enumMenu) {
+    CCSprite* leftSprite = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
+    CCSprite* rightSprite = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
+
+    leftSprite->setScale(0.56f);
+    rightSprite->setScale(0.56f);
+    rightSprite->setFlipX(true);
+
+    m_left = CCMenuItemExt::createSpriteExtra(leftSprite, [this](CCMenuItemSpriteExtra* sender) {
+        this->onClick(sender);
+    });
+    m_right = CCMenuItemExt::createSpriteExtra(rightSprite, [this](CCMenuItemSpriteExtra* sender) {
+        this->onClick(sender);
+    });
+    m_label = CCLabelBMFont::create(enumMenu.releaseCurrentValue()(m_selected, m_popup).c_str(), "bigFont.fnt");
+
+    this->registerValue(m_label);
+    m_left->setID("left");
+    m_right->setID("right");
+    m_label->setWidth(this->getMaxLabelWidth());
+    m_label->setScale(0.56);
+    m_label->setAlignment(CCTextAlignment::kCCTextAlignmentCenter);
+
+    return this->initBaseMenu(enumMenu.getID(), enumMenu.getTitle(), { m_left, m_label, m_right });
+}
+
+float EnumMenuNode::getMaxLabelWidth() {
+    float maxWidth = m_label->getContentWidth();
+
+    for (size_t i = 0; i < m_values.size(); i++) {
+        if (const float width = CCLabelBMFont::create(m_values[i].c_str(), "bigFont.fnt")->getContentWidth(); width > maxWidth) maxWidth = width;
+        if (m_values[i].compare(m_label->getString()) == 0) m_index = i;
+    }
+
+    return maxWidth;
+}
+
+void EnumMenuNode::onClick(CCMenuItemSpriteExtra* sender) {
+    const float width = m_label->getContentWidth();
+
+    if (sender == m_left) {
+        m_index = (m_index ? m_index : m_values.size()) - 1;
+    } else {
+        m_index = (m_index + (m_index == m_values.size() ? 0 : 1)) % m_values.size();
+    }
+
+    m_onValue(m_values[m_index], m_selected, m_popup);
+    m_label->setString(m_values[m_index].c_str());
+    m_label->setWidth(width);
+}

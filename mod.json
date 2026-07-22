@@ -1,0 +1,60 @@
+{
+	"geode": "5.8.2",
+	"gd": {
+		"win": "2.2081",
+		"android": "2.2081",
+		"mac": "2.2081",
+		"ios": "2.2081"
+	},
+	"id": "smjs.object-collab",
+	"name": "Object Collab",
+	"version": "v0.1.0",
+	"developer": "SMJS",
+	"description": "Adding a compat layer between gameplay mods",
+  "tags": [
+    "gameplay",
+    "editor",
+    "enhancement",
+    "bugfix",
+    "utility",
+    "customization",
+    "content",
+    "developer",
+    "api"
+  ],
+	"dependencies": {
+		"geode.node-ids": ">=v1.23.3",
+    "alphalaneous.level-storage-api": ">=v1.0.4"
+	},
+  "resources": {
+    "spritesheets": {
+      "objects": [
+        "resources/objects/*.png"
+      ]
+    }
+  },
+  "api": {
+    "include": [
+      "include/*.hpp"
+    ]
+  },
+  "settings": {
+    "fixes": {
+      "name": "Fixes",
+      "description": "A list of vanilla bugfixes which are by default applied as a QOL.",
+      "type": "title"
+    },
+    "special-button-fix": {
+      "name": "Edit special activation fix",
+      "description": "Properly disables the edit special button when the state is requested for the current selection.",
+      "type": "bool",
+      "default": true
+    },
+    "link-buttons-reposition": {
+      "name": "Link buttons reposition",
+      "description": "Repositions the link buttons to not be in the way.",
+      "type": "bool",
+      "default": true
+    }
+  }
+}
