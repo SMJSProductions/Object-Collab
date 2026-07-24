@@ -178,6 +178,6 @@ $on_mod(Loaded) {
         .sprite("mod-trigger.png"_spr)
         .factory(ModSpawnTrigger::create)
         .editObject(ModSpawnTrigger::getEditObjectConfig)
-        .editorTab(EditorTab::TRIGGERS)
+        .editorTab(EditorTab::Triggers)
         .build());
 }

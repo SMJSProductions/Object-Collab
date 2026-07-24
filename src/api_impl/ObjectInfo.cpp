@@ -6,7 +6,8 @@ using namespace geode::prelude;
 struct ObjectInfo::Impl {
     std::string id;
     std::string sprite;
-    EditorTab editorTab = EditorTab::SOLIDS;
+    GameObjectType objectType = GameObjectType::Solid;
+    EditorTab editorTab = EditorTab::Solids;
     ObjectFactory factory = nullptr;
     ObjectPopupFactory editObject = nullptr;
     ObjectPopupFactory editSpecial = nullptr;
@@ -30,6 +31,10 @@ std::string_view ObjectInfo::getID() const {
 
 ZStringView ObjectInfo::getSprite() const {
     return m_impl->sprite;
+}
+
+GameObjectType ObjectInfo::getObjectType() const {
+    return m_impl->objectType;
 }
 
 EditorTab ObjectInfo::getEditorTab() const {
@@ -72,6 +77,12 @@ ObjectInfo::Builder&& ObjectInfo::Builder::id(std::string id) && {
 
 ObjectInfo::Builder&& ObjectInfo::Builder::sprite(std::string sprite) && {
     m_config->m_impl->sprite = std::move(sprite);
+
+    return std::forward<ObjectInfo::Builder>(*this);
+}
+
+ObjectInfo::Builder&& ObjectInfo::Builder::objectType(GameObjectType objectType) && {
+    m_config->m_impl->objectType = objectType;
 
     return std::forward<ObjectInfo::Builder>(*this);
 }
