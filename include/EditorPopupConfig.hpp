@@ -444,15 +444,25 @@ namespace object_collab::editor_popup {
         std::vector<std::unique_ptr<ToggleMenu>> releaseToggles();
     };
 
-    template<typename Value, typename T, typename Member>
-    inline void applyValueToSelected(const Selected& selected, Member T::* member, const Value& value) {
+    template<typename V, typename T>
+    inline void applyValueToSelected(const Selected& selected, V T::* member, const V& value) {
         for (CustomObjectnterface* object : selected) {
             geode::cast::typeinfo_cast<T*>(object)->*member = value;
         }
     }
 
-    template<typename Value, typename T, typename Member, typename F> requires std::invocable<F, T*> && std::is_convertible_v<std::invoke_result_t<F, T*>, bool>
-    inline void applyValueToSelectedIf(const Selected& selected, Member T::* member, const Value& value, F&& condition) {
+    template<typename V, typename T>
+    inline void applyValueToSelectedAndReport(const Selected& selected, V T::* valueMember, void (T::* reportMember)(), const V& value) {
+        for (CustomObjectnterface* object : selected) {
+            T* castedObject = geode::cast::typeinfo_cast<T*>(object);
+
+            castedObject->*valueMember = value;
+            (castedObject->*reportMember)();
+        }
+    }
+
+    template<typename V, typename T, typename F> requires std::invocable<F, T*> && std::is_convertible_v<std::invoke_result_t<F, T*>, bool>
+    inline void applyValueToSelectedIf(const Selected& selected, V T::* member, const V& value, F&& condition) {
         for (CustomObjectnterface* object : selected) {
             T* castedObject = geode::cast::typeinfo_cast<T*>(object);
 
@@ -460,11 +470,23 @@ namespace object_collab::editor_popup {
         }
     }
 
-    template<typename Value, typename T, typename Member>
-    inline Value getCommonValueOrDefault(const Selected& selected, Member T::* member, Value defaultValue) {
+    template<typename V, typename T, typename F> requires std::invocable<F, T*> && std::is_convertible_v<std::invoke_result_t<F, T*>, bool>
+    inline void applyValueToSelectedIfAndReport(const Selected& selected, V T::* valueMember, void (T::* reportMember)(), const V& value, F&& condition) {
+        for (CustomObjectnterface* object : selected) {
+            T* castedObject = geode::cast::typeinfo_cast<T*>(object);
+
+            if (condition(castedObject)) {
+                castedObject->*valueMember = value;
+                (castedObject->*reportMember)();
+            }
+        }
+    }
+
+    template<typename V, typename T>
+    inline V getCommonValueOrDefault(const Selected& selected, V T::* member, auto defaultValue) {
         if (selected.empty()) return defaultValue;
 
-        const Value& firstValue = geode::cast::typeinfo_cast<T*>(selected[0])->*member;
+        const V& firstValue = geode::cast::typeinfo_cast<T*>(selected[0])->*member;
 
         for (size_t i = 1; i < selected.size(); i++) {
             if (firstValue != geode::cast::typeinfo_cast<T*>(selected[i])->*member) return defaultValue;
@@ -473,8 +495,8 @@ namespace object_collab::editor_popup {
         return firstValue;
     }
 
-    template<typename Value, typename T, typename Member>
-    inline Value getOnlyValueOrDefault(const Selected& selected, Member T::* member, Value defaultValue) {
+    template<typename V, typename T>
+    inline V getOnlyValueOrDefault(const Selected& selected, V T::* member, auto defaultValue) {
         if (selected.size() == 1) {
             return geode::cast::typeinfo_cast<T*>(selected[0])->*member;
         } else {

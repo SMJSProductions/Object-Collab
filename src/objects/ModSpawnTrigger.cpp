@@ -29,10 +29,10 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
             .title("Mod ID")
             .values(std::move(mods))
             .onValue([](const std::string& value, const Selected& selected, Popup* popup) {
-                applyValueToSelected(selected, &ModSpawnTrigger::m_mod, value);
+                applyValueToSelectedAndReport(selected, &ModSpawnTrigger::m_mod, &ModSpawnTrigger::checkMod, value);
             })
             .currentValue([](const Selected& selected, Popup* popup) {
-                return getCommonValueOrDefault<std::string>(selected, &ModSpawnTrigger::m_mod, "Unknown");
+                return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_mod, "Unknown");
             })
             .build())
         .menu(AxisLayoutMenu::builder()
@@ -47,7 +47,7 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                 .max(9999)
                 .precision(0)
                 .placeholder("Num")
-                .onValue([](const uint32_t value, const Selected& selected, Popup* popup) {
+                .onValue([](const int value, const Selected& selected, Popup* popup) {
                     applyValueToSelected(selected, &ModSpawnTrigger::m_targetGroupID, value);
                 })
                 .currentValue([](const Selected& selected, Popup* popup) {
@@ -91,7 +91,7 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                 .precision(4)
                 .stepSize(0.0001)
                 .placeholder("Num")
-                .onValue([](const uint32_t value, const Selected& selected, Popup* popup) {
+                .onValue([](const float value, const Selected& selected, Popup* popup) {
                     applyValueToSelected(selected, &ModSpawnTrigger::m_spawnDelay, value);
                 })
                 .currentValue([](const Selected& selected, Popup* popup) {
@@ -107,7 +107,7 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                 .precision(4)
                 .stepSize(0.0001)
                 .placeholder("Num")
-                .onValue([](const uint32_t value, const Selected& selected, Popup* popup) {
+                .onValue([](const float value, const Selected& selected, Popup* popup) {
                     applyValueToSelected(selected, &ModSpawnTrigger::m_delayRange, value);
                 })
                 .currentValue([](const Selected& selected, Popup* popup) {
@@ -164,6 +164,10 @@ void ModSpawnTrigger::initWithCustomProperties(const CustomProperties& values) {
     CustomObject::propertyInto(m_spawnOrdered, ModSpawnTrigger::SPAWN_ORDERED, values);
     CustomObject::propertyInto(m_previewDisable, ModSpawnTrigger::PREVIEW_DISABLE, values);
 
+    this->checkMod();
+}
+
+void ModSpawnTrigger::checkMod() {
     m_active = Loader::get()->isModLoaded(m_mod);
 }
 
