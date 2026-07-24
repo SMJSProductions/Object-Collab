@@ -45,10 +45,15 @@ ObjectInfo* ObjectAPI::getCustomObject(int numericID) {
 }
 
 void ObjectAPI::registerObject(ObjectInfo info, Mod* mod) {
+    const ZStringView modID = mod->getID();
     const std::string_view id = info.getID();
 
-    if (!id.starts_with(mod->getID())) {
-        utils::terminate("Object ID must use the \"\"_spr operator", mod);
+    if (!id.starts_with(modID + "/")) {
+        return log::error("[{}] Object ID must use the \"\"_spr operator!", modID);
+    } else if (id.size() == modID.size() + 1) {
+        return log::error("[{}] Object ID must have at least 1 character besides the mod ID!", modID);
+    } else if (info.getSprite().empty()) {
+        return log::error("[{}] Sprite is required!", modID);
     }
 
     const uint32_t numericID = ObjectAPI::BASE_CUSTOM_OBJECT_ID + ID_OFFSET++;
