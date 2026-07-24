@@ -9,19 +9,20 @@ void ModPlayLayer::processCreateObjectsFromSetup() {
     }
 
     for (const std::string_view object : CustomLevelData::ACTIVE.getObjects()) {
-        if (Result<ObjectVectors> objectVectorsResult = CustomObjectnterface::createObjectVectorsFromString(object)) {
+        if (Result<ObjectVectors> objectVectorsResult = CustomObjectInterface::createObjectVectorsFromString(object)) {
             ObjectVectors objectVectors = std::move(objectVectorsResult).unwrap();
-            CustomObjectnterface* customObject = typeinfo_cast<CustomObjectnterface*>(GameObject::objectFromVector(
+            
+            if (CustomObjectInterface* customObject = typeinfo_cast<CustomObjectInterface*>(GameObject::objectFromVector(
                 objectVectors.first,
                 objectVectors.second,
                 this,
                 m_lowDetailMode
-            ));
-
-            this->addObject(customObject->getGameObject());
-
-            customObject->internalPostInit();
-            customObject->postInit();
+            ))) {
+                this->addObject(customObject->getGameObject());
+                customObject->postInit();
+            } else {
+                log::warn("Failed to initialize object");
+            }
         } else {
             log::warn("Failed to load object: {}", std::move(objectVectorsResult).unwrapErr());
         }

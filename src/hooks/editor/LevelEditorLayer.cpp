@@ -9,12 +9,17 @@ void ModLevelEditorLayer::createObjectsFromSetup(gd::string& setup) {
     }
 
     for (const std::string_view object : CustomLevelData::ACTIVE.getObjects()) {
-        if (Result<ObjectVectors> objectVectorsResult = CustomObjectnterface::createObjectVectorsFromString(object)) {
+        if (Result<ObjectVectors> objectVectorsResult = CustomObjectInterface::createObjectVectorsFromString(object)) {
             ObjectVectors objectVectors = std::move(objectVectorsResult).unwrap();
-            CustomObjectnterface* customObject = typeinfo_cast<CustomObjectnterface*>(this->addObjectFromVector(objectVectors.first, objectVectors.second));
 
-            customObject->internalPostInit();
-            customObject->postInit();
+            if (CustomObjectInterface* customObject = typeinfo_cast<CustomObjectInterface*>(this->addObjectFromVector(
+                objectVectors.first,
+                objectVectors.second
+            ))) {
+                customObject->postInit();
+            } else {
+                log::warn("Failed to initialize object");
+            }
         } else {
             log::warn("Failed to load object: {}", std::move(objectVectorsResult).unwrapErr());
         }
@@ -30,9 +35,10 @@ GameObject* ModLevelEditorLayer::createObject(const int key, const CCPoint posit
     GameObject* object = LevelEditorLayer::createObject(key, position, noUndo);
 
     if (key >= ObjectAPI::getBaseCustomObjectID()) {
-        if (CustomObjectnterface* customObject = typeinfo_cast<CustomObjectnterface*>(object)) {
-            customObject->internalPostInit();
+        if (CustomObjectInterface* customObject = typeinfo_cast<CustomObjectInterface*>(object)) {
             customObject->postInit();
+        } else {
+            log::warn("Failed to initialize object");
         }
     }
 

@@ -5,7 +5,7 @@ using namespace geode::prelude;
 
 template<typename Value, typename T, typename Member>
 inline void applyValueToSelectedGameObjects(const Selected& selected, Member T::* member, const Value& value) {
-    for (CustomObjectnterface* object : selected) {
+    for (CustomObjectInterface* object : selected) {
         if (T* gameObject = typeinfo_cast<T*>(object->getGameObject())) {
             gameObject->*member = value;
         }

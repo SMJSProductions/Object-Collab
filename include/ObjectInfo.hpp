@@ -5,7 +5,7 @@
 
 namespace object_collab {
     using PopupOptions = std::variant<geode::Popup*, editor_popup::PopupConfig>;
-    using ObjectFactory = geode::Function<CustomObjectnterface*()>;
+    using ObjectFactory = geode::Function<CustomObjectInterface*()>;
     using ObjectPopupFactory = geode::Function<PopupOptions(const Selected& selected)>;
 
     enum class EditorTab {
@@ -61,7 +61,7 @@ namespace object_collab {
         geode::ZStringView getSprite() const;
         EditorTab getEditorTab() const;
         bool hasFactory() const;
-        CustomObjectnterface* factory() const;
+        CustomObjectInterface* factory() const;
         bool hasEditObject() const;
         PopupOptions editObject(const Selected& selected) const;
         bool hasEditSpecial() const;

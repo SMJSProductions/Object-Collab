@@ -121,8 +121,6 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
 ModSpawnTrigger::ModSpawnTrigger(): CustomObject(GameObjectType::Modifier), m_mod("Unknown") { }
 
 void ModSpawnTrigger::postInit() {
-    m_duration = 0;
-
     this->setHitbox({ 1, 1 });
 }
 
@@ -145,7 +143,6 @@ std::vector<std::string> ModSpawnTrigger::getObjectDetails() {
 }
 
 CustomProperties ModSpawnTrigger::getCustomProperties() {
-    SpawnTriggerGameObject::create();
     return {
         CustomObject::toProperty(ModSpawnTrigger::MOD_KEY, m_mod),
         CustomObject::toProperty(ModSpawnTrigger::TARGET_GROUP, m_targetGroupID),
@@ -165,6 +162,10 @@ void ModSpawnTrigger::initWithCustomProperties(const CustomProperties& values) {
     CustomObject::propertyInto(m_previewDisable, ModSpawnTrigger::PREVIEW_DISABLE, values);
 
     this->checkMod();
+}
+
+bool ModSpawnTrigger::ignoreEditorDuration() {
+    return true;
 }
 
 void ModSpawnTrigger::checkMod() {

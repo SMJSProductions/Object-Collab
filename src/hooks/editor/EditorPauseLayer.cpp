@@ -36,13 +36,13 @@ bool ModEditorPauseLayer::init(LevelEditorLayer* layer) {
 
 void ModEditorPauseLayer::saveLevel() {
     CCArray* objectsBackup = m_editorLayer->m_objects;
-    std::vector<CustomObjectnterface*> customObjects;
+    std::vector<CustomObjectInterface*> customObjects;
 
     m_editorLayer->m_objects = CCArray::create();
     m_editorLayer->m_objects->addObjectsFromArray(objectsBackup);
 
     for (size_t i = 0; i < m_editorLayer->m_objects->count(); i++) {
-        if (CustomObjectnterface* object = typeinfo_cast<CustomObjectnterface*>(m_editorLayer->m_objects->objectAtIndex(i))) {
+        if (CustomObjectInterface* object = typeinfo_cast<CustomObjectInterface*>(m_editorLayer->m_objects->objectAtIndex(i))) {
             customObjects.emplace_back(object);
             m_editorLayer->m_objects->removeObjectAtIndex(i--, false);
         }

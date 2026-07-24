@@ -70,7 +70,7 @@ void ModEditorUI::editObject(CCObject* sender) {
         customSelected.reserve(selected.size());
 
         for (GameObject* object : selected) {
-            customSelected.emplace_back(typeinfo_cast<CustomObjectnterface*>(object));
+            customSelected.emplace_back(typeinfo_cast<CustomObjectInterface*>(object));
         }
 
         Popup* popup = std::visit<Popup*>(makeVisitor{
@@ -104,7 +104,7 @@ void ModEditorUI::editObjectSpecial(const int type) {
         customSelected.reserve(selected.size());
 
         for (GameObject* object : selected) {
-            customSelected.emplace_back(typeinfo_cast<CustomObjectnterface*>(object));
+            customSelected.emplace_back(typeinfo_cast<CustomObjectInterface*>(object));
         }
 
         Popup* popup = std::visit<Popup*>(makeVisitor{
@@ -130,7 +130,7 @@ void ModEditorUI::editObjectSpecial(const int type) {
 void ModEditorUI::updateObjectInfoLabel() {
     EditorUI::updateObjectInfoLabel();
 
-    if (CustomObjectnterface* object = typeinfo_cast<CustomObjectnterface*>(m_selectedObject)) {
+    if (CustomObjectInterface* object = typeinfo_cast<CustomObjectInterface*>(m_selectedObject)) {
         const std::string_view objectID = ObjectAPI::getCustomObject(object->getGameObject()->m_objectID)->getID();
         std::vector<std::string> customInfo = object->getObjectDetails();
         utils::StringBuffer info;

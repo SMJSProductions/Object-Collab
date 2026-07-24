@@ -3,7 +3,7 @@
 #include <CustomObject.hpp>
 
 namespace object_collab {
-    using Selected = std::vector<CustomObjectnterface*>;
+    using Selected = std::vector<CustomObjectInterface*>;
 }
 
 namespace object_collab::editor_popup {
@@ -446,14 +446,14 @@ namespace object_collab::editor_popup {
 
     template<typename V, typename T>
     inline void applyValueToSelected(const Selected& selected, V T::* member, const V& value) {
-        for (CustomObjectnterface* object : selected) {
+        for (CustomObjectInterface* object : selected) {
             geode::cast::typeinfo_cast<T*>(object)->*member = value;
         }
     }
 
     template<typename V, typename T>
     inline void applyValueToSelectedAndReport(const Selected& selected, V T::* valueMember, void (T::* reportMember)(), const V& value) {
-        for (CustomObjectnterface* object : selected) {
+        for (CustomObjectInterface* object : selected) {
             T* castedObject = geode::cast::typeinfo_cast<T*>(object);
 
             castedObject->*valueMember = value;
@@ -463,7 +463,7 @@ namespace object_collab::editor_popup {
 
     template<typename V, typename T, typename F> requires std::invocable<F, T*> && std::is_convertible_v<std::invoke_result_t<F, T*>, bool>
     inline void applyValueToSelectedIf(const Selected& selected, V T::* member, const V& value, F&& condition) {
-        for (CustomObjectnterface* object : selected) {
+        for (CustomObjectInterface* object : selected) {
             T* castedObject = geode::cast::typeinfo_cast<T*>(object);
 
             if (condition(castedObject)) castedObject->*member = value;
@@ -472,7 +472,7 @@ namespace object_collab::editor_popup {
 
     template<typename V, typename T, typename F> requires std::invocable<F, T*> && std::is_convertible_v<std::invoke_result_t<F, T*>, bool>
     inline void applyValueToSelectedIfAndReport(const Selected& selected, V T::* valueMember, void (T::* reportMember)(), const V& value, F&& condition) {
-        for (CustomObjectnterface* object : selected) {
+        for (CustomObjectInterface* object : selected) {
             T* castedObject = geode::cast::typeinfo_cast<T*>(object);
 
             if (condition(castedObject)) {

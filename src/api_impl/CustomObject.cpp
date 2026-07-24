@@ -18,11 +18,11 @@ std::vector<std::string_view> split(const std::string_view string, const char de
     return results;
 }
 
-struct CustomObjectnterface::Impl {
-    bool m_isUpdating = false;
+struct CustomObjectInterface::Impl {
+    // Reserved for future updates
 };
 
-Result<ObjectVectors> CustomObjectnterface::createObjectVectorsFromString(std::string_view object) {
+Result<ObjectVectors> CustomObjectInterface::createObjectVectorsFromString(std::string_view object) {
     const std::vector<std::string_view> properties = split(object, ',');
     // Rob OMFG use a map FFS
     // Yes this needs a size of 600, otherwise Rob will just offset hard to random memory with 0 bound checks... I wish I were kidding
@@ -62,14 +62,6 @@ Result<ObjectVectors> CustomObjectnterface::createObjectVectorsFromString(std::s
     return Ok(std::make_pair(std::move(values), std::move(exists)));
 }
 
-CustomObjectnterface::CustomObjectnterface(): m_impl(std::make_unique<Impl>()) { }
+CustomObjectInterface::CustomObjectInterface(): m_impl(std::make_unique<Impl>()) { }
 
-CustomObjectnterface::~CustomObjectnterface() = default;
-
-bool CustomObjectnterface::isUpdating() {
-    return m_impl->m_isUpdating;
-}
-
-void CustomObjectnterface::toggleUpdating(bool enabled) {
-    m_impl->m_isUpdating = enabled;
-}
+CustomObjectInterface::~CustomObjectInterface() = default;

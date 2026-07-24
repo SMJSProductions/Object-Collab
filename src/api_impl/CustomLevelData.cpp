@@ -96,7 +96,7 @@ CustomLevelData CustomLevelData::load(CCLayer* baseGameLayer) {
     return level_storage::getSavedValue<CustomLevelData>(baseGameLayer, SAVE_KEY);
 }
 
-void CustomLevelData::save(LevelEditorLayer* editorLayer, std::span<CustomObjectnterface*> customObjects) {
+void CustomLevelData::save(LevelEditorLayer* editorLayer, std::span<CustomObjectInterface*> customObjects) {
     if (!editorLayer) return;
 
     CCArray* objects = LevelEditorLayer::get()->getAllObjects();
@@ -104,7 +104,7 @@ void CustomLevelData::save(LevelEditorLayer* editorLayer, std::span<CustomObject
     CustomLevelData levelData(false);
     size_t offset = ObjectAPI::getBaseCustomObjectID();
 
-    for (CustomObjectnterface* object : customObjects) {
+    for (CustomObjectInterface* object : customObjects) {
         GameObject* gameObject = object->getGameObject();
         const int originalObjectID = gameObject->m_objectID;
         ObjectInfo* objectInfo = ObjectAPI::getCustomObject(gameObject->m_objectID);

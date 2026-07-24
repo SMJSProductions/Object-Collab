@@ -17,7 +17,7 @@ namespace object_collab {
     using CustomProperties = std::unordered_map<uint32_t, std::string>;
     using ObjectVectors = std::pair<gd::vector<gd::string>, gd::vector<void*>>;
 
-    class OBJC_API_DLL CustomObjectnterface {
+    class OBJC_API_DLL CustomObjectInterface {
         template<typename T> requires std::derived_from<T, GameObject>
         friend class CustomObject;
 
@@ -29,21 +29,29 @@ namespace object_collab {
         /// @returns The vector pair GD uses to initialize objects.
         static geode::Result<ObjectVectors> createObjectVectorsFromString(std::string_view objectString);
     private:
-        CustomObjectnterface();
+        CustomObjectInterface();
     public:
-        virtual ~CustomObjectnterface();
+        virtual ~CustomObjectInterface();
         virtual bool init(const char* frame) = 0;
         virtual void postInit() = 0;
-        virtual void internalPostInit() = 0;
         virtual std::vector<std::string> getObjectDetails() = 0;
         virtual GameObject* getGameObject() = 0;
+        virtual bool isColorTrigger() = 0;
+        virtual bool isSettingsObject() = 0;
+        virtual bool isSpawnableTrigger() = 0;
+        virtual bool isSpecialObject() = 0;
+        virtual bool isTrigger() = 0;
+        virtual bool shouldLockX() = 0;
+        virtual bool shouldNotHideAnimFreeze() = 0;
+        virtual bool usesFreezeAnimation() = 0;
+        virtual bool usesSpecialAnimation() = 0;
     protected:
         bool isUpdating();
         void toggleUpdating(bool enabled);
     };
 
     template<typename T> requires std::derived_from<T, GameObject>
-    class CustomObject : public CustomObjectnterface, public T {
+    class CustomObject : public CustomObjectInterface, public T {
     public:
         /// Converts a deserialized property to a matjson serialized property and makes a key value pair.
         /// @param key The property key.
@@ -84,7 +92,7 @@ namespace object_collab {
         CustomObject(CustomObject&& other) = default;
         CustomObject(const CustomObject& other) = delete;
 
-        /// @param objectType The type of object, this copies some standard properties of the specified type. Default is Solid.
+        /// @param objectType The type of object, this copies some standard properties of the specified type.
         CustomObject(GameObjectType objectType = GameObjectType::Solid) {
             this->m_objectType = objectType;
         }
@@ -102,19 +110,17 @@ namespace object_collab {
             }
         }
 
+        virtual void customSetup() override {
+            T::customSetup();
+
+            this->m_dontIgnoreDuration = !this->ignoreEditorDuration();
+            this->m_activateTriggerInEditor = this->isEditorSpawnableTrigger();
+            this->m_canBeControlled = this->isStoppableTrigger();
+        }
+
         /// Runs after the object has fully generated.
         /// @note It's highly recommended to use this if you want to alter default GameObject properties.
         virtual void postInit() override { }
-
-        /// An internal post init which runs before postInit to setup basic object properties
-        void internalPostInit() override {
-            this->m_dontIgnoreDuration = this->m_isTrigger = this->isTrigger();
-
-            if (this->m_isTrigger) {
-                this->m_baseColor->m_defaultColorID = 0;
-                this->m_isInvisible = !this->m_editorEnabled;
-            }
-        }
 
         /// Creates a map of custom properties which will be saved in the level string together with the standard properties.
         /// @note Make sure to check https://boomlings.dev/resources/client/level-components/level-string#level-string-data to prevent overlaps!
@@ -168,37 +174,103 @@ namespace object_collab {
             this->m_objectRadius = radius;
         }
 
-        /// @see CCNode::scheduleUpdate
-        virtual void scheduleUpdate() {
-            this->toggleUpdating(true);
-        }
+        // TODO: What activates portals?
 
-        /// @see CCNode::unscheduleUpdate
-        virtual void unscheduleUpdate() {
-            this->toggleUpdating(false);
-        }
-
-        /// @see CCNode::visit
-        virtual void visit() override {
-            if (this->isUpdating()) this->update(cocos2d::CCDirector::get()->getDeltaTime());
-
-            T::visit();
-        }
-
-        /// @see GameObject::activateObject
-        virtual void activateObject() override {
-            if (!this->isTrigger()) this->onAction(GJBaseGameLayer::get(), this->m_uniqueID, {});
-
-            GameObject::activateObject();
-        }
-
+        /// Called when any trigger condition is met for a trigger object.
         /// @see GameObject::triggerObject
         virtual void triggerObject(GJBaseGameLayer* layer, int uniqueID, const gd::vector<int>* remapKeys) override {
             if (this->isTrigger()) this->onAction(layer, uniqueID, remapKeys);
 
-            GameObject::triggerObject(layer, uniqueID, remapKeys);
+            T::triggerObject(layer, uniqueID, remapKeys);
         }
 
+        /// If the object can be rotated without 90deg snapping.
+        /// @warning This feature is currently unimplemented due to too much inlining!
+        /// @see GameObject::canRotateFree
+        virtual bool canRotateFree() {
+            return T::canRotateFree();
+        }
+
+        /// If the trigger duration handling should be removed.
+        /// @see GameObject::ignoreEditorDuration
+        virtual bool ignoreEditorDuration() {
+            return !this->isTrigger();
+        }
+
+        /// If the trigger can affect color channels.
+        /// @see GameObject::isColorTrigger
+        virtual bool isColorTrigger() override {
+            return false;
+        }
+
+        /// If the trigger should be simulated in the editor.
+        /// @see GameObject::isEditorSpawnableTrigger
+        virtual bool isEditorSpawnableTrigger() {
+            return this->isTrigger();
+        }
+
+        /// If the play layer should ignore this object as its reserved for the editor.
+        /// @see GameObject::isSettingsObject
+        virtual bool isSettingsObject() override {
+            return false;
+        }
+
+        /// If the trigger can be spawned.
+        /// @see GameObject::isSpawnableTrigger
+        virtual bool isSpawnableTrigger() override {
+            return this->isTrigger();
+        }
+
+        /// If the object should be omitted from rendering in the custom delete & delete all buttons.
+        /// @see GameObject::isSpecialObject
+        virtual bool isSpecialObject() override {
+            return false;
+        }
+
+        /// If the object can change the gameplay speed.
+        /// @warning This feature is currently unimplemented due to too much inlining!
+        /// @see GameObject::isSpeedObject
+        virtual bool isSpeedObject() {
+            return false;
+        }
+
+        /// If the trigger can be manipulated by a stop trigger.
+        /// @see GameObject::isStoppableTrigger
+        virtual bool isStoppableTrigger() {
+            return this->isTrigger();
+        }
+
+        /// If the object should be considered a trigger.
+        /// @see GameObject::isTrigger
+        virtual bool isTrigger() override {
+            return this->m_classType == GameObjectClassType::Effect && this->m_objectType == GameObjectType::Modifier;
+        }
+
+        /// If the object can be affected by move triggers on the X axis.
+        /// @see GameObject::shouldLockX
+        virtual bool shouldLockX() override {
+            return false;
+        }
+
+        /// If the object should end the animation dirty.
+        /// @see GameObject::shouldNotHideAnimFreeze
+        virtual bool shouldNotHideAnimFreeze() override {
+            return false;
+        }
+
+        /// If the object uses an animation with a delayed start.
+        /// @see GameObject::usesFreezeAnimation
+        virtual bool usesFreezeAnimation() override {
+            return false;
+        }
+
+        /// If the object is animated.
+        /// @see GameObject::usesSpecialAnimation
+        virtual bool usesSpecialAnimation() override {
+            return false;
+        }
+
+        /// Initializes the object with the custom variables inside a (really strange) vector/map structure.
         /// @see GameObject::customObjectSetup
         virtual void customObjectSetup(gd::vector<gd::string>& values, gd::vector<void*>& exists) override {
             CustomProperties properties;
@@ -219,6 +291,7 @@ namespace object_collab {
             this->initWithCustomProperties(std::move(properties));
         }
 
+        /// Gets the raw save string of the object.
         /// @see GameObject::getSaveString
         virtual gd::string getSaveString(GJBaseGameLayer* layer) override {
             CustomProperties properties = this->getCustomProperties();
@@ -239,7 +312,13 @@ namespace object_collab {
             return buffer.str();
         }
 
-        /// @note This mostly exists for simplified use of the templated class internally
+        /// A replacement for CCNode::update().
+        /// @see GameObject::activateObject
+        virtual void activateObject() override {
+            T::activateObject();
+        }
+
+        /// @note This exists for simplified use of the templated class internally.
         /// @returns The instance as a game object.
         GameObject* getGameObject() override {
             return this;

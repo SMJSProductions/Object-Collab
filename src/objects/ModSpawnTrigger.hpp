@@ -22,5 +22,6 @@ public:
     std::vector<std::string> getObjectDetails() override;
     object_collab::CustomProperties getCustomProperties() override;
     void initWithCustomProperties(const object_collab::CustomProperties& values) override;
+    bool ignoreEditorDuration() override;
     void checkMod();
 };
