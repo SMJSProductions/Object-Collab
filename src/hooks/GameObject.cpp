@@ -7,7 +7,7 @@ GameObject* ModGameObject::createWithKey(const int key) {
     if (ObjectAPI::getBaseCustomObjectID() > key) {
         return GameObject::createWithKey(key);
     } else if (ObjectInfo* info = ObjectAPI::getCustomObject(key)) {
-        CustomObjectInterface* object = info->hasFactory() ? info->factory() : new CustomObject<GameObject>();
+        CustomObjectInterface* object = info->hasFactory() ? info->factory() : new CustomObject<GameObject>(info->getObjectType());
 
         if (object && object->init(info->getSprite().c_str())) {
             GameObject* gameObject = object->getGameObject();
