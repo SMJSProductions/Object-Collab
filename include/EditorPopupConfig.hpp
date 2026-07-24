@@ -3,7 +3,7 @@
 #include <CustomObject.hpp>
 
 namespace object_collab {
-    using Selected = std::vector<CustomObject*>;
+    using Selected = std::vector<CustomObjectnterface*>;
 }
 
 namespace object_collab::editor_popup {
@@ -437,15 +437,15 @@ namespace object_collab::editor_popup {
 
     template<typename T, typename Member, typename Value>
     inline void applyValueToSelected(const Selected& selected, Member T::* member, const Value& value) {
-        for (CustomObject* object : selected) {
-            reinterpret_cast<T*>(object)->*member = value;
+        for (CustomObjectnterface* object : selected) {
+            geode::cast::typeinfo_cast<T*>(object)->*member = value;
         }
     }
 
     template<typename T, typename Member, typename Value, typename F> requires std::invocable<F, T*> && std::is_convertible_v<std::invoke_result_t<F, T*>, bool>
     inline void applyValueToSelectedIf(const Selected& selected, Member T::* member, const Value& value, F&& condition) {
-        for (CustomObject* object : selected) {
-            T* castedObject = reinterpret_cast<T*>(object);
+        for (CustomObjectnterface* object : selected) {
+            T* castedObject = geode::cast::typeinfo_cast<T*>(object);
 
             if (condition(castedObject)) castedObject->*member = value;
         }
@@ -455,10 +455,10 @@ namespace object_collab::editor_popup {
     inline Value getCommonValueOrDefault(const Selected& selected, Member T::* member, Value defaultValue) {
         if (selected.empty()) return defaultValue;
 
-        const Value& firstValue = reinterpret_cast<T*>(selected[0])->*member;
+        const Value& firstValue = geode::cast::typeinfo_cast<T*>(selected[0])->*member;
 
         for (size_t i = 1; i < selected.size(); i++) {
-            if (firstValue != reinterpret_cast<T*>(selected[i])->*member) return defaultValue;
+            if (firstValue != geode::cast::typeinfo_cast<T*>(selected[i])->*member) return defaultValue;
         }
 
         return firstValue;
@@ -467,7 +467,7 @@ namespace object_collab::editor_popup {
     template<typename T, typename Member, typename Value>
     inline Value getOnlyValueOrDefault(const Selected& selected, Member T::* member, Value defaultValue) {
         if (selected.size() == 1) {
-            return reinterpret_cast<T*>(selected[0])->*member;
+            return geode::cast::typeinfo_cast<T*>(selected[0])->*member;
         } else {
             return defaultValue;
         }

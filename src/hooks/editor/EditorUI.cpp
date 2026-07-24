@@ -70,7 +70,7 @@ void ModEditorUI::editObject(CCObject* sender) {
         customSelected.reserve(selected.size());
 
         for (GameObject* object : selected) {
-            customSelected.emplace_back(reinterpret_cast<CustomObject*>(object));
+            customSelected.emplace_back(typeinfo_cast<CustomObjectnterface*>(object));
         }
 
         Popup* popup = std::visit<Popup*>(makeVisitor{
@@ -104,7 +104,7 @@ void ModEditorUI::editObjectSpecial(const int type) {
         customSelected.reserve(selected.size());
 
         for (GameObject* object : selected) {
-            customSelected.emplace_back(reinterpret_cast<CustomObject*>(object));
+            customSelected.emplace_back(typeinfo_cast<CustomObjectnterface*>(object));
         }
 
         Popup* popup = std::visit<Popup*>(makeVisitor{
@@ -130,8 +130,8 @@ void ModEditorUI::editObjectSpecial(const int type) {
 void ModEditorUI::updateObjectInfoLabel() {
     EditorUI::updateObjectInfoLabel();
 
-    if (CustomObject* object = typeinfo_cast<CustomObject*>(m_selectedObject)) {
-        const std::string_view objectID = ObjectAPI::getCustomObject(object->m_objectID)->getID();
+    if (CustomObjectnterface* object = typeinfo_cast<CustomObjectnterface*>(m_selectedObject)) {
+        const std::string_view objectID = ObjectAPI::getCustomObject(object->getGameObject()->m_objectID)->getID();
         std::vector<std::string> customInfo = object->getObjectDetails();
         utils::StringBuffer info;
 
@@ -145,7 +145,7 @@ void ModEditorUI::updateObjectInfoLabel() {
             info.append("{}\n", customInfoEntry);
         }
 
-        info.append("Mod: {}", objectID.substr(0, objectID.find('/')));
+        info.append("Object Mod: {}", objectID.substr(0, objectID.find('/')));
         m_objectInfoLabel->setString(info.c_str());
     }
 }

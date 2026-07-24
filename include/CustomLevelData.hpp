@@ -18,7 +18,7 @@ namespace object_collab {
 
         static matjson::Value raw(cocos2d::CCLayer* baseGameLayer);
         static CustomLevelData load(cocos2d::CCLayer* baseGameLayer);
-        static void save(LevelEditorLayer* editorLayer, std::span<CustomObject*> customObjects);
+        static void save(LevelEditorLayer* editorLayer, std::span<CustomObjectnterface*> customObjects);
 
         CustomLevelData& operator=(CustomLevelData&& other);
         CustomLevelData& operator=(const CustomLevelData& other) = delete;

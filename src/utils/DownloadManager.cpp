@@ -52,7 +52,7 @@ Future<Result<>> DownloadManager::download(std::string modID, ProgressCallback o
     co_return co_await this->joinedFutureResult(std::move(downloads));
 }
 
-arc::Future<geode::Result<>> DownloadManager::downloadGeodeFile(std::string url, ModMetadata metadata, ProgressCallback onProgress) {
+Future<geode::Result<>> DownloadManager::downloadGeodeFile(std::string url, ModMetadata metadata, ProgressCallback onProgress) {
     std::string modID = metadata.id;
 
     co_return GEODE_CO_UNWRAP(

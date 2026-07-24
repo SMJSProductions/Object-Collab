@@ -96,7 +96,7 @@ CustomLevelData CustomLevelData::load(CCLayer* baseGameLayer) {
     return level_storage::getSavedValue<CustomLevelData>(baseGameLayer, SAVE_KEY);
 }
 
-void CustomLevelData::save(LevelEditorLayer* editorLayer, std::span<CustomObject*> customObjects) {
+void CustomLevelData::save(LevelEditorLayer* editorLayer, std::span<CustomObjectnterface*> customObjects) {
     if (!editorLayer) return;
 
     CCArray* objects = LevelEditorLayer::get()->getAllObjects();
@@ -104,26 +104,27 @@ void CustomLevelData::save(LevelEditorLayer* editorLayer, std::span<CustomObject
     CustomLevelData levelData(false);
     size_t offset = ObjectAPI::getBaseCustomObjectID();
 
-    for (CustomObject* object : customObjects) {
-        const int originalObjectID = object->m_objectID;
-        ObjectInfo* objectInfo = ObjectAPI::getCustomObject(object->m_objectID);
+    for (CustomObjectnterface* object : customObjects) {
+        GameObject* gameObject = object->getGameObject();
+        const int originalObjectID = gameObject->m_objectID;
+        ObjectInfo* objectInfo = ObjectAPI::getCustomObject(gameObject->m_objectID);
         const std::string_view id = objectInfo->getID();
 
         // Yes I am temp overwriting the existing object ID to save it... Sure do hope no one assumes this thing is static.
         if (const auto assignedID = tempLookup.find(id); assignedID == tempLookup.end()) {
-            object->m_objectID = offset;
+            gameObject->m_objectID = offset;
             tempLookup.emplace(id, offset);
             levelData.m_impl->allocations.emplace(offset, objectInfo);
 
             offset++;
         } else {
-            object->m_objectID = assignedID->second;
+            gameObject->m_objectID = assignedID->second;
         }
 
         // No need to populate the mods field, it doesn't get used for saving
-        levelData.m_impl->objects.emplace_back(object->getSaveString(editorLayer));
+        levelData.m_impl->objects.emplace_back(gameObject->getSaveString(editorLayer));
 
-        object->m_objectID = originalObjectID;
+        gameObject->m_objectID = originalObjectID;
     }
 
     level_storage::setSavedValue(editorLayer, SAVE_KEY, levelData);

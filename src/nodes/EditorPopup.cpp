@@ -3,6 +3,34 @@
 using namespace object_collab::prelude;
 using namespace geode::prelude;
 
+template<typename T, typename Member, typename Value>
+inline void applyValueToSelectedGameObjects(const Selected& selected, Member T::* member, const Value& value) {
+    for (CustomObjectnterface* object : selected) {
+        if (T* gameObject = typeinfo_cast<T*>(object->getGameObject())) {
+            gameObject->*member = value;
+        }
+    }
+}
+
+template<typename T, typename Member, typename Value>
+    inline Value getGameObjectsCommonValueOrDefault(const Selected& selected, Member T::* member, Value defaultValue) {
+        if (selected.empty()) return defaultValue;
+
+        T* firstGameObject = typeinfo_cast<T*>(selected[0]->getGameObject());
+
+        if (!firstGameObject) return defaultValue;
+
+        const Value& firstValue = firstGameObject->*member;
+
+        for (size_t i = 1; i < selected.size(); i++) {
+            T* gameObject = typeinfo_cast<T*>(selected[i]->getGameObject());
+
+            if (!gameObject || firstValue != gameObject->*member) return defaultValue;
+        }
+
+        return firstValue;
+    }
+
 EditorPopup* EditorPopup::create(Selected selected, PopupConfig& config) {
     EditorPopup* popup = new EditorPopup(std::move(selected));
 
@@ -116,11 +144,9 @@ bool EditorPopup::addTriggerToggles(CCNode* container) {
         .id("touch-trigger"_spr)
         .title("Touch\nTrigger")
         .currentValue([](const Selected& selected, Popup* popup) {
-            return getCommonValueOrDefault(selected, &CustomObject::m_isTouchTriggered, false);
+            return getGameObjectsCommonValueOrDefault(selected, &EffectGameObject::m_isTouchTriggered, false);
         })
         .onValue([this, container](const bool value, const Selected& selected, Popup* popup) {
-            
-
             if (value) {
                 CCMenuItemToggler* spawnTrigger = reinterpret_cast<ToggleMenuNode*>(container->getChildByID("spawn-trigger"_spr))
                     ->getValueNode<CCMenuItemToggler>();
@@ -133,7 +159,7 @@ bool EditorPopup::addTriggerToggles(CCNode* container) {
                 container->updateLayout();
             }
 
-            applyValueToSelected(selected, &CustomObject::m_isTouchTriggered, value);
+            applyValueToSelectedGameObjects(selected, &EffectGameObject::m_isTouchTriggered, value);
         })
         .build()
         .get());
@@ -141,7 +167,7 @@ bool EditorPopup::addTriggerToggles(CCNode* container) {
         .id("spawn-trigger"_spr)
         .title("Spawn\nTrigger")
         .currentValue([](const Selected& selected, Popup* popup) {
-            return getCommonValueOrDefault(selected, &CustomObject::m_isSpawnTriggered, false);
+            return getGameObjectsCommonValueOrDefault(selected, &EffectGameObject::m_isSpawnTriggered, false);
         })
         .onValue([this, container](const bool value, const Selected& selected, Popup* popup) {
             if (value) {
@@ -156,7 +182,7 @@ bool EditorPopup::addTriggerToggles(CCNode* container) {
                 container->updateLayout();
             }
 
-            applyValueToSelected(selected, &CustomObject::m_isSpawnTriggered, value);
+            applyValueToSelectedGameObjects(selected, &EffectGameObject::m_isSpawnTriggered, value);
         })
         .build()
         .get());
@@ -172,10 +198,10 @@ void EditorPopup::addNoMultiActivateToggle(cocos2d::CCNode* container) {
         .id("no-multi-activate"_spr)
         .title("No Multi\nActivate")
         .currentValue([](const Selected& selected, Popup* popup) {
-            return getCommonValueOrDefault(selected, &CustomObject::m_isNoMultiActivate, false);
+            return getGameObjectsCommonValueOrDefault(selected, &EnhancedGameObject::m_isNoMultiActivate, false);
         })
         .onValue([](const bool value, const Selected& selected, Popup* popup) {
-            applyValueToSelected(selected, &CustomObject::m_isNoMultiActivate, value);
+            applyValueToSelectedGameObjects(selected, &EnhancedGameObject::m_isNoMultiActivate, value);
         })
         .build()
         .get()));
@@ -188,10 +214,10 @@ void EditorPopup::addMultiTriggerToggle(CCNode* container) {
         .id("multi-trigger"_spr)
         .title("Multi\nTrigger")
         .currentValue([](const Selected& selected, Popup* popup) {
-            return getCommonValueOrDefault(selected, &CustomObject::m_isMultiTriggered, false);
+            return getGameObjectsCommonValueOrDefault(selected, &EffectGameObject::m_isMultiTriggered, false);
         })
         .onValue([](const bool value, const Selected& selected, Popup* popup) {
-            applyValueToSelected(selected, &CustomObject::m_isMultiTriggered, value);
+            applyValueToSelectedGameObjects(selected, &EffectGameObject::m_isMultiTriggered, value);
         })
         .build()
         .get()));

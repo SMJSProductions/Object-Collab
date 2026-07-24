@@ -3,7 +3,7 @@
 using namespace object_collab::prelude;
 using namespace geode::prelude;
 
-CustomObject* ModSpawnTrigger::create() {
+ModSpawnTrigger* ModSpawnTrigger::create() {
     return new ModSpawnTrigger();
 }
 
@@ -72,23 +72,21 @@ void ModSpawnTrigger::postInit() {
     this->setHitbox({ 1, 1 });
 }
 
-void ModSpawnTrigger::onAction() {
-    GJBaseGameLayer::get()->m_effectManager->spawnGroup(
-        m_targetGroupID,
-        m_spawnTriggerDelay,
-        m_spawnOrdered,
-        {},
-        m_uniqueID,
-        m_controlID
-    );
+void ModSpawnTrigger::onAction(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) {
+    if (m_active) {
+        SpawnTriggerGameObject::triggerObject(layer, m_uniqueID, remapKeys);
+    }
 }
 
 std::vector<std::string> ModSpawnTrigger::getObjectDetails() {
     return {
         fmt::format("Mod ID: {}", m_mod.empty() ? "Unknown" : m_mod),
         fmt::format("Group ID: {}", m_targetGroupID),
-        fmt::format("Spawn trigger delay: {}", m_spawnTriggerDelay),
-        fmt::format("Is spawn ordered: {}", m_spawnOrdered ? "Yes" : "No")
+        fmt::format("Delay: {}", m_spawnDelay),
+        fmt::format("Delay+-: {}", m_delayRange),
+        fmt::format("Spawn ordered: {}", m_spawnOrdered ? "Yes" : "No"),
+        fmt::format("Preview disabled: {}", m_previewDisable ? "Yes" : "No"),
+        fmt::format("Active: {}", m_active ? "Yes" : "No")
     };
 }
 
@@ -97,8 +95,8 @@ CustomProperties ModSpawnTrigger::getCustomProperties() {
     return {
         CustomObject::toProperty(ModSpawnTrigger::MOD_KEY, m_mod),
         CustomObject::toProperty(ModSpawnTrigger::TARGET_GROUP, m_targetGroupID),
-        CustomObject::toProperty(ModSpawnTrigger::DELAY, m_spawnTriggerDelay),
-        // CustomObject::toProperty(ModSpawnTrigger::DELAY_PLUS_MINUS, ), // TODO:
+        CustomObject::toProperty(ModSpawnTrigger::DELAY, m_spawnDelay),
+        CustomObject::toProperty(ModSpawnTrigger::DELAY_PLUS_MINUS, m_delayRange),
         CustomObject::toProperty(ModSpawnTrigger::SPAWN_ORDERED, m_spawnOrdered),
         CustomObject::toProperty(ModSpawnTrigger::PREVIEW_DISABLE, m_previewDisable)
     };
@@ -107,10 +105,12 @@ CustomProperties ModSpawnTrigger::getCustomProperties() {
 void ModSpawnTrigger::initWithCustomProperties(const CustomProperties& values) {
     CustomObject::propertyInto(m_mod, ModSpawnTrigger::MOD_KEY, values);
     CustomObject::propertyInto(m_targetGroupID, ModSpawnTrigger::TARGET_GROUP, values);
-    CustomObject::propertyInto(m_spawnTriggerDelay, ModSpawnTrigger::DELAY, values);
-    // CustomObject::propertyInto(, ModSpawnTrigger::DELAY_PLUS_MINUS, values); // TODO:
+    CustomObject::propertyInto(m_spawnDelay, ModSpawnTrigger::DELAY, values);
+    CustomObject::propertyInto(m_delayRange, ModSpawnTrigger::DELAY_PLUS_MINUS, values);
     CustomObject::propertyInto(m_spawnOrdered, ModSpawnTrigger::SPAWN_ORDERED, values);
     CustomObject::propertyInto(m_previewDisable, ModSpawnTrigger::PREVIEW_DISABLE, values);
+
+    m_active = Loader::get()->isModLoaded(m_mod);
 }
 
 $on_mod(Loaded) {

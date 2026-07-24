@@ -40,7 +40,7 @@ bool ObjectInfo::hasFactory() const {
     return m_impl->factory != nullptr;
 }
 
-CustomObject* ObjectInfo::factory() const {
+CustomObjectnterface* ObjectInfo::factory() const {
     return m_impl->factory();
 }
 
