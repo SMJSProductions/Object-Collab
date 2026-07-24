@@ -31,7 +31,7 @@ bool ValueMenuNode::initBaseMenuInverted(const ZStringView id, const ZStringView
     if (titleButton) horizontalMenu->addChild(titleButton);
 
     if (horizontalMenu->getChildrenCount()) {
-        horizontalMenu->setLayout(this->createStandardLayout(Axis::Row));
+        horizontalMenu->setLayout(this->createStandardLayout(Axis::Row, 5));
 
         this->addChild(horizontalMenu);
     }
@@ -47,9 +47,9 @@ bool ValueMenuNode::initBaseMenuInverted(const ZStringView id, const ZStringView
     return true;
 }
 
-SimpleAxisLayout* ValueMenuNode::createStandardLayout(const Axis axis) {
+SimpleAxisLayout* ValueMenuNode::createStandardLayout(const Axis axis, const float gap) {
     return SimpleAxisLayout::create(axis)
-        ->setGap(10)
+        ->setGap(gap)
         ->setMainAxisScaling(AxisScaling::Fit)
         ->setCrossAxisScaling(AxisScaling::Fit);
 }

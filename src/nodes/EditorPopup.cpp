@@ -3,7 +3,7 @@
 using namespace object_collab::prelude;
 using namespace geode::prelude;
 
-template<typename T, typename Member, typename Value>
+template<typename Value, typename T, typename Member>
 inline void applyValueToSelectedGameObjects(const Selected& selected, Member T::* member, const Value& value) {
     for (CustomObjectnterface* object : selected) {
         if (T* gameObject = typeinfo_cast<T*>(object->getGameObject())) {
@@ -12,7 +12,7 @@ inline void applyValueToSelectedGameObjects(const Selected& selected, Member T::
     }
 }
 
-template<typename T, typename Member, typename Value>
+template<typename Value, typename T, typename Member>
     inline Value getGameObjectsCommonValueOrDefault(const Selected& selected, Member T::* member, Value defaultValue) {
         if (selected.empty()) return defaultValue;
 
@@ -60,7 +60,7 @@ bool EditorPopup::init(PopupConfig& config) {
     this->setID(config.getID());
     this->addInfo(config.getInfo());
     this->addToggles(config);
-    this->addMenus(config.releaseMenus());
+    this->addMenus(config);
 
     return true;
 }
@@ -78,10 +78,10 @@ void EditorPopup::addInfo(const InfoPopup& info) {
     m_buttonMenu->addChild(infoBtn);
 }
 
-void EditorPopup::addMenus(std::vector<std::unique_ptr<ValueMenu>> menus) {
+void EditorPopup::addMenus(PopupConfig& config) {
     CCMenu* menuContainer = CCMenu::create();
 
-    for (const std::unique_ptr<ValueMenu>& menu : menus) {
+    for (const std::unique_ptr<ValueMenu>& menu : config.releaseMenus()) {
         if (ToggleMenu* toggleMenu = typeinfo_cast<ToggleMenu*>(menu.get())) {
             menuContainer->addChild(ToggleMenuNode::create(m_selected, this, *toggleMenu));
         } else if (NumericMenu* numericMenu = typeinfo_cast<NumericMenu*>(menu.get())) {
@@ -99,7 +99,8 @@ void EditorPopup::addMenus(std::vector<std::unique_ptr<ValueMenu>> menus) {
 
     menuContainer->setContentSize(m_contentLayer->getContentSize());
     menuContainer->setLayout(TableLayout::create(Axis::Row)
-        ->setGap(10)
+        ->setMainAxisGap(config.getGapX())
+        ->setCrossAxisGap(config.getGapY())
         ->setMinScale(0.4f)
         ->setMaxScale(0.8f)
         ->inverseCrossAxis(true));
@@ -107,7 +108,7 @@ void EditorPopup::addMenus(std::vector<std::unique_ptr<ValueMenu>> menus) {
     m_contentLayer->updateLayout();
 }
 
-void EditorPopup::addToggles(object_collab::editor_popup::PopupConfig& config) {
+void EditorPopup::addToggles(PopupConfig& config) {
     CCNode* container = CCNode::create();
     bool shouldAddMultiTrigger = false;
 
@@ -193,7 +194,7 @@ bool EditorPopup::addTriggerToggles(CCNode* container) {
     return touchTrigger->getValueNode<CCMenuItemToggler>()->isToggled() || spawnTrigger->getValueNode<CCMenuItemToggler>()->isToggled();
 }
 
-void EditorPopup::addNoMultiActivateToggle(cocos2d::CCNode* container) {
+void EditorPopup::addNoMultiActivateToggle(CCNode* container) {
     container->addChild(ToggleMenuNode::create(m_selected, this, *ToggleMenu::builder()
         .id("no-multi-activate"_spr)
         .title("No Multi\nActivate")

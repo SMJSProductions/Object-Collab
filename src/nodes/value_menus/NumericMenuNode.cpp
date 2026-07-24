@@ -61,6 +61,8 @@ SliderNode* NumericMenuNode::getSlider(const Selected& selected, Popup* popup, N
     slider->setMin(numericMenu.getMin().value_or(0));
     slider->setMax(numericMenu.getMax().value_or(100));
     slider->setValue(currentValue);
+    slider->setSnapStep(numericMenu.getStepSize());
+    slider->setScale(0.75f);
     slider->linkTextInput(input, numericMenu.getPrecision());
 
     return slider;
@@ -74,21 +76,23 @@ std::pair<CCMenuItemSpriteExtra*, CCMenuItemSpriteExtra*> NumericMenuNode::getAr
     rightSprite->setScale(0.96f);
 
     CCMenuItemSpriteExtra* left = CCMenuItemExt::createSpriteExtra(leftSprite, [
+        stepSize = numericMenu.getStepSize(),
         min = numericMenu.getMin(),
         input
     ](CCMenuItemSpriteExtra* sender) {
         if (Result<float> result = utils::numFromString<float>(input->getString())) {
-            const float number = std::move(result).unwrap() - 1;
+            const float number = std::move(result).unwrap() - stepSize;
 
             input->setString(utils::numToString(min ? std::max(min.value(), number) : number), true);
         }
     });
     CCMenuItemSpriteExtra* right = CCMenuItemExt::createSpriteExtra(rightSprite, [
+        stepSize = numericMenu.getStepSize(),
         max = numericMenu.getMax(),
         input
     ](CCMenuItemSpriteExtra* sender) {
         if (Result<float> result = utils::numFromString<float>(input->getString())) {
-            const float number = std::move(result).unwrap() + 1;
+            const float number = std::move(result).unwrap() + stepSize;
 
             input->setString(utils::numToString(max ? std::min(max.value(), number) : number), true);
         }

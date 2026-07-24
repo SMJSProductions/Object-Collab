@@ -8,15 +8,33 @@ ModSpawnTrigger* ModSpawnTrigger::create() {
 }
 
 PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
+    std::vector<std::string> mods;
+
+    for (Mod* mod : Loader::get()->getAllMods()) {
+        mods.emplace_back(mod->getID());
+    }
+
     return PopupConfig::builder()
         .width(320)
-        .height(150)
+        .height(250)
+        .gapY(20)
         .title("Loaded Mod Spawn Group")
         .info(InfoPopup::builder()
             .title("Help")
             .description("Works exactly like the spawn trigger with the condition that the targetted mod is installed & loaded.")
             .build())
         .triggerToggles(true)
+        .menu(EnumMenu::builder()
+            .id("mod-id"_spr)
+            .title("Mod ID")
+            .values(std::move(mods))
+            .onValue([](const std::string& value, const Selected& selected, Popup* popup) {
+                applyValueToSelected(selected, &ModSpawnTrigger::m_mod, value);
+            })
+            .currentValue([](const Selected& selected, Popup* popup) {
+                return getCommonValueOrDefault<std::string>(selected, &ModSpawnTrigger::m_mod, "Unknown");
+            })
+            .build())
         .menu(AxisLayoutMenu::builder()
             .axis(Axis::Row)
             .gap(20)
@@ -61,10 +79,46 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                     .build())
                 .build())
             .build())
+        .menu(AxisLayoutMenu::builder()
+            .axis(Axis::Row)
+            .gap(20)
+            .menu(NumericMenu::builder()
+                .id("delay"_spr)
+                .title("Delay")
+                .inputType(NumericMenu::InputType::SLIDER)
+                .min(0)
+                .max(1)
+                .precision(4)
+                .stepSize(0.0001)
+                .placeholder("Num")
+                .onValue([](const uint32_t value, const Selected& selected, Popup* popup) {
+                    applyValueToSelected(selected, &ModSpawnTrigger::m_spawnDelay, value);
+                })
+                .currentValue([](const Selected& selected, Popup* popup) {
+                    return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_spawnDelay, 0);
+                })
+                .build())
+            .menu(NumericMenu::builder()
+                .id("+-"_spr)
+                .title("+-")
+                .inputType(NumericMenu::InputType::SLIDER)
+                .min(0)
+                .max(1)
+                .precision(4)
+                .stepSize(0.0001)
+                .placeholder("Num")
+                .onValue([](const uint32_t value, const Selected& selected, Popup* popup) {
+                    applyValueToSelected(selected, &ModSpawnTrigger::m_delayRange, value);
+                })
+                .currentValue([](const Selected& selected, Popup* popup) {
+                    return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_delayRange, 0);
+                })
+                .build())
+            .build())
         .build();
 }
 
-ModSpawnTrigger::ModSpawnTrigger(): CustomObject(GameObjectType::Modifier) { }
+ModSpawnTrigger::ModSpawnTrigger(): CustomObject(GameObjectType::Modifier), m_mod("Unknown") { }
 
 void ModSpawnTrigger::postInit() {
     m_duration = 0;
@@ -80,7 +134,7 @@ void ModSpawnTrigger::onAction(GJBaseGameLayer* layer, const int uniqueID, const
 
 std::vector<std::string> ModSpawnTrigger::getObjectDetails() {
     return {
-        fmt::format("Mod ID: {}", m_mod.empty() ? "Unknown" : m_mod),
+        fmt::format("Mod ID: {}", m_mod),
         fmt::format("Group ID: {}", m_targetGroupID),
         fmt::format("Delay: {}", m_spawnDelay),
         fmt::format("Delay+-: {}", m_delayRange),

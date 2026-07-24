@@ -35,9 +35,9 @@ using namespace object_collab::editor_popup;
 #define IMPL_VALUES() \
     std::string id; \
     std::string title
-#define VALUE_IMPL_VALUES(type) \
+#define VALUE_IMPL_VALUES(type, ...) \
     IMPL_VALUES(); \
-    ValueUpdateCallback<type> onValue = [](type value, const Selected& selected, Popup* popup) { }; \
+    ValueUpdateCallback<type __VA_ARGS__> onValue = [](type __VA_ARGS__ value, const Selected& selected, Popup* popup) { }; \
     CurrentValueCallback<type> currentValue = [](const Selected& selected, Popup* popup) { return type(); }
 
 #define BUILD_IMPL(name) name name::Builder::build() && { return std::move(m_impl); }
@@ -53,12 +53,12 @@ using namespace object_collab::editor_popup;
     name::Builder::~Builder() = default; \
     CONFIG_VALUE(name, std::string, ZStringView, id, ID) \
     CONFIG_VALUE(name, std::string, ZStringView, title, Title)
-#define VALUE_IMPL(name, type) \
+#define VALUE_IMPL(name, type, ...) \
     CONFIG_IMPL(name) \
     PTR_BUILD_IMPL(name) \
-    BUILDER_PARAM(name, ValueUpdateCallback<type>, onValue) \
+    BUILDER_PARAM(name, ValueUpdateCallback<type __VA_ARGS__>, onValue) \
     BUILDER_PARAM(name, CurrentValueCallback<type>, currentValue) \
-    VALUE_RELEASE(name, ValueUpdateCallback<type>, onValue, OnValue) \
+    VALUE_RELEASE(name, ValueUpdateCallback<type __VA_ARGS__>, onValue, OnValue) \
     VALUE_RELEASE(name, CurrentValueCallback<type>, currentValue, CurrentValue)
 
 struct InfoPopup::Impl {
@@ -81,6 +81,7 @@ struct NumericMenu::Impl {
     std::string placeholder;
     NumericMenu::InputType inputType = NumericMenu::InputType::TEXT_BOX;
     size_t precision = 2;
+    float stepSize = 1;
     std::optional<float> min = std::nullopt;
     std::optional<float> max = std::nullopt;
 };
@@ -89,27 +90,28 @@ VALUE_IMPL(NumericMenu, float);
 CONFIG_VALUE(NumericMenu, std::string, ZStringView, placeholder, Placeholder);
 PRIMITIVE_CONFIG_VALUE(NumericMenu, NumericMenu::InputType, inputType, InputType);
 PRIMITIVE_CONFIG_VALUE(NumericMenu, size_t, precision, Precision);
+PRIMITIVE_CONFIG_VALUE(NumericMenu, float, stepSize, StepSize);
 CONFIG_VALUE(NumericMenu, std::optional<float>, const std::optional<float>&, min, Min);
 CONFIG_VALUE(NumericMenu, std::optional<float>, const std::optional<float>&, max, Max);
 
 struct InputMenu::Impl {
-    VALUE_IMPL_VALUES(std::string);
+    VALUE_IMPL_VALUES(std::string, const&);
     std::string placeholder;
     std::string allowedChars;
     size_t maxSize = std::string::npos;
 };
 
-VALUE_IMPL(InputMenu, std::string);
+VALUE_IMPL(InputMenu, std::string, const&);
 CONFIG_VALUE(InputMenu, std::string, ZStringView, placeholder, Placeholder);
 CONFIG_VALUE(InputMenu, std::string, ZStringView, allowedChars, AllowedChars);
 PRIMITIVE_CONFIG_VALUE(InputMenu, size_t, maxSize, MaxSize);
 
 struct EnumMenu::Impl {
-    VALUE_IMPL_VALUES(std::string);
+    VALUE_IMPL_VALUES(std::string, const&);
     std::vector<std::string> values;
 };
 
-VALUE_IMPL(EnumMenu, std::string);
+VALUE_IMPL(EnumMenu, std::string, const&);
 VECTOR_VALUE(EnumMenu, std::string, value, Values);
 
 struct CustomValueMenu::Impl {
@@ -149,6 +151,8 @@ struct PopupConfig::Impl {
     IMPL_VALUES();
     float width = 300;
     float height = 200;
+    float gapX = 10;
+    float gapY = 10;
     InfoPopup info = InfoPopup::builder().build();
     std::vector<std::unique_ptr<ValueMenu>> menus;
     bool triggerToggles = false;
@@ -160,6 +164,8 @@ CONFIG_IMPL(PopupConfig);
 BUILD_IMPL(PopupConfig);
 PRIMITIVE_CONFIG_VALUE(PopupConfig, float, width, Width);
 PRIMITIVE_CONFIG_VALUE(PopupConfig, float, height, Height);
+PRIMITIVE_CONFIG_VALUE(PopupConfig, float, gapX, GapX);
+PRIMITIVE_CONFIG_VALUE(PopupConfig, float, gapY, GapY);
 CONFIG_VALUE(PopupConfig, InfoPopup, const InfoPopup&, info, Info);
 VECTOR_VALUE(PopupConfig, std::unique_ptr<ValueMenu>, menu, Menus);
 PRIMITIVE_CONFIG_VALUE(PopupConfig, bool, triggerToggles, TriggerToggles);

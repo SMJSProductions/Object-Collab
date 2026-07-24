@@ -31,13 +31,13 @@ TableLayout* TableLayout::setGap(CCSize gap) {
     return this;
 }
 
-TableLayout* TableLayout::setGapX(const float gap) {
+TableLayout* TableLayout::setMainAxisGap(const float gap) {
     m_gap.width = gap;
 
     return this;
 }
 
-TableLayout* TableLayout::setGapY(const float gap) {
+TableLayout* TableLayout::setCrossAxisGap(const float gap) {
     m_gap.height = gap;
 
     return this;

@@ -18,8 +18,8 @@ public:
     TableLayout(const geode::Axis axis);
     TableLayout* setGap(const float gap);
     TableLayout* setGap(cocos2d::CCSize gap);
-    TableLayout* setGapX(const float gap);
-    TableLayout* setGapY(const float gap);
+    TableLayout* setMainAxisGap(const float gap);
+    TableLayout* setCrossAxisGap(const float gap);
     TableLayout* setMinScale(const float min);
     TableLayout* setMaxScale(const float max);
     TableLayout* setPadding(geode::Padding padding);

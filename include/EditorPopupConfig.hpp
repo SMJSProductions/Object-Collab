@@ -142,6 +142,8 @@ namespace object_collab::editor_popup {
             Builder&& inputType(InputType inputType) &&;
             /// @param precision The precision of the numeric value
             Builder&& precision(size_t precision) &&;
+            /// @param stepSize The step size of the input
+            Builder&& stepSize(float stepSize) &&;
             /// @param min The min numeric value
             /// @note std::nullopt = No min value if range is false, 0 if true
             Builder&& min(std::optional<float> min) &&;
@@ -166,6 +168,7 @@ namespace object_collab::editor_popup {
         geode::ZStringView getPlaceholder() const;
         InputType getInputType() const;
         size_t getPrecision() const;
+        float getStepSize() const;
         const std::optional<float>& getMin() const;
         const std::optional<float>& getMax() const;
     };
@@ -190,7 +193,7 @@ namespace object_collab::editor_popup {
             /// @param title The title of the popup section
             Builder&& title(std::string title) &&;
             /// @param onValue A callback to digest any value changes
-            Builder&& onValue(ValueUpdateCallback<std::string> onValue) &&;
+            Builder&& onValue(ValueUpdateCallback<const std::string&> onValue) &&;
             /// @param currentValue The current value getter callback
             Builder&& currentValue(CurrentValueCallback<std::string> currentValue) &&;
             /// @param placeholder A placeholder label set when no text is present
@@ -214,7 +217,7 @@ namespace object_collab::editor_popup {
         ~InputMenu();
         geode::ZStringView getID() const;
         geode::ZStringView getTitle() const;
-        ValueUpdateCallback<std::string> releaseOnValue();
+        ValueUpdateCallback<const std::string&> releaseOnValue();
         CurrentValueCallback<std::string> releaseCurrentValue();
         geode::ZStringView getPlaceholder() const;
         geode::ZStringView getAllowedChars() const;
@@ -241,7 +244,7 @@ namespace object_collab::editor_popup {
             /// @param title The title of the popup section
             Builder&& title(std::string title) &&;
             /// @param onValue A callback to digest any value changes
-            Builder&& onValue(ValueUpdateCallback<std::string> onValue) &&;
+            Builder&& onValue(ValueUpdateCallback<const std::string&> onValue) &&;
             /// @param currentValue The current value getter callback
             Builder&& currentValue(CurrentValueCallback<std::string> currentValue) &&;
             /// @param value An enum value
@@ -262,7 +265,7 @@ namespace object_collab::editor_popup {
         ~EnumMenu();
         geode::ZStringView getID() const;
         geode::ZStringView getTitle() const;
-        ValueUpdateCallback<std::string> releaseOnValue();
+        ValueUpdateCallback<const std::string&> releaseOnValue();
         CurrentValueCallback<std::string> releaseCurrentValue();
         std::span<std::string> getValues() const;
         std::vector<std::string> releaseValues();
@@ -396,6 +399,10 @@ namespace object_collab::editor_popup {
             Builder&& width(float width) &&;
             /// @param height The popup height
             Builder&& height(float height) &&;
+            /// @param gap The gap on the X axis
+            Builder&& gapX(float gap) &&;
+            /// @param gap The gap on the Y axis
+            Builder&& gapY(float gap) &&;
             /// @param info The info button details of the popup
             /// @note Empty = No info
             Builder&& info(InfoPopup info) &&;
@@ -426,6 +433,8 @@ namespace object_collab::editor_popup {
         geode::ZStringView getTitle() const;
         float getWidth() const;
         float getHeight() const;
+        float getGapX() const;
+        float getGapY() const;
         const InfoPopup& getInfo() const;
         std::span<std::unique_ptr<ValueMenu>> getMenus() const;
         std::vector<std::unique_ptr<ValueMenu>> releaseMenus();
@@ -435,14 +444,14 @@ namespace object_collab::editor_popup {
         std::vector<std::unique_ptr<ToggleMenu>> releaseToggles();
     };
 
-    template<typename T, typename Member, typename Value>
+    template<typename Value, typename T, typename Member>
     inline void applyValueToSelected(const Selected& selected, Member T::* member, const Value& value) {
         for (CustomObjectnterface* object : selected) {
             geode::cast::typeinfo_cast<T*>(object)->*member = value;
         }
     }
 
-    template<typename T, typename Member, typename Value, typename F> requires std::invocable<F, T*> && std::is_convertible_v<std::invoke_result_t<F, T*>, bool>
+    template<typename Value, typename T, typename Member, typename F> requires std::invocable<F, T*> && std::is_convertible_v<std::invoke_result_t<F, T*>, bool>
     inline void applyValueToSelectedIf(const Selected& selected, Member T::* member, const Value& value, F&& condition) {
         for (CustomObjectnterface* object : selected) {
             T* castedObject = geode::cast::typeinfo_cast<T*>(object);
@@ -451,7 +460,7 @@ namespace object_collab::editor_popup {
         }
     }
 
-    template<typename T, typename Member, typename Value>
+    template<typename Value, typename T, typename Member>
     inline Value getCommonValueOrDefault(const Selected& selected, Member T::* member, Value defaultValue) {
         if (selected.empty()) return defaultValue;
 
@@ -464,7 +473,7 @@ namespace object_collab::editor_popup {
         return firstValue;
     }
 
-    template<typename T, typename Member, typename Value>
+    template<typename Value, typename T, typename Member>
     inline Value getOnlyValueOrDefault(const Selected& selected, Member T::* member, Value defaultValue) {
         if (selected.size() == 1) {
             return geode::cast::typeinfo_cast<T*>(selected[0])->*member;
