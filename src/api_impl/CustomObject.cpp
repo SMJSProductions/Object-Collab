@@ -25,9 +25,9 @@ struct CustomObjectInterface::Impl {
 Result<ObjectVectors> CustomObjectInterface::createObjectVectorsFromString(std::string_view object) {
     const std::vector<std::string_view> properties = split(object, ',');
     // Rob OMFG use a map FFS
-    // Yes this needs a size of 600, otherwise Rob will just offset hard to random memory with 0 bound checks... I wish I were kidding
-    gd::vector<gd::string> values(600);
-    gd::vector<void*> exists(600);
+    // Yes this needs a size of 601, otherwise Rob will just offset hard to random memory with 0 bound checks... I wish I were kidding
+    gd::vector<gd::string> values(601);
+    gd::vector<void*> exists(601);
 
     // Why is there an odd amount of entries?
     if (properties.size() % 2 != 0) {
