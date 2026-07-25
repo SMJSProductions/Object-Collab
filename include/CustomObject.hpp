@@ -53,6 +53,8 @@ namespace object_collab {
     template<typename T> requires std::derived_from<T, GameObject>
     class CustomObject : public CustomObjectInterface, public T {
     public:
+        static constexpr float TILE_SIZE = 30;
+
         /// Converts a deserialized property to a matjson serialized property and makes a key value pair.
         /// @param key The property key.
         /// @param property The property to serialize.
@@ -93,6 +95,8 @@ namespace object_collab {
         CustomObject(const CustomObject& other) = delete;
 
         /// @param objectType The type of object, this copies some standard properties of the specified type.
+        /// @param defaultZLayer The default z layer given when the object is created.
+        /// @param defaultZOrder The default z order given when the object is created.
         CustomObject(GameObjectType objectType = GameObjectType::Solid, ZLayer defaultZLayer = ZLayer::Default, int defaultZOrder = 2) {
             this->m_objectType = objectType;
             this->m_defaultZLayer = defaultZLayer;
@@ -117,8 +121,11 @@ namespace object_collab {
             return true;
         }
 
+        /// @see GameObject::customSetup
         virtual void customSetup() override {
             T::customSetup();
+
+            GameObject::setDefaultMainColorMode(this->getDefaultMainColorID());
 
             this->m_dontIgnoreDuration = !this->ignoreEditorDuration();
             this->m_activateTriggerInEditor = this->isEditorSpawnableTrigger();
@@ -145,20 +152,67 @@ namespace object_collab {
         /// This will trigger either when activateObject is called for a normal object or triggerObject for a trigger.
         virtual void onAction(GJBaseGameLayer* layer, int uniqueID, const gd::vector<int>* remapKeys) { }
 
+        /// Gets the detail sprite of the object.
+        virtual cocos2d::CCSprite* getColorSprite() {
+            return this->m_colorSprite;
+        }
+
+        /// Gets the glow sprite of the object.
+        virtual cocos2d::CCSprite* getGlowSprite() {
+            return this->m_glowSprite;
+        }
+
+        /// Sets the detail sprite of the object.
+        /// @param frame The sprite frame name to use.
+        /// @param defaultColorID The default color ID given to the detail sprite.
+        virtual void setDetailSprite(const char* frame, int defaultColorID = 1) {
+            this->addCustomColorChild(frame);
+            this->setDefaultSecondaryColorMode(defaultColorID);
+        }
+
+        /// Sets the glow sprite of the object.
+        /// @param frame The sprite frame name to use.
+        /// @param color The optional color, if set it will make the glow considered custom.
+        virtual void setGlowSprite(gd::string frame, const std::optional<cocos2d::ccColor4B>& color = std::nullopt) {
+            this->createGlow(std::move(frame));
+            this->addCustomColorChild(frame);
+
+            if (color) {
+                this->m_customGlowColor = true;
+                this->m_cantColorGlow = false;
+
+                this->setGlowOpacity(color->a);
+                this->setGlowColor({ color->r, color->g, color->b });
+            } else {
+                this->m_customGlowColor = false;
+                this->m_cantColorGlow = true;
+            }
+        }
+
+        /// Removes the detail sprite.
+        /// @see GameObject::removeColorSprite
+        virtual void removeDetailSprite() {
+            this->removeColorSprite();
+        }
+
+        /// Removes the glow sprite.
+        /// @see GameObject::removeGlow
+        virtual void removeGlowSprite() {
+            this->removeGlow();
+        }
+
         /// Sets the hitbox of the object based on the size and offset.
         /// @param sizeUnits The amount of units (1 in-game tile) the hitbox size is on both axis.
         /// @param offsetUnits The amount of units (1 in-game tile) the hitbox is offset on both axis.
         virtual void setHitbox(const cocos2d::CCSize& sizeUnits, const cocos2d::CCPoint& offsetUnits = { 0, 0 }) {
-            constexpr float TILE_SIZE = 30;
-
-            this->m_width = sizeUnits.width * TILE_SIZE;
-            this->m_height = sizeUnits.height * TILE_SIZE;
-            this->m_customBoxOffset = offsetUnits * TILE_SIZE;
+            this->m_width = sizeUnits.width * CustomObject::TILE_SIZE;
+            this->m_height = sizeUnits.height * CustomObject::TILE_SIZE;
+            this->m_customBoxOffset = offsetUnits * CustomObject::TILE_SIZE;
         }
 
         /// Sets the round hitbox of the object based on the radius.
         /// @param radiusUnits The amount of units (1 in-game tile) the hitbox radius is.
-        virtual void setRoundHitbox(const float radiusUnits) {
+        virtual void setRoundHitbox(float radiusUnits) {
             this->setHitbox({ radiusUnits * 2, radiusUnits * 2 });
 
             this->m_objectRadius = this->m_width / 2;
@@ -175,7 +229,7 @@ namespace object_collab {
 
         /// Sets the round hitbox of the object based on the radius using the 30 steps per grid system.
         /// @param radius The radius of the hitbox.
-        virtual void setRawRoundHitbox(const float radius) {
+        virtual void setRawRoundHitbox(float radius) {
             this->setHitbox({ radius * 2, radius * 2 });
 
             this->m_objectRadius = radius;
@@ -189,6 +243,10 @@ namespace object_collab {
             if (this->isTrigger()) this->onAction(layer, uniqueID, remapKeys);
 
             T::triggerObject(layer, uniqueID, remapKeys);
+        }
+
+        virtual int getDefaultMainColorID() {
+            return this->isTrigger() ? 0 : 1004;
         }
 
         /// If the object can be rotated without 90deg snapping.
