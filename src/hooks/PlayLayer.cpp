@@ -11,7 +11,7 @@ void ModPlayLayer::processCreateObjectsFromSetup() {
     for (const std::string_view object : CustomLevelData::ACTIVE.getObjects()) {
         if (Result<ObjectVectors> objectVectorsResult = CustomObjectInterface::createObjectVectorsFromString(object)) {
             ObjectVectors objectVectors = std::move(objectVectorsResult).unwrap();
-            
+
             if (CustomObjectInterface* customObject = typeinfo_cast<CustomObjectInterface*>(GameObject::objectFromVector(
                 objectVectors.first,
                 objectVectors.second,

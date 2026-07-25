@@ -31,7 +31,7 @@ void VirtualModEnhancedGameObject::setupAnimationVariables() {
         m_visible = isFrozen;
         m_shouldNotHideAnimFreeze = custom->shouldNotHideAnimFreeze();
         m_usesSpecialAnimation = custom->usesSpecialAnimation();
-        
+
         return;
     });
 }

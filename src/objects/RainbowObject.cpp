@@ -77,7 +77,7 @@ void RainbowObject::onAction(GJBaseGameLayer* layer, const int uniqueID, const g
     #define RAND_COLOR { RAND_COLOR_CHANNEL, RAND_COLOR_CHANNEL, RAND_COLOR_CHANNEL }
     const ccColor3B color1 = RAND_COLOR;
     const ccColor3B color2 = RAND_COLOR;
-    
+
     layer->m_player1->setColor(color1);
     layer->m_player1->setSecondColor(color2);
 

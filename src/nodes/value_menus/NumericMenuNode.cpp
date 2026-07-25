@@ -44,7 +44,7 @@ bool NumericMenuNode::init(const Selected& selected, Popup* popup, NumericMenu& 
 
         input->setScale(0.9f);
 
-        return this->initBaseMenu(numericMenu.getID(), numericMenu.getTitle(), { arrows.first, input, arrows.second }); 
+        return this->initBaseMenu(numericMenu.getID(), numericMenu.getTitle(), { arrows.first, input, arrows.second });
     } else {
         return this->initBaseMenuInverted(numericMenu.getID(), numericMenu.getTitle(), input, nodes);
     }

@@ -59,7 +59,7 @@ bool CompatPopup::init() {
         PopupExtra::ButtonConfig{ "cancel", "GJ_button_06.png", [this](CCMenuItemSpriteExtra*) { this->closeWithEnabled(); } },
         PopupExtra::ButtonConfig{ state.second, "GJ_button_01.png", [this](CCMenuItemSpriteExtra*) { this->onFix(); } }
     ))) return false;
- 
+
     const CCSize& contentSize = m_contentLayer->getContentSize();
     Loader* loader = Loader::get();
     CCLabelBMFont* label = CCLabelBMFont::create(
