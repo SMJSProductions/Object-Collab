@@ -93,21 +93,28 @@ namespace object_collab {
         CustomObject(const CustomObject& other) = delete;
 
         /// @param objectType The type of object, this copies some standard properties of the specified type.
-        CustomObject(GameObjectType objectType = GameObjectType::Solid) {
+        CustomObject(GameObjectType objectType = GameObjectType::Solid, ZLayer defaultZLayer = ZLayer::Default, int defaultZOrder = 2) {
             this->m_objectType = objectType;
+            this->m_defaultZLayer = defaultZLayer;
+            this->m_defaultZOrder = defaultZOrder;
         }
 
         /// @see GameObject::init
         virtual bool init(const char* frame) override {
             static_assert(GameObjectHasBasicInit<T> || GameObjectHasFrameInit<T>, "Must have either ::init(const char* frame) or ::init()");
 
+            const int defaultZOrder = this->m_defaultZOrder;
             this->m_addToNodeContainer = true;
 
             if constexpr (GameObjectHasBasicInit<T>) {
-                return T::init() && cocos2d::CCSpriteExtra::initWithSpriteFrameName(frame);
+                if (!T::init() || !cocos2d::CCSpriteExtra::initWithSpriteFrameName(frame)) return false;
             } else {
-                return T::init(frame);
+                if (!T::init(frame)) return false;
             }
+
+            this->m_defaultZOrder = defaultZOrder;
+
+            return true;
         }
 
         virtual void customSetup() override {

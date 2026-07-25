@@ -48,6 +48,14 @@ namespace object_collab {
             /// @warning This only works for objects with no associated factory!
             /// @param objectType The object type which determines the vanilla behavior it inherits.
             Builder&& objectType(GameObjectType objectType) &&;
+            /// @note Default is ZLayer::Default.
+            /// @warning This only works for objects with no associated factory!
+            /// @param defaultZLayer The default z layer assigned when the object is created.
+            Builder&& defaultZLayer(ZLayer defaultZLayer) &&;
+            /// @note Default is 2.
+            /// @warning This only works for objects with no associated factory!
+            /// @param defaultZOrder The default z order assigned when the object is created.
+            Builder&& defaultZOrder(int defaultZOrder) &&;
             /// @note Default is EditorTab::Solids.
             /// @param editorTab The editor tab the object will be shown in.
             Builder&& editorTab(EditorTab editorTab) &&;
@@ -77,6 +85,8 @@ namespace object_collab {
         std::string_view getID() const;
         geode::ZStringView getSprite() const;
         GameObjectType getObjectType() const;
+        ZLayer getDefaultZLayer() const;
+        int getDefaultZOrder() const;
         EditorTab getEditorTab() const;
         bool hasFactory() const;
         CustomObjectInterface* factory() const;

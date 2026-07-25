@@ -7,6 +7,8 @@ struct ObjectInfo::Impl {
     std::string id;
     std::string sprite;
     GameObjectType objectType = GameObjectType::Solid;
+    ZLayer defaultZLayer = ZLayer::Default;
+    int defaultZOrder = 2;
     EditorTab editorTab = EditorTab::Solids;
     ObjectFactory factory = nullptr;
     ObjectPopupFactory editObject = nullptr;
@@ -35,6 +37,14 @@ ZStringView ObjectInfo::getSprite() const {
 
 GameObjectType ObjectInfo::getObjectType() const {
     return m_impl->objectType;
+}
+
+ZLayer ObjectInfo::getDefaultZLayer() const {
+    return m_impl->defaultZLayer;
+}
+
+int ObjectInfo::getDefaultZOrder() const {
+    return m_impl->defaultZOrder;
 }
 
 EditorTab ObjectInfo::getEditorTab() const {
@@ -83,6 +93,18 @@ ObjectInfo::Builder&& ObjectInfo::Builder::sprite(std::string sprite) && {
 
 ObjectInfo::Builder&& ObjectInfo::Builder::objectType(GameObjectType objectType) && {
     m_config->m_impl->objectType = objectType;
+
+    return std::forward<ObjectInfo::Builder>(*this);
+}
+
+ObjectInfo::Builder&& ObjectInfo::Builder::defaultZLayer(ZLayer defaultZLayer) && {
+    m_config->m_impl->defaultZLayer = defaultZLayer;
+
+    return std::forward<ObjectInfo::Builder>(*this);
+}
+
+ObjectInfo::Builder&& ObjectInfo::Builder::defaultZOrder(int defaultZOrder) && {
+    m_config->m_impl->defaultZOrder = defaultZOrder;
 
     return std::forward<ObjectInfo::Builder>(*this);
 }
