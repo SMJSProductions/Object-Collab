@@ -44,8 +44,7 @@ void ModEditorUI::toggleEditObjectButton() {
 
     if (key) {
         if (ObjectInfo* info = ObjectAPI::getCustomObject(key.value())) {
-            // Not sure why this one is even needed. I don't think there's even 1 object which has this turned off
-            this->toggleButton(m_editObjectBtn, true);
+            this->toggleButton(m_editObjectBtn, info->hasEditObject() || this->editButtonUsable());
             this->toggleButton(m_editSpecialBtn, info->hasEditSpecial());
             this->updateEditColorButton();
         } else {
