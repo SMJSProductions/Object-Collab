@@ -39,9 +39,20 @@
     ]
   },
   "settings": {
+    "ui": {
+      "name": "UI",
+      "description": "A list of UI changes which are by default applied as a QOL feature.",
+      "type": "title"
+    },
+    "link-buttons-reposition": {
+      "name": "Link buttons reposition",
+      "description": "Repositions the link buttons to not be in the way.",
+      "type": "bool",
+      "default": true
+    },
     "fixes": {
       "name": "Fixes",
-      "description": "A list of vanilla bugfixes which are by default applied as a QOL.",
+      "description": "A list of vanilla bugfixes which are by default applied as a QOL feature.",
       "type": "title"
     },
     "special-button-fix": {
@@ -50,9 +61,9 @@
       "type": "bool",
       "default": true
     },
-    "link-buttons-reposition": {
-      "name": "Link buttons reposition",
-      "description": "Repositions the link buttons to not be in the way.",
+    "object-info-label-fix": {
+      "name": "Object info label fix",
+      "description": "Shows the correct object info label if you create an object.",
       "type": "bool",
       "default": true
     }

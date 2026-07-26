@@ -16,6 +16,7 @@ public:
     $override void toggleEditObjectButton();
     $override void editObject(cocos2d::CCObject* sender);
     $override void editObjectSpecial(const int type);
+    $override void onCreateObject(const int id);
     $override void updateObjectInfoLabel();
     void toggleButton(CCMenuItemSpriteExtra* button, const bool enabled);
     void fixEditSpecial(const std::optional<int>& selectedKey);

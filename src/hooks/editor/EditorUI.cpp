@@ -1,5 +1,6 @@
 #include "EditorUI.hpp"
 
+using namespace std::string_view_literals;
 using namespace object_collab::prelude;
 using namespace geode::prelude;
 
@@ -127,7 +128,19 @@ void ModEditorUI::editObjectSpecial(const int type) {
     }
 }
 
+void ModEditorUI::onCreateObject(const int id) {
+    EditorUI::onCreateObject(id);
+
+    if (m_objectInfoLabel->getString() == " "sv && Mod::get()->getSettingValue<bool>("object-info-label-fix")) {
+        EditorUI::updateObjectInfoLabel();
+    }
+}
+
 void ModEditorUI::updateObjectInfoLabel() {
+    if (!m_selectedObject && m_selectedObjects->count() == 1 && Mod::get()->getSettingValue<bool>("object-info-label-fix")) {
+        m_selectedObject = reinterpret_cast<GameObject*>(m_selectedObjects->objectAtIndex(0));
+    }
+
     EditorUI::updateObjectInfoLabel();
 
     if (CustomObjectInterface* object = typeinfo_cast<CustomObjectInterface*>(m_selectedObject)) {
