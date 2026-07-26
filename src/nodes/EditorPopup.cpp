@@ -45,7 +45,7 @@ EditorPopup* EditorPopup::create(Selected selected, PopupConfig& config) {
     }
 }
 
-EditorPopup::EditorPopup(Selected selected): PopupExtra(PopupExtra::CloseSetup::NO_BUTTON), m_selected(std::move(selected)) { }
+EditorPopup::EditorPopup(Selected selected): PopupExtra(PopupExtra::CloseSetup::NoButton), m_selected(std::move(selected)) { }
 
 bool EditorPopup::init(PopupConfig& config) {
     if (!PopupExtra::init(config.getTitle(), {

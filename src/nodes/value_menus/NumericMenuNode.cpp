@@ -27,7 +27,7 @@ bool NumericMenuNode::init(const Selected& selected, Popup* popup, NumericMenu& 
     this->setFilter(numericMenu, input);
     this->registerValue(input);
 
-    if (inputType == NumericMenu::InputType::SLIDER) {
+    if (inputType == NumericMenu::InputType::Slider) {
         nodes.emplace_back(this->getSlider(selected, popup, numericMenu, input, currentValue));
     } else {
         input->setString(std::move(currentStringValue));
@@ -39,7 +39,7 @@ bool NumericMenuNode::init(const Selected& selected, Popup* popup, NumericMenu& 
         });
     }
 
-    if (inputType == NumericMenu::InputType::ARROWS) {
+    if (inputType == NumericMenu::InputType::Arrows) {
         std::pair<CCMenuItemSpriteExtra*, CCMenuItemSpriteExtra*> arrows = this->getArrows(numericMenu, input);
 
         input->setScale(0.9f);
@@ -105,7 +105,7 @@ std::pair<CCMenuItemSpriteExtra*, CCMenuItemSpriteExtra*> NumericMenuNode::getAr
 }
 
 void NumericMenuNode::setFilter(NumericMenu& numericMenu, TextInput* input) {
-    if (numericMenu.getMin().value_or(numericMenu.getInputType() == NumericMenu::InputType::SLIDER ? 0 : -1) < 0) {
+    if (numericMenu.getMin().value_or(numericMenu.getInputType() == NumericMenu::InputType::Slider ? 0 : -1) < 0) {
         input->setCommonFilter(numericMenu.getPrecision() ? CommonFilter::Float : CommonFilter::Int);
     } else if (numericMenu.getPrecision()) {
         input->setFilter(".0123456789");

@@ -28,7 +28,7 @@ std::variant<Popup*, editor_popup::PopupConfig> RainbowObject::getEditSpecialCon
             .currentValue([](const Selected& selected, Popup* popup) {
                 return getCommonValueOrDefault(selected, &RainbowObject::m_targetSpeed, 180);
             })
-            .inputType(NumericMenu::InputType::SLIDER)
+            .inputType(NumericMenu::InputType::Slider)
             .min(0)
             .max(360)
             .build())

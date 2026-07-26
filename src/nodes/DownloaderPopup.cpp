@@ -17,7 +17,7 @@ DownloaderPopup* DownloaderPopup::create(std::vector<std::string> modIDs) {
     }
 }
 
-DownloaderPopup::DownloaderPopup(): PopupExtra(PopupExtra::CloseSetup::NO_BUTTON) { }
+DownloaderPopup::DownloaderPopup(): PopupExtra(PopupExtra::CloseSetup::NoButton) { }
 
 bool DownloaderPopup::init(std::vector<std::string> modIDs) {
     if (!PopupExtra::init("Downloading Mods...", { 250, 250 }, makeVector<PopupExtra::ButtonConfig>(PopupExtra::ButtonConfig{

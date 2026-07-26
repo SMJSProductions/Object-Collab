@@ -8,9 +8,9 @@
 
 class CompatPopup : public PopupExtra {
     enum class CurrentModState {
-        DISABLED_MISSING = 0,
-        DISABLED = 1,
-        MISSING = 2
+        DisabledMissing,
+        Disabled,
+        Missing
     };
 public:
     static CompatPopup* create(geode::Function<void()> callback);

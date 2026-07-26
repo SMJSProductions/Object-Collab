@@ -8,7 +8,7 @@ namespace object_collab {
     public:
         PropertyInterface& operator=(PropertyInterface&& other) noexcept = default;
         PropertyInterface& operator=(const PropertyInterface& other) noexcept = delete;
-        
+
         PropertyInterface(PropertyInterface&& other) noexcept = default;
         PropertyInterface(const PropertyInterface& other) noexcept = delete;
         PropertyInterface() = default;
@@ -26,7 +26,7 @@ namespace object_collab {
     public:
         Property<V>& operator=(Property<V>&& other) noexcept = default;
         Property<V>& operator=(const Property<V>& other) noexcept = delete;
-        
+
         Property<V>(Property<V>&& other) noexcept = default;
         Property<V>(const Property<V>& other) noexcept = delete;
         template<typename D> requires std::is_convertible_v<D, V>
@@ -56,7 +56,7 @@ namespace object_collab {
     public:
         CustomPropertiesList& operator=(CustomPropertiesList&& other) noexcept = default;
         CustomPropertiesList& operator=(const CustomPropertiesList& other) noexcept = delete;
-        
+
         CustomPropertiesList(CustomPropertiesList&& other) noexcept = default;
         CustomPropertiesList(const CustomPropertiesList& other) noexcept = delete;
         template<class... Pairs>

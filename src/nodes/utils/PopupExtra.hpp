@@ -5,10 +5,10 @@
 class PopupExtra : public geode::Popup {
 public:
     enum class CloseSetup {
-        DEFAULT,
-        NO_BUTTON,
-        NO_KEYBIND,
-        NONE
+        Default,
+        NoButton,
+        NoKeybind,
+        None
     };
 
     struct ButtonConfig {
@@ -23,7 +23,7 @@ public:
 private:
     const CloseSetup m_closeSetup;
 protected:
-    PopupExtra(const CloseSetup closeSetup = CloseSetup::DEFAULT);
+    PopupExtra(const CloseSetup closeSetup = CloseSetup::Default);
     bool init(const geode::ZStringView title, cocos2d::CCSize size, std::vector<ButtonConfig> buttons = {});
     void setButtons(std::vector<ButtonConfig> buttons);
     void keyBackClicked() override;

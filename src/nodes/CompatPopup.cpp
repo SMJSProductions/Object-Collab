@@ -26,32 +26,32 @@ CompatPopup::CurrentModState CompatPopup::getModState() {
 
     for (const std::string_view mod : CustomLevelData::ACTIVE.getMissingMods()) {
         if (loader->isModInstalled(mod)) {
-            if (state == CompatPopup::CurrentModState::MISSING) {
-                return CompatPopup::CurrentModState::DISABLED_MISSING;
+            if (state == CompatPopup::CurrentModState::Missing) {
+                return CompatPopup::CurrentModState::DisabledMissing;
             } else {
-                state = CompatPopup::CurrentModState::DISABLED;
+                state = CompatPopup::CurrentModState::Disabled;
             }
         } else {
-            if (state == CompatPopup::CurrentModState::DISABLED) {
-                return CompatPopup::CurrentModState::DISABLED_MISSING;
+            if (state == CompatPopup::CurrentModState::Disabled) {
+                return CompatPopup::CurrentModState::DisabledMissing;
             } else {
-                state = CompatPopup::CurrentModState::MISSING;
+                state = CompatPopup::CurrentModState::Missing;
             }
         }
     }
 
-    return state ? state.value() : CompatPopup::CurrentModState::DISABLED_MISSING;
+    return state ? state.value() : CompatPopup::CurrentModState::DisabledMissing;
 }
 
-CompatPopup::CompatPopup(Function<void()> callback): PopupExtra(PopupExtra::CloseSetup::NO_BUTTON),
+CompatPopup::CompatPopup(Function<void()> callback): PopupExtra(PopupExtra::CloseSetup::NoButton),
 m_state(CompatPopup::getModState()),
 m_callback(std::move(callback)) { }
 
 bool CompatPopup::init() {
     static const std::unordered_map<CompatPopup::CurrentModState, std::pair<std::string, std::string>> STATE_STRINGS {
-        { CompatPopup::CurrentModState::DISABLED_MISSING, { "enabled and downloaded", "fix" } },
-        { CompatPopup::CurrentModState::DISABLED, { "enabled", "enable" } },
-        { CompatPopup::CurrentModState::MISSING, { "downloaded", "download" } }
+        { CompatPopup::CurrentModState::DisabledMissing, { "enabled and downloaded", "fix" } },
+        { CompatPopup::CurrentModState::Disabled, { "enabled", "enable" } },
+        { CompatPopup::CurrentModState::Missing, { "downloaded", "download" } }
     };
     const std::pair<std::string, std::string>& state = STATE_STRINGS.at(m_state);
 

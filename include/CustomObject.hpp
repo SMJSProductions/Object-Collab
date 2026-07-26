@@ -31,7 +31,7 @@ namespace object_collab {
 
         CustomObjectInterface& operator=(CustomObjectInterface&& other) noexcept;
         CustomObjectInterface& operator=(const CustomObjectInterface& other) noexcept = delete;
-        
+
         CustomObjectInterface(CustomObjectInterface&& other) noexcept;
         CustomObjectInterface(const CustomObjectInterface& other) noexcept = delete;
     protected:
@@ -69,7 +69,7 @@ namespace object_collab {
 
         CustomObject& operator=(CustomObject&& other) noexcept = default;
         CustomObject& operator=(const CustomObject& other) noexcept = delete;
-        
+
         CustomObject(CustomObject&& other) noexcept = default;
         CustomObject(const CustomObject& other) noexcept = delete;
         /// @note Make sure to check https://flowvix.github.io/gd-info-explorer/props to prevent custom property overlaps!
@@ -239,7 +239,7 @@ namespace object_collab {
         /// @see GameObject::triggerObject
         /// @param layer The base game layer this object belongs to.
         /// @param uniqueID The unique ID of the trigger which spawned this trigger or this->m_uniqueID if triggered by the player.
-        /// @param remapKeys The target group IDs which have to be swapped upon triggering. This is a nullptr if triggered by the player. 
+        /// @param remapKeys The target group IDs which have to be swapped upon triggering. This is a nullptr if triggered by the player.
         virtual void triggerObject(GJBaseGameLayer* layer, int uniqueID, const gd::vector<int>* remapKeys) override {
             T::triggerObject(layer, uniqueID, remapKeys);
         }

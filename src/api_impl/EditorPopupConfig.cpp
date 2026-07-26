@@ -78,8 +78,8 @@ VALUE_IMPL(ToggleMenu, bool);
 
 struct NumericMenu::Impl {
     VALUE_IMPL_VALUES(float);
-    std::string placeholder;
-    NumericMenu::InputType inputType = NumericMenu::InputType::TEXT_BOX;
+    std::string placeholder = "Num";
+    NumericMenu::InputType inputType = NumericMenu::InputType::TextBox;
     size_t precision = 2;
     float stepSize = 1;
     std::optional<float> min = std::nullopt;
@@ -96,7 +96,7 @@ CONFIG_VALUE(NumericMenu, std::optional<float>, const std::optional<float>&, max
 
 struct InputMenu::Impl {
     VALUE_IMPL_VALUES(std::string, const&);
-    std::string placeholder;
+    std::string placeholder = "Text";
     std::string allowedChars;
     size_t maxSize = std::string::npos;
 };
@@ -116,13 +116,13 @@ VECTOR_VALUE(EnumMenu, std::string, value, Values);
 
 struct CustomValueMenu::Impl {
     IMPL_VALUES();
-    MenuFactory factory;
+    CustomMenuFactory factory;
 };
 
 CONFIG_IMPL(CustomValueMenu);
 PTR_BUILD_IMPL(CustomValueMenu);
-BUILDER_PARAM(CustomValueMenu, MenuFactory, factory);
-VALUE_RELEASE(CustomValueMenu, MenuFactory, factory, Factory);
+BUILDER_PARAM(CustomValueMenu, CustomMenuFactory, factory);
+VALUE_RELEASE(CustomValueMenu, CustomMenuFactory, factory, Factory);
 
 struct AxisLayoutMenu::Impl {
     IMPL_VALUES();

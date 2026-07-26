@@ -9,21 +9,21 @@ namespace object_collab {
 namespace object_collab::editor_popup {
     using namespace object_collab;
 
-    /// @param value The value to digest (ownership is moved to the callback)
-    /// @param selected The currently selected objects
-    /// @param popup The editor popup instance
+    /// @param value The value to digest (ownership is moved to the callback).
+    /// @param selected The currently selected objects.
+    /// @param popup The editor popup instance.
     template<typename T>
     using ValueUpdateCallback = geode::Function<void(T value, const Selected& selected, geode::Popup* popup)>;
 
-    /// @param selected The currently selected objects
-    /// @param popup The editor popup instance
-    /// @returns The current agreed upon value
+    /// @param selected The currently selected objects.
+    /// @param popup The editor popup instance.
+    /// @returns The current agreed upon value.
     template<typename T>
     using CurrentValueCallback = geode::Function<T(const Selected& selected, geode::Popup* popup)>;
 
-    /// @param popup The editor popup instance
-    /// @returns The menu
-    using MenuFactory = geode::Function<cocos2d::CCMenu*(const Selected& selected, geode::Popup* popup)>;
+    /// @param popup The editor popup instance.
+    /// @returns The custom menu to add.
+    using CustomMenuFactory = geode::Function<cocos2d::CCMenu*(const Selected& selected, geode::Popup* popup)>;
 
     class OBJC_API_DLL ValueMenu {
     public:
@@ -45,11 +45,11 @@ namespace object_collab::editor_popup {
             Builder();
         public:
             ~Builder();
-            /// @param id The ID assigned to the menu
+            /// @param id The ID assigned to the menu.
             Builder&& id(std::string id) &&;
-            /// @param title The title of the popup section
+            /// @param title The title of the popup section.
             Builder&& title(std::string title) &&;
-            /// @param description The description of the info popup which supports color tags (e.g. `<cy></c>`)
+            /// @param description The description of the info popup which supports color tags (e.g. `<cy></c>`).
             Builder&& description(std::string description) &&;
             InfoPopup build() &&;
         };
@@ -82,13 +82,13 @@ namespace object_collab::editor_popup {
             Builder();
         public:
             ~Builder();
-            /// @param id The ID assigned to the menu
+            /// @param id The ID assigned to the menu.
             Builder&& id(std::string id) &&;
-            /// @param title The title of the popup section
+            /// @param title The title of the popup section.
             Builder&& title(std::string title) &&;
-            /// @param onValue A callback to digest any value changes
+            /// @param onValue A callback to digest any value changes.
             Builder&& onValue(ValueUpdateCallback<bool> onValue) &&;
-            /// @param currentValue The current value getter callback
+            /// @param currentValue The current value getter callback.
             Builder&& currentValue(CurrentValueCallback<bool> currentValue) &&;
             std::unique_ptr<ToggleMenu> build() &&;
         };
@@ -115,9 +115,9 @@ namespace object_collab::editor_popup {
         NumericMenu(std::unique_ptr<Impl> impl);
     public:
         enum class InputType {
-            TEXT_BOX,
-            ARROWS,
-            SLIDER
+            TextBox,
+            Arrows,
+            Slider
         };
 
         class OBJC_API_DLL Builder {
@@ -128,27 +128,33 @@ namespace object_collab::editor_popup {
             Builder();
         public:
             ~Builder();
-            /// @param id The ID assigned to the menu
+            /// @param id The ID assigned to the menu.
             Builder&& id(std::string id) &&;
-            /// @param title The title of the popup section
+            /// @param title The title of the popup section.
             Builder&& title(std::string title) &&;
-            /// @param onValue A callback to digest any value changes
+            /// @param onValue A callback to digest any value changes.
             Builder&& onValue(ValueUpdateCallback<float> onValue) &&;
-            /// @param currentValue The current value getter callback
+            /// @param currentValue The current value getter callback.
             Builder&& currentValue(CurrentValueCallback<float> currentValue) &&;
-            /// @param placeholder A placeholder label set when no value is present
+            /// @note Default is "Num".
+            /// @param placeholder A placeholder label set when no value is present.
             Builder&& placeholder(std::string placeholder) &&;
-            /// @param inputType The type of input style
+            /// @note Default is NumericMenu::InputType::TextBox.
+            /// @param inputType The type of input style.
             Builder&& inputType(InputType inputType) &&;
-            /// @param precision The precision of the numeric value
+            /// @note Default is 2.
+            /// @param precision The precision of the numeric value.
             Builder&& precision(size_t precision) &&;
-            /// @param stepSize The step size of the input
+            /// @note Default is 1.
+            /// @param stepSize The step size of the input.
             Builder&& stepSize(float stepSize) &&;
-            /// @param min The min numeric value
-            /// @note std::nullopt = No min value if range is false, 0 if true
+            /// @note Default is std::nullopt.
+            /// @note std::nullopt = No min value if range is false, 0 if true.
+            /// @param min The min numeric value.
             Builder&& min(std::optional<float> min) &&;
-            /// @param max The max numeric value
-            /// @note std::nullopt = No max value if range is false, 100 if true
+            /// @note Default is std::nullopt.
+            /// @note std::nullopt = No max value if range is false, 100 if true.
+            /// @param max The max numeric value.
             Builder&& max(std::optional<float> max) &&;
             std::unique_ptr<NumericMenu> build() &&;
         };
@@ -188,21 +194,23 @@ namespace object_collab::editor_popup {
             Builder();
         public:
             ~Builder();
-            /// @param id The ID assigned to the menu
+            /// @param id The ID assigned to the menu.
             Builder&& id(std::string id) &&;
-            /// @param title The title of the popup section
+            /// @param title The title of the popup section.
             Builder&& title(std::string title) &&;
-            /// @param onValue A callback to digest any value changes
+            /// @param onValue A callback to digest any value changes.
             Builder&& onValue(ValueUpdateCallback<const std::string&> onValue) &&;
-            /// @param currentValue The current value getter callback
+            /// @param currentValue The current value getter callback.
             Builder&& currentValue(CurrentValueCallback<std::string> currentValue) &&;
-            /// @param placeholder A placeholder label set when no text is present
+            /// @note Default is "Text".
+            /// @param placeholder A placeholder label set when no text is present.
             Builder&& placeholder(std::string placeholder) &&;
-            /// @param allowedChars The characters allowed in the input (due to limitations in Cocos it can't support any characters Cocos doesn't natively support)
-            /// @note Empty = No filter
+            /// @note Empty = No filter.
+            /// @param allowedChars The characters allowed in the input (due to limitations in Cocos it can't support any characters Cocos doesn't natively support).
             Builder&& allowedChars(std::string allowedChars) &&;
-            /// @param maxSize The max amount of characters in the input
-            /// @note std::string::npos = No limit
+            /// @note Default is std::string::npos.
+            /// @note std::string::npos = No limit.
+            /// @param maxSize The max amount of characters in the input.
             Builder&& maxSize(size_t maxSize) &&;
             std::unique_ptr<InputMenu> build() &&;
         };
@@ -239,18 +247,18 @@ namespace object_collab::editor_popup {
             Builder();
         public:
             ~Builder();
-            /// @param id The ID assigned to the menu
+            /// @param id The ID assigned to the menu.
             Builder&& id(std::string id) &&;
-            /// @param title The title of the popup section
+            /// @param title The title of the popup section.
             Builder&& title(std::string title) &&;
-            /// @param onValue A callback to digest any value changes
+            /// @param onValue A callback to digest any value changes.
             Builder&& onValue(ValueUpdateCallback<const std::string&> onValue) &&;
-            /// @param currentValue The current value getter callback
+            /// @param currentValue The current value getter callback.
             Builder&& currentValue(CurrentValueCallback<std::string> currentValue) &&;
-            /// @param value An enum value
+            /// @param value An enum value.
             Builder&& value(std::string value) &&;
-            /// @param values The list of enum values
-            /// @note An empty vector is considered invalid and will skip this node in the list
+            /// @note An empty vector is considered invalid and will skip this node in the list.
+            /// @param values The list of enum values.
             Builder&& values(std::vector<std::string> values) &&;
             std::unique_ptr<EnumMenu> build() &&;
         };
@@ -286,12 +294,12 @@ namespace object_collab::editor_popup {
             Builder();
         public:
             ~Builder();
-            /// @param id The ID assigned to the menu
+            /// @param id The ID assigned to the menu.
             Builder&& id(std::string id) &&;
-            /// @param title The title of the popup section
+            /// @param title The title of the popup section.
             Builder&& title(std::string title) &&;
-            /// @param factory The node factory for a custom value menu
-            Builder&& factory(MenuFactory factory) &&;
+            /// @param factory The node factory for a custom value menu.
+            Builder&& factory(CustomMenuFactory factory) &&;
             std::unique_ptr<CustomValueMenu> build() &&;
         };
 
@@ -305,7 +313,7 @@ namespace object_collab::editor_popup {
         ~CustomValueMenu();
         geode::ZStringView getID() const;
         geode::ZStringView getTitle() const;
-        MenuFactory releaseFactory();
+        CustomMenuFactory releaseFactory();
     };
 
     class OBJC_API_DLL AxisLayoutMenu : public ValueMenu {
@@ -323,34 +331,41 @@ namespace object_collab::editor_popup {
             Builder();
         public:
             ~Builder();
-            /// @param id The ID assigned to the menu
+            /// @param id The ID assigned to the menu.
             Builder&& id(std::string id) &&;
-            /// @param title The title of the popup section
+            /// @param title The title of the popup section.
             Builder&& title(std::string title) &&;
-            /// @param axis The layout axis
+            /// @note Default is geode::Axis::Column.
             /// @see geode::SimpleAxisLayout::setAxis
+            /// @param axis The layout axis.
             Builder&& axis(geode::Axis axis) &&;
-            /// @param gap The layout gap
+            /// @note Default is 0.
             /// @see geode::SimpleAxisLayout::setGap
+            /// @param gap The layout gap.
             Builder&& gap(float gap) &&;
-            /// @param direction The layout main axis direction
+            /// @note Default is geode::AxisDirection::LeftToRight.
             /// @see geode::SimpleAxisLayout::setMainAxisDirection
+            /// @param direction The layout main axis direction.
             Builder&& mainAxisDirection(geode::AxisDirection direction) &&;
-            /// @param direction The layout main axis alignment
+            /// @note Default is geode::MainAxisAlignment::Start.
             /// @see geode::SimpleAxisLayout::setMainAxisAlignment
+            /// @param direction The layout main axis alignment.
             Builder&& mainAxisAlignment(geode::MainAxisAlignment alignment) &&;
-            /// @param direction The layout cross axis direction
+            /// @note Default is geode::AxisDirection::LeftToRight.
             /// @see geode::SimpleAxisLayout::setCrossAxisDirection
+            /// @param direction The layout cross axis direction.
             Builder&& crossAxisDirection(geode::AxisDirection direction) &&;
-            /// @param direction The layout cross axis alignment
+            /// @note Default is geode::CrossAxisAlignment::Center.
             /// @see geode::SimpleAxisLayout::setCrossAxisAlignment
+            /// @param direction The layout cross axis alignment.
             Builder&& crossAxisAlignment(geode::CrossAxisAlignment alignment) &&;
-            /// @param enabled If invisible children should be ignored in the layout
+            /// @note Default is true.
             /// @see geode::SimpleAxisLayout::ignoreInvisibleChildren
+            /// @param enabled If invisible children should be ignored in the layout.
             Builder&& ignoreInvisibleChildren(bool enabled) &&;
-            /// @param menu A value menu shown in the layout
+            /// @param menu A value menu shown in the layout.
             Builder&& menu(std::unique_ptr<ValueMenu> menu) &&;
-            /// @param menus A list of value menus shown in the layout
+            /// @param menus A list of value menus shown in the layout.
             Builder&& menus(std::vector<std::unique_ptr<ValueMenu>> menus) &&;
             std::unique_ptr<AxisLayoutMenu> build() &&;
         };
@@ -391,32 +406,38 @@ namespace object_collab::editor_popup {
             Builder();
         public:
             ~Builder();
-            /// @param id The ID assigned to the menu
+            /// @param id The ID assigned to the menu.
             Builder&& id(std::string id) &&;
-            /// @param title The title of the popup section
+            /// @param title The title of the popup section.
             Builder&& title(std::string title) &&;
-            /// @param width The popup width
+            /// @note Default is 300.
+            /// @param width The popup width.
             Builder&& width(float width) &&;
-            /// @param height The popup height
+            /// @note Default is 200.
+            /// @param height The popup height.
             Builder&& height(float height) &&;
-            /// @param gap The gap on the X axis
+            /// @note Default is 10.
+            /// @param gap The gap on the X axis.
             Builder&& gapX(float gap) &&;
-            /// @param gap The gap on the Y axis
+            /// @note Default is 10.
+            /// @param gap The gap on the Y axis.
             Builder&& gapY(float gap) &&;
-            /// @param info The info button details of the popup
-            /// @note Empty = No info
+            /// @note Empty = No info.
+            /// @param info The info button details of the popup.
             Builder&& info(InfoPopup info) &&;
-            /// @param menu A value menu shown in the popup
+            /// @param menu A value menu shown in the popup.
             Builder&& menu(std::unique_ptr<ValueMenu> menu) &&;
-            /// @param menus A list of value menus shown in the popup
+            /// @param menus A list of value menus shown in the popup.
             Builder&& menus(std::vector<std::unique_ptr<ValueMenu>> menus) &&;
-            /// @param enabled If true, adds the default trigger toggles to the toggle list
+            /// @note Default is false.
+            /// @param enabled If true, adds the default trigger toggles to the toggle list.
             Builder&& triggerToggles(bool enabled) &&;
-            /// @param enabled If true, adds the default no multi activate toggle to the toggle list
+            /// @note Default is false.
+            /// @param enabled If true, adds the default no multi activate toggle to the toggle list.
             Builder&& noMultiActivateToggle(bool enabled) &&;
-            /// @param toggle A toggle in the bottom left corner of the popup
+            /// @param toggle A toggle in the bottom left corner of the popup.
             Builder&& toggle(std::unique_ptr<ToggleMenu> toggle) &&;
-            /// @param toggles A list of toggles in the bottom left corner of the popup
+            /// @param toggles A list of toggles in the bottom left corner of the popup.
             Builder&& toggles(std::vector<std::unique_ptr<ToggleMenu>> toggles) &&;
             PopupConfig build() &&;
         };

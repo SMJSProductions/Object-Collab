@@ -6,7 +6,7 @@ PopupExtra::PopupExtra(const CloseSetup closeSetup): m_closeSetup(closeSetup) { 
 
 bool PopupExtra::init(const ZStringView title, CCSize size, std::vector<ButtonConfig> buttons) {
     if (!Popup::init(std::move(size))) return false;
-    if (m_closeSetup == CloseSetup::NO_BUTTON || m_closeSetup == CloseSetup::NONE) m_closeBtn->removeFromParent();
+    if (m_closeSetup == CloseSetup::NoButton || m_closeSetup == CloseSetup::None) m_closeBtn->removeFromParent();
 
     this->setTitle(title);
 
@@ -64,7 +64,7 @@ void PopupExtra::setButtons(std::vector<ButtonConfig> buttons) {
 }
 
 void PopupExtra::keyBackClicked() {
-    if (m_closeSetup != CloseSetup::NO_KEYBIND && m_closeSetup != CloseSetup::NONE) Popup::keyBackClicked();
+    if (m_closeSetup != CloseSetup::NoKeybind && m_closeSetup != CloseSetup::None) Popup::keyBackClicked();
 }
 
 void PopupExtra::close() {

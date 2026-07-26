@@ -15,66 +15,6 @@ struct ObjectInfo::Impl {
     ObjectPopupFactory editSpecial = nullptr;
 };
 
-ObjectInfo::Builder ObjectInfo::builder() {
-    return ObjectInfo::Builder();
-}
-
-ObjectInfo& ObjectInfo::operator=(ObjectInfo&& other) noexcept = default;
-
-ObjectInfo::ObjectInfo(ObjectInfo&& other) noexcept = default;
-
-ObjectInfo::ObjectInfo(): m_impl(std::make_unique<Impl>()) { }
-
-ObjectInfo::~ObjectInfo() = default;
-
-std::string_view ObjectInfo::getID() const {
-    return m_impl->id;
-}
-
-ZStringView ObjectInfo::getSprite() const {
-    return m_impl->sprite;
-}
-
-GameObjectType ObjectInfo::getObjectType() const {
-    return m_impl->objectType;
-}
-
-ZLayer ObjectInfo::getDefaultZLayer() const {
-    return m_impl->defaultZLayer;
-}
-
-int ObjectInfo::getDefaultZOrder() const {
-    return m_impl->defaultZOrder;
-}
-
-EditorTab ObjectInfo::getEditorTab() const {
-    return m_impl->editorTab;
-}
-
-bool ObjectInfo::hasFactory() const {
-    return m_impl->factory != nullptr;
-}
-
-CustomObjectInterface* ObjectInfo::factory() const {
-    return m_impl->factory();
-}
-
-bool ObjectInfo::hasEditObject() const {
-    return m_impl->editObject != nullptr;
-}
-
-PopupOptions ObjectInfo::editObject(const Selected& selected) const {
-    return m_impl->editObject(selected);
-}
-
-bool ObjectInfo::hasEditSpecial() const {
-    return m_impl->editSpecial != nullptr;
-}
-
-PopupOptions ObjectInfo::editSpecial(const Selected& selected) const {
-    return m_impl->editSpecial(selected);
-}
-
 ObjectInfo::Builder::Builder(): m_config(std::unique_ptr<ObjectInfo>(new ObjectInfo())) { }
 
 ObjectInfo::Builder::~Builder() = default;
@@ -135,4 +75,64 @@ ObjectInfo::Builder&& ObjectInfo::Builder::editSpecial(ObjectPopupFactory editSp
 
 ObjectInfo ObjectInfo::Builder::build() && {
     return std::move(*m_config);
+}
+
+ObjectInfo::Builder ObjectInfo::builder() {
+    return ObjectInfo::Builder();
+}
+
+ObjectInfo& ObjectInfo::operator=(ObjectInfo&& other) noexcept = default;
+
+ObjectInfo::ObjectInfo(ObjectInfo&& other) noexcept = default;
+
+ObjectInfo::ObjectInfo(): m_impl(std::make_unique<Impl>()) { }
+
+ObjectInfo::~ObjectInfo() = default;
+
+std::string_view ObjectInfo::getID() const {
+    return m_impl->id;
+}
+
+ZStringView ObjectInfo::getSprite() const {
+    return m_impl->sprite;
+}
+
+GameObjectType ObjectInfo::getObjectType() const {
+    return m_impl->objectType;
+}
+
+ZLayer ObjectInfo::getDefaultZLayer() const {
+    return m_impl->defaultZLayer;
+}
+
+int ObjectInfo::getDefaultZOrder() const {
+    return m_impl->defaultZOrder;
+}
+
+EditorTab ObjectInfo::getEditorTab() const {
+    return m_impl->editorTab;
+}
+
+bool ObjectInfo::hasFactory() const {
+    return m_impl->factory != nullptr;
+}
+
+CustomObjectInterface* ObjectInfo::factory() const {
+    return m_impl->factory();
+}
+
+bool ObjectInfo::hasEditObject() const {
+    return m_impl->editObject != nullptr;
+}
+
+PopupOptions ObjectInfo::editObject(const Selected& selected) const {
+    return m_impl->editObject(selected);
+}
+
+bool ObjectInfo::hasEditSpecial() const {
+    return m_impl->editSpecial != nullptr;
+}
+
+PopupOptions ObjectInfo::editSpecial(const Selected& selected) const {
+    return m_impl->editSpecial(selected);
 }
