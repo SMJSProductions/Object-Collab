@@ -12,7 +12,7 @@ public:
     RainbowObject();
     std::vector<std::string> getObjectDetails() override;
     void postInit() override;
-    void onAction(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) override;
+    void triggerObject(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) override;
     void update(const float dt) override;
 private:
     float m_targetSpeed;

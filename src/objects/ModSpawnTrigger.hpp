@@ -13,7 +13,7 @@ private:
 public:
     ModSpawnTrigger();
     void postInit() override;
-    void onAction(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) override;
+    void triggerObject(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) override;
     std::vector<std::string> getObjectDetails() override;
     bool ignoreEditorDuration() override;
     void checkMod();

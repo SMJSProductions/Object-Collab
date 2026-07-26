@@ -63,7 +63,7 @@ void RainbowObject::postInit() {
     this->scheduleUpdate();
 }
 
-void RainbowObject::onAction(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) {
+void RainbowObject::triggerObject(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) {
     #define RAND_COLOR_CHANNEL static_cast<GLubyte>(std::rand() % 256)
     #define RAND_COLOR { RAND_COLOR_CHANNEL, RAND_COLOR_CHANNEL, RAND_COLOR_CHANNEL }
     const ccColor3B color1 = RAND_COLOR;

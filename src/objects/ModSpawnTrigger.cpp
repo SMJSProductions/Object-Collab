@@ -127,7 +127,7 @@ void ModSpawnTrigger::postInit() {
     this->checkMod();
 }
 
-void ModSpawnTrigger::onAction(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) {
+void ModSpawnTrigger::triggerObject(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) {
     if (m_active) {
         SpawnTriggerGameObject::triggerObject(layer, m_uniqueID, remapKeys);
     }

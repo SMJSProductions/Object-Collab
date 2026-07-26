@@ -72,7 +72,7 @@ namespace object_collab {
         
         CustomObject(CustomObject&& other) noexcept = default;
         CustomObject(const CustomObject& other) noexcept = delete;
-        /// @note Make sure to check https://flowvix.github.io/gd-info-explorer/props to prevent overlaps!
+        /// @note Make sure to check https://flowvix.github.io/gd-info-explorer/props to prevent custom property overlaps!
         /// @param customPropertiesList The custom properties list this object uses. This will automate saving and loading data.
         /// @param objectType The type of object, this copies some standard properties of the specified type.
         /// @param defaultZLayer The default z layer given when the object is created.
@@ -106,6 +106,7 @@ namespace object_collab {
             return true;
         }
 
+        /// @see GameObject::firstSetup
         virtual void firstSetup() override {
             for (auto& [_, property] : this->getCustomProperties()) {
                 property->applyDefault();
@@ -130,9 +131,6 @@ namespace object_collab {
         /// Provides any custom details shown when the object is selected.
         /// @returns A list of custom lines shown, the default implement is none.
         virtual std::vector<std::string> getObjectDetails() override { return {}; }
-
-        /// This will trigger either when activateObject is called for a normal object or triggerObject for a trigger.
-        virtual void onAction(GJBaseGameLayer* layer, int uniqueID, const gd::vector<int>* remapKeys) { }
 
         /// Gets the detail sprite of the object.
         virtual cocos2d::CCSprite* getColorSprite() {
@@ -217,16 +215,37 @@ namespace object_collab {
             this->m_objectRadius = radius;
         }
 
-        // TODO: What activates portals?
+        /// Called when the object was activated by the given player.
+        /// @note This method is not called by InverseMirrorPortal, NormalMirrorPortal, Modifier, EnterEffectObject, DualPortal, SoloPortal, SecretCoin, Collectible & UserCoin.
+        /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of!
+        /// @see GameObject::activatedByPlayer
+        /// @param player The player who triggered the object.
+        virtual void activatedByPlayer(PlayerObject* player) override {
+            T::activatedByPlayer(player);
+        }
+
+        /// Called when the object was collided by a player.
+        /// @note This method is called on InverseMirrorPortal, NormalMirrorPortal, Modifier, EnterEffectObject, DualPortal, SoloPortal, SecretCoin, Collectible & UserCoin.
+        /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of!
+        /// @see GameObject::triggerActivated
+        /// @param spawnXPosition From where the object was triggered. If by a player it will be 0.
+        virtual void triggerActivated(float spawnXPosition) override {
+            T::triggerActivated(spawnXPosition);
+        }
 
         /// Called when any trigger condition is met for a trigger object.
+        /// @note This method is called on Modifier, EnterEffectObject, SecretCoin, Collectible & UserCoin.
+        /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of!
         /// @see GameObject::triggerObject
+        /// @param layer The base game layer this object belongs to.
+        /// @param uniqueID The unique ID of the trigger which spawned this trigger or this->m_uniqueID if triggered by the player.
+        /// @param remapKeys The target group IDs which have to be swapped upon triggering. This is a nullptr if triggered by the player. 
         virtual void triggerObject(GJBaseGameLayer* layer, int uniqueID, const gd::vector<int>* remapKeys) override {
-            if (this->isTrigger()) this->onAction(layer, uniqueID, remapKeys);
-
             T::triggerObject(layer, uniqueID, remapKeys);
         }
 
+        /// Gets the default main color ID given when the object is created.
+        /// @note Returning 0 will deactivate colors.
         virtual int getDefaultMainColorID() {
             return this->isTrigger() ? 0 : 1004;
         }
@@ -289,7 +308,7 @@ namespace object_collab {
 
         /// If the object should be considered a trigger.
         /// @see GameObject::isTrigger
-        virtual bool isTrigger() override {
+        bool isTrigger() override {
             return this->m_classType == GameObjectClassType::Effect && this->m_objectType == GameObjectType::Modifier;
         }
 
@@ -319,6 +338,8 @@ namespace object_collab {
 
         /// Initializes the object with the custom variables inside a (really strange) vector/map structure.
         /// @see GameObject::customObjectSetup
+        /// @param values The values part of the properties map.
+        /// @param exists The key existence part of the properties map.
         virtual void customObjectSetup(gd::vector<gd::string>& values, gd::vector<void*>& exists) override {
             const CustomProperties& properties = this->getCustomProperties();
             std::unordered_map<int, std::string> foundProperties;
@@ -375,7 +396,7 @@ namespace object_collab {
 
         /// @note This exists for simplified use of the templated class internally.
         /// @returns The instance as a game object.
-        GameObject* getGameObject() override {
+        inline GameObject* getGameObject() override {
             return this;
         }
     };
