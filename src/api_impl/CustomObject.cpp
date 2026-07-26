@@ -19,7 +19,7 @@ std::vector<std::string_view> split(const std::string_view string, const char de
 }
 
 struct CustomObjectInterface::Impl {
-    // Reserved for future updates
+    CustomProperties customProperties;
 };
 
 Result<ObjectVectors> CustomObjectInterface::createObjectVectorsFromString(std::string_view object) {
@@ -62,6 +62,16 @@ Result<ObjectVectors> CustomObjectInterface::createObjectVectorsFromString(std::
     return Ok(std::make_pair(std::move(values), std::move(exists)));
 }
 
-CustomObjectInterface::CustomObjectInterface(): m_impl(std::make_unique<Impl>()) { }
+CustomObjectInterface& CustomObjectInterface::operator=(CustomObjectInterface&& other) noexcept = default;
+
+CustomObjectInterface::CustomObjectInterface(CustomObjectInterface&& other) noexcept = default;
+
+CustomObjectInterface::CustomObjectInterface(CustomProperties&& customProperties): m_impl(std::make_unique<Impl>()) {
+    m_impl->customProperties = std::forward<CustomProperties>(customProperties);
+}
 
 CustomObjectInterface::~CustomObjectInterface() = default;
+
+const CustomProperties& CustomObjectInterface::getCustomProperties() {
+    return m_impl->customProperties;
+}

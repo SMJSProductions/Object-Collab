@@ -44,25 +44,16 @@ std::variant<Popup*, editor_popup::PopupConfig> RainbowObject::getEditSpecialCon
         .build();
 }
 
-RainbowObject::RainbowObject(): m_enabled(true), m_targetSpeed(180) { }
+RainbowObject::RainbowObject(): CustomObject({
+    CustomObject::propertyFrom(RainbowObject::ENABLED_KEY, m_enabled, true),
+    CustomObject::propertyFrom(RainbowObject::SPEED_KEY, m_targetSpeed, 180)
+}) { }
 
 std::vector<std::string> RainbowObject::getObjectDetails() {
     return {
         fmt::format("Shift p/s: {}deg", m_targetSpeed),
         fmt::format("Enabled: {}", m_enabled ? "yes" : "no")
     };
-}
-
-CustomProperties RainbowObject::getCustomProperties() {
-    return {
-        CustomObject::toProperty(RainbowObject::SPEED_KEY, m_targetSpeed),
-        CustomObject::toProperty(RainbowObject::ENABLED_KEY, m_enabled)
-    };
-}
-
-void RainbowObject::initWithCustomProperties(const CustomProperties& values) {
-    CustomObject::propertyInto(m_targetSpeed, RainbowObject::SPEED_KEY, values);
-    CustomObject::propertyInto(m_enabled, RainbowObject::ENABLED_KEY, values);
 }
 
 void RainbowObject::postInit() {

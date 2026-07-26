@@ -56,11 +56,11 @@ namespace object_collab::editor_popup {
 
         static Builder builder();
 
-        InfoPopup& operator=(InfoPopup&& other);
-        InfoPopup& operator=(const InfoPopup& other) = delete;
+        InfoPopup& operator=(InfoPopup&& other) noexcept;
+        InfoPopup& operator=(const InfoPopup& other) noexcept = delete;
 
-        InfoPopup(InfoPopup&& other);
-        InfoPopup(const InfoPopup& other) = delete;
+        InfoPopup(InfoPopup&& other) noexcept;
+        InfoPopup(const InfoPopup& other) noexcept = delete;
         ~InfoPopup();
         geode::ZStringView getID() const;
         geode::ZStringView getTitle() const;
@@ -95,11 +95,11 @@ namespace object_collab::editor_popup {
 
         static Builder builder();
 
-        ToggleMenu& operator=(ToggleMenu&& other);
-        ToggleMenu& operator=(const ToggleMenu& other) = delete;
+        ToggleMenu& operator=(ToggleMenu&& other) noexcept;
+        ToggleMenu& operator=(const ToggleMenu& other) noexcept = delete;
 
-        ToggleMenu(ToggleMenu&& other);
-        ToggleMenu(const ToggleMenu& other) = delete;
+        ToggleMenu(ToggleMenu&& other) noexcept;
+        ToggleMenu(const ToggleMenu& other) noexcept = delete;
         ~ToggleMenu();
         geode::ZStringView getID() const;
         geode::ZStringView getTitle() const;
@@ -155,11 +155,11 @@ namespace object_collab::editor_popup {
 
         static Builder builder();
 
-        NumericMenu& operator=(NumericMenu&& other);
-        NumericMenu& operator=(const NumericMenu& other) = delete;
+        NumericMenu& operator=(NumericMenu&& other) noexcept;
+        NumericMenu& operator=(const NumericMenu& other) noexcept = delete;
 
-        NumericMenu(NumericMenu&& other);
-        NumericMenu(const NumericMenu& other) = delete;
+        NumericMenu(NumericMenu&& other) noexcept;
+        NumericMenu(const NumericMenu& other) noexcept = delete;
         ~NumericMenu();
         geode::ZStringView getID() const;
         geode::ZStringView getTitle() const;
@@ -209,11 +209,11 @@ namespace object_collab::editor_popup {
 
         static Builder builder();
 
-        InputMenu& operator=(InputMenu&& other);
-        InputMenu& operator=(const InputMenu& other) = delete;
+        InputMenu& operator=(InputMenu&& other) noexcept;
+        InputMenu& operator=(const InputMenu& other) noexcept = delete;
 
-        InputMenu(InputMenu&& other);
-        InputMenu(const InputMenu& other) = delete;
+        InputMenu(InputMenu&& other) noexcept;
+        InputMenu(const InputMenu& other) noexcept = delete;
         ~InputMenu();
         geode::ZStringView getID() const;
         geode::ZStringView getTitle() const;
@@ -257,11 +257,11 @@ namespace object_collab::editor_popup {
 
         static Builder builder();
 
-        EnumMenu& operator=(EnumMenu&& other);
-        EnumMenu& operator=(const EnumMenu& other) = delete;
+        EnumMenu& operator=(EnumMenu&& other) noexcept;
+        EnumMenu& operator=(const EnumMenu& other) noexcept = delete;
 
-        EnumMenu(EnumMenu&& other);
-        EnumMenu(const EnumMenu& other) = delete;
+        EnumMenu(EnumMenu&& other) noexcept;
+        EnumMenu(const EnumMenu& other) noexcept = delete;
         ~EnumMenu();
         geode::ZStringView getID() const;
         geode::ZStringView getTitle() const;
@@ -297,11 +297,11 @@ namespace object_collab::editor_popup {
 
         static Builder builder();
 
-        CustomValueMenu& operator=(CustomValueMenu&& other);
-        CustomValueMenu& operator=(const CustomValueMenu& other) = delete;
+        CustomValueMenu& operator=(CustomValueMenu&& other) noexcept;
+        CustomValueMenu& operator=(const CustomValueMenu& other) noexcept = delete;
 
-        CustomValueMenu(CustomValueMenu&& other);
-        CustomValueMenu(const CustomValueMenu& other) = delete;
+        CustomValueMenu(CustomValueMenu&& other) noexcept;
+        CustomValueMenu(const CustomValueMenu& other) noexcept = delete;
         ~CustomValueMenu();
         geode::ZStringView getID() const;
         geode::ZStringView getTitle() const;
@@ -357,11 +357,11 @@ namespace object_collab::editor_popup {
 
         static Builder builder();
 
-        AxisLayoutMenu& operator=(AxisLayoutMenu&& other);
-        AxisLayoutMenu& operator=(const AxisLayoutMenu& other) = delete;
+        AxisLayoutMenu& operator=(AxisLayoutMenu&& other) noexcept;
+        AxisLayoutMenu& operator=(const AxisLayoutMenu& other) noexcept = delete;
 
-        AxisLayoutMenu(AxisLayoutMenu&& other);
-        AxisLayoutMenu(const AxisLayoutMenu& other) = delete;
+        AxisLayoutMenu(AxisLayoutMenu&& other) noexcept;
+        AxisLayoutMenu(const AxisLayoutMenu& other) noexcept = delete;
         ~AxisLayoutMenu();
         geode::ZStringView getID() const;
         geode::ZStringView getTitle() const;
@@ -423,11 +423,11 @@ namespace object_collab::editor_popup {
 
         static Builder builder();
 
-        PopupConfig& operator=(PopupConfig&& other);
-        PopupConfig& operator=(const PopupConfig& other) = delete;
+        PopupConfig& operator=(PopupConfig&& other) noexcept;
+        PopupConfig& operator=(const PopupConfig& other) noexcept = delete;
 
-        PopupConfig(PopupConfig&& other);
-        PopupConfig(const PopupConfig& other) = delete;
+        PopupConfig(PopupConfig&& other) noexcept;
+        PopupConfig(const PopupConfig& other) noexcept = delete;
         ~PopupConfig();
         geode::ZStringView getID() const;
         geode::ZStringView getTitle() const;

@@ -73,11 +73,11 @@ namespace object_collab {
 
         static Builder builder();
 
-        ObjectInfo& operator=(ObjectInfo&& other);
-        ObjectInfo& operator=(const ObjectInfo& other) = delete;
+        ObjectInfo& operator=(ObjectInfo&& other) noexcept;
+        ObjectInfo& operator=(const ObjectInfo& other) noexcept = delete;
 
-        ObjectInfo(ObjectInfo&& other);
-        ObjectInfo(const ObjectInfo& other) = delete;
+        ObjectInfo(ObjectInfo&& other) noexcept;
+        ObjectInfo(const ObjectInfo& other) noexcept = delete;
     private:
         ObjectInfo();
     public:

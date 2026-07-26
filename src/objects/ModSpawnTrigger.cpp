@@ -118,10 +118,13 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
         .build();
 }
 
-ModSpawnTrigger::ModSpawnTrigger(): CustomObject(GameObjectType::Modifier), m_mod("Unknown") { }
+ModSpawnTrigger::ModSpawnTrigger(): CustomObject({
+    CustomObject::propertyFrom(ModSpawnTrigger::MOD_KEY, m_mod, "Unknown")
+}, GameObjectType::Modifier) { }
 
 void ModSpawnTrigger::postInit() {
     this->setHitbox({ 1, 1 });
+    this->checkMod();
 }
 
 void ModSpawnTrigger::onAction(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) {
@@ -140,28 +143,6 @@ std::vector<std::string> ModSpawnTrigger::getObjectDetails() {
         fmt::format("Preview disabled: {}", m_previewDisable ? "Yes" : "No"),
         fmt::format("Active: {}", m_active ? "Yes" : "No")
     };
-}
-
-CustomProperties ModSpawnTrigger::getCustomProperties() {
-    return {
-        CustomObject::toProperty(ModSpawnTrigger::MOD_KEY, m_mod),
-        CustomObject::toProperty(ModSpawnTrigger::TARGET_GROUP, m_targetGroupID),
-        CustomObject::toProperty(ModSpawnTrigger::DELAY, m_spawnDelay),
-        CustomObject::toProperty(ModSpawnTrigger::DELAY_PLUS_MINUS, m_delayRange),
-        CustomObject::toProperty(ModSpawnTrigger::SPAWN_ORDERED, m_spawnOrdered),
-        CustomObject::toProperty(ModSpawnTrigger::PREVIEW_DISABLE, m_previewDisable)
-    };
-}
-
-void ModSpawnTrigger::initWithCustomProperties(const CustomProperties& values) {
-    CustomObject::propertyInto(m_mod, ModSpawnTrigger::MOD_KEY, values);
-    CustomObject::propertyInto(m_targetGroupID, ModSpawnTrigger::TARGET_GROUP, values);
-    CustomObject::propertyInto(m_spawnDelay, ModSpawnTrigger::DELAY, values);
-    CustomObject::propertyInto(m_delayRange, ModSpawnTrigger::DELAY_PLUS_MINUS, values);
-    CustomObject::propertyInto(m_spawnOrdered, ModSpawnTrigger::SPAWN_ORDERED, values);
-    CustomObject::propertyInto(m_previewDisable, ModSpawnTrigger::PREVIEW_DISABLE, values);
-
-    this->checkMod();
 }
 
 bool ModSpawnTrigger::ignoreEditorDuration() {

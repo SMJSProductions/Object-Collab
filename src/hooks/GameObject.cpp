@@ -8,6 +8,7 @@ GameObject* ModGameObject::createWithKey(const int key) {
         return GameObject::createWithKey(key);
     } else if (ObjectInfo* info = ObjectAPI::getCustomObject(key)) {
         CustomObjectInterface* object = info->hasFactory() ? info->factory() : new CustomObject<GameObject>(
+            {},
             info->getObjectType(),
             info->getDefaultZLayer(),
             info->getDefaultZOrder()

@@ -44,8 +44,8 @@ using namespace object_collab::editor_popup;
 #define PTR_BUILD_IMPL(name) std::unique_ptr<name> name::Builder::build() && { return std::make_unique<name>(name(std::move(m_impl))); }
 
 #define CONFIG_IMPL(name) \
-    name& name::operator=(name&& other) = default; \
-    name::name(name&& other) = default; \
+    name& name::operator=(name&& other) noexcept = default; \
+    name::name(name&& other) noexcept = default; \
     name::name(std::unique_ptr<Impl> impl): m_impl(std::move(impl)) { } \
     name::~name() = default; \
     name::Builder name::builder() { return {}; } \

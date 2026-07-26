@@ -20,11 +20,11 @@ namespace object_collab {
         static CustomLevelData load(cocos2d::CCLayer* baseGameLayer);
         static void save(LevelEditorLayer* editorLayer, std::span<CustomObjectInterface*> customObjects);
 
-        CustomLevelData& operator=(CustomLevelData&& other);
-        CustomLevelData& operator=(const CustomLevelData& other) = delete;
+        CustomLevelData& operator=(CustomLevelData&& other) noexcept;
+        CustomLevelData& operator=(const CustomLevelData& other) noexcept = delete;
 
-        CustomLevelData(CustomLevelData&& other);
-        CustomLevelData(const CustomLevelData& other) = delete;
+        CustomLevelData(CustomLevelData&& other) noexcept;
+        CustomLevelData(const CustomLevelData& other) noexcept = delete;
         CustomLevelData(bool defaulted = true);
         ~CustomLevelData();
         bool isDefaulted() const;

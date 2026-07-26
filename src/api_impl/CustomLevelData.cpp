@@ -130,15 +130,15 @@ void CustomLevelData::save(LevelEditorLayer* editorLayer, std::span<CustomObject
     level_storage::setSavedValue(editorLayer, SAVE_KEY, levelData);
 }
 
-CustomLevelData& CustomLevelData::operator=(CustomLevelData&& other) = default;
+CustomLevelData& CustomLevelData::operator=(CustomLevelData&& other) noexcept = default;
 
-CustomLevelData::CustomLevelData(CustomLevelData&& other) = default;
+CustomLevelData::CustomLevelData(CustomLevelData&& other) noexcept = default;
 
 CustomLevelData::CustomLevelData(bool defaulted): m_impl(std::make_unique<CustomLevelData::Impl>()) {
     m_impl->defaulted = defaulted;
 }
 
-CustomLevelData::~CustomLevelData() { }
+CustomLevelData::~CustomLevelData() = default;
 
 bool CustomLevelData::isDefaulted() const {
     return m_impl->defaulted;

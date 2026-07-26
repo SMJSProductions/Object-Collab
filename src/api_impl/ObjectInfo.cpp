@@ -19,13 +19,13 @@ ObjectInfo::Builder ObjectInfo::builder() {
     return ObjectInfo::Builder();
 }
 
-ObjectInfo& ObjectInfo::operator=(ObjectInfo&& other) = default;
+ObjectInfo& ObjectInfo::operator=(ObjectInfo&& other) noexcept = default;
 
-ObjectInfo::ObjectInfo(ObjectInfo&& other) = default;
+ObjectInfo::ObjectInfo(ObjectInfo&& other) noexcept = default;
 
 ObjectInfo::ObjectInfo(): m_impl(std::make_unique<Impl>()) { }
 
-ObjectInfo::~ObjectInfo() { }
+ObjectInfo::~ObjectInfo() = default;
 
 std::string_view ObjectInfo::getID() const {
     return m_impl->id;
@@ -77,7 +77,7 @@ PopupOptions ObjectInfo::editSpecial(const Selected& selected) const {
 
 ObjectInfo::Builder::Builder(): m_config(std::unique_ptr<ObjectInfo>(new ObjectInfo())) { }
 
-ObjectInfo::Builder::~Builder() { }
+ObjectInfo::Builder::~Builder() = default;
 
 ObjectInfo::Builder&& ObjectInfo::Builder::id(std::string id) && {
     m_config->m_impl->id = std::move(id);

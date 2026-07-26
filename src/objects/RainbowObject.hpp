@@ -11,8 +11,6 @@ public:
 
     RainbowObject();
     std::vector<std::string> getObjectDetails() override;
-    object_collab::CustomProperties getCustomProperties() override;
-    void initWithCustomProperties(const object_collab::CustomProperties& values) override;
     void postInit() override;
     void onAction(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) override;
     void update(const float dt) override;

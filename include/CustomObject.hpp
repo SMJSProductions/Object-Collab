@@ -1,6 +1,7 @@
 #pragma once
 
 #include <dll.hpp>
+#include <Property.hpp>
 #include <Geode/Geode.hpp>
 
 template<typename T>
@@ -14,7 +15,6 @@ concept GameObjectHasFrameInit = requires(T& object, const char* name) {
 };
 
 namespace object_collab {
-    using CustomProperties = std::unordered_map<uint32_t, std::string>;
     using ObjectVectors = std::pair<gd::vector<gd::string>, gd::vector<void*>>;
 
     class OBJC_API_DLL CustomObjectInterface {
@@ -28,8 +28,14 @@ namespace object_collab {
         /// @param objectString The object string with the delimited data.
         /// @returns The vector pair GD uses to initialize objects.
         static geode::Result<ObjectVectors> createObjectVectorsFromString(std::string_view objectString);
-    private:
-        CustomObjectInterface();
+
+        CustomObjectInterface& operator=(CustomObjectInterface&& other) noexcept;
+        CustomObjectInterface& operator=(const CustomObjectInterface& other) noexcept = delete;
+        
+        CustomObjectInterface(CustomObjectInterface&& other) noexcept;
+        CustomObjectInterface(const CustomObjectInterface& other) noexcept = delete;
+    protected:
+        CustomObjectInterface(CustomProperties&& customProperties);
     public:
         virtual ~CustomObjectInterface();
         virtual bool init(const char* frame) = 0;
@@ -48,6 +54,7 @@ namespace object_collab {
     protected:
         bool isUpdating();
         void toggleUpdating(bool enabled);
+        const CustomProperties& getCustomProperties();
     };
 
     template<typename T> requires std::derived_from<T, GameObject>
@@ -55,49 +62,27 @@ namespace object_collab {
     public:
         static constexpr float TILE_SIZE = 30;
 
-        /// Converts a deserialized property to a matjson serialized property and makes a key value pair.
-        /// @param key The property key.
-        /// @param property The property to serialize.
-        /// @returns The key value pair to save.
-        template<typename V>
-        static std::pair<uint32_t, std::string> toProperty(uint32_t key, const V& property) {
-            return { key, matjson::Value(property).dump() };
+        template<typename V, typename D> requires std::is_convertible_v<D, V>
+        static std::pair<int, std::unique_ptr<PropertyInterface>> propertyFrom(int key, V& member, D&& defaultValue) {
+            return { key, std::make_unique<Property<V>>(member, std::forward<D>(defaultValue)) };
         }
 
-        /// Converts a matjson serialized property to a deserialized property.
-        /// @param key The key with the property to deserialize.
-        /// @param properties The properties container.
-        /// @returns The deserialized property.
-        template<typename V>
-        static geode::Result<V> fromProperty(uint32_t key, const CustomProperties& properties) {
-            if (const auto& property = properties.find(key); property != properties.end()) {
-                return matjson::parseAs<V>(property->second);
-            } else {
-                return geode::Err("Property not found");
-            }
-        }
-
-        /// Converts a matjson serialized property to a deserialized property and puts it into the target if present.
-        /// @param target The target to put the deserialized property into.
-        /// @param key The key with the property to deserialize.
-        /// @param properties The properties container.
-        template<typename V>
-        static void propertyInto(V& target, uint32_t key, const CustomProperties& properties) {
-            if (const auto& property = properties.find(key); property != properties.end()) {
-                GEODE_UNWRAP_INTO_IF_OK(target, matjson::parseAs<V>(property->second));
-            }
-        }
-
-        CustomObject& operator=(CustomObject&& other) = default;
-        CustomObject& operator=(const CustomObject& other) = delete;
-
-        CustomObject(CustomObject&& other) = default;
-        CustomObject(const CustomObject& other) = delete;
-
+        CustomObject& operator=(CustomObject&& other) noexcept = default;
+        CustomObject& operator=(const CustomObject& other) noexcept = delete;
+        
+        CustomObject(CustomObject&& other) noexcept = default;
+        CustomObject(const CustomObject& other) noexcept = delete;
+        /// @note Make sure to check https://flowvix.github.io/gd-info-explorer/props to prevent overlaps!
+        /// @param customPropertiesList The custom properties list this object uses. This will automate saving and loading data.
         /// @param objectType The type of object, this copies some standard properties of the specified type.
         /// @param defaultZLayer The default z layer given when the object is created.
         /// @param defaultZOrder The default z order given when the object is created.
-        CustomObject(GameObjectType objectType = GameObjectType::Solid, ZLayer defaultZLayer = ZLayer::Default, int defaultZOrder = 2) {
+        CustomObject(
+            CustomPropertiesList customPropertiesList,
+            GameObjectType objectType = GameObjectType::Solid,
+            ZLayer defaultZLayer = ZLayer::Default,
+            int defaultZOrder = 2
+        ): CustomObjectInterface(std::move(customPropertiesList).releaseMap()) {
             this->m_objectType = objectType;
             this->m_defaultZLayer = defaultZLayer;
             this->m_defaultZOrder = defaultZOrder;
@@ -121,6 +106,12 @@ namespace object_collab {
             return true;
         }
 
+        virtual void firstSetup() override {
+            for (auto& [_, property] : this->getCustomProperties()) {
+                property->applyDefault();
+            }
+        }
+
         /// @see GameObject::customSetup
         virtual void customSetup() override {
             T::customSetup();
@@ -135,15 +126,6 @@ namespace object_collab {
         /// Runs after the object has fully generated.
         /// @note It's highly recommended to use this if you want to alter default GameObject properties.
         virtual void postInit() override { }
-
-        /// Creates a map of custom properties which will be saved in the level string together with the standard properties.
-        /// @note Make sure to check https://boomlings.dev/resources/client/level-components/level-string#level-string-data to prevent overlaps!
-        /// @returns The map of all custom properties which will be stored in the level string as 'key1,value1,key2,value2;'.
-        virtual CustomProperties getCustomProperties() { return {}; }
-
-        /// Initializes the object with its custom properties.
-        /// @param properties The map of properties associated with the object.
-        virtual void initWithCustomProperties(const CustomProperties& properties) { }
 
         /// Provides any custom details shown when the object is selected.
         /// @returns A list of custom lines shown, the default implement is none.
@@ -338,33 +320,41 @@ namespace object_collab {
         /// Initializes the object with the custom variables inside a (really strange) vector/map structure.
         /// @see GameObject::customObjectSetup
         virtual void customObjectSetup(gd::vector<gd::string>& values, gd::vector<void*>& exists) override {
-            CustomProperties properties;
+            const CustomProperties& properties = this->getCustomProperties();
+            std::unordered_map<int, std::string> foundProperties;
 
             T::customObjectSetup(values, exists);
 
             for (size_t i = 0; i < values.size() && i < exists.size(); i++) {
-                if (exists[i]) {
+                if (exists[i] && properties.contains(i)) {
                     std::string value = values[i];
 
                     std::ranges::replace(value, 0x1, ',');
                     std::ranges::replace(value, 0x2, ';');
 
-                    properties.emplace(i, std::move(value));
+                    foundProperties.emplace(i, std::move(value));
                 }
             }
 
-            this->initWithCustomProperties(std::move(properties));
+            for (auto& [key, property] : properties) {
+                if (auto entry = foundProperties.find(key); entry == foundProperties.end()) {
+                    property->applyDefault();
+                } else {
+                    property->applyFromString(entry->second);
+                }
+            }
         }
 
         /// Gets the raw save string of the object.
         /// @see GameObject::getSaveString
         virtual gd::string getSaveString(GJBaseGameLayer* layer) override {
-            CustomProperties properties = this->getCustomProperties();
             geode::utils::StringBuffer buffer;
 
             buffer.append(T::getSaveString(layer));
 
-            for (auto& [key, value] : properties) {
+            for (auto& [key, property] : this->getCustomProperties()) {
+                std::string value = property->getStringValue();
+
                 std::ranges::replace(value, ',', 0x1);
                 std::ranges::replace(value, ';', 0x2);
 
