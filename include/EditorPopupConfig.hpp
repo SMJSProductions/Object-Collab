@@ -115,8 +115,11 @@ namespace object_collab::editor_popup {
         NumericMenu(std::unique_ptr<Impl> impl);
     public:
         enum class InputType {
+            /// Renders the menu as a single text box.
             TextBox,
+            /// Renders the menu as a text box with arrows.
             Arrows,
+            /// Renders the menu as a text bpx with a slider.
             Slider
         };
 
@@ -339,7 +342,7 @@ namespace object_collab::editor_popup {
             /// @see geode::SimpleAxisLayout::setAxis
             /// @param axis The layout axis.
             Builder&& axis(geode::Axis axis) &&;
-            /// @note Default is 0.
+            /// @note Default is 10.
             /// @see geode::SimpleAxisLayout::setGap
             /// @param gap The layout gap.
             Builder&& gap(float gap) &&;

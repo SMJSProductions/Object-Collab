@@ -128,7 +128,7 @@ struct AxisLayoutMenu::Impl {
     IMPL_VALUES();
     std::vector<std::unique_ptr<ValueMenu>> menus;
     Axis axis = Axis::Column;
-    float gap = 0;
+    float gap = 10;
     AxisDirection mainAxisDirection = AxisDirection::LeftToRight;
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment::Start;
     AxisDirection crossAxisDirection = AxisDirection::LeftToRight;

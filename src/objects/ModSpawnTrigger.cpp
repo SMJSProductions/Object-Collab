@@ -46,7 +46,6 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                 .min(0)
                 .max(9999)
                 .precision(0)
-                .placeholder("Num")
                 .onValue([](const int value, const Selected& selected, Popup* popup) {
                     applyValueToSelected(selected, &ModSpawnTrigger::m_targetGroupID, value);
                 })
@@ -55,8 +54,6 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                 })
                 .build())
             .menu(AxisLayoutMenu::builder()
-                .axis(Axis::Column)
-                .gap(10)
                 .menu(ToggleMenu::builder()
                     .id("preview-disable"_spr)
                     .title("Preview\nDisable")
@@ -90,7 +87,6 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                 .max(1)
                 .precision(4)
                 .stepSize(0.0001)
-                .placeholder("Num")
                 .onValue([](const float value, const Selected& selected, Popup* popup) {
                     applyValueToSelected(selected, &ModSpawnTrigger::m_spawnDelay, value);
                 })
@@ -106,7 +102,6 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                 .max(1)
                 .precision(4)
                 .stepSize(0.0001)
-                .placeholder("Num")
                 .onValue([](const float value, const Selected& selected, Popup* popup) {
                     applyValueToSelected(selected, &ModSpawnTrigger::m_delayRange, value);
                 })
