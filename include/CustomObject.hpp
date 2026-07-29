@@ -24,6 +24,8 @@ namespace object_collab {
         struct Impl;
 
         std::unique_ptr<Impl> m_impl;
+
+        static std::vector<std::string_view> split(const std::string_view string, const char delimiter);
     public:
         /// @param objectString The object string with the delimited data.
         /// @returns The vector pair GD uses to initialize objects.
@@ -40,6 +42,7 @@ namespace object_collab {
         virtual ~CustomObjectInterface();
         virtual bool init(const char* frame) = 0;
         virtual void postInit() = 0;
+        virtual void postEditorInit() = 0;
         virtual std::vector<std::string> getObjectDetails() = 0;
         virtual GameObject* getGameObject() = 0;
         virtual bool isColorTrigger() = 0;
@@ -51,10 +54,15 @@ namespace object_collab {
         virtual bool shouldNotHideAnimFreeze() = 0;
         virtual bool usesFreezeAnimation() = 0;
         virtual bool usesSpecialAnimation() = 0;
-    protected:
-        bool isUpdating();
-        void toggleUpdating(bool enabled);
+        virtual bool updateProperty(size_t property, std::string_view value) = 0;
         const CustomProperties& getCustomProperties();
+    private:
+        std::optional<size_t> getTriggerTextProperty();
+        void setTriggerTextProperty(std::optional<size_t> property);
+        const cocos2d::CCPoint& getTriggerTextPropertyOffset();
+        void setTriggerTextPropertyOffset(cocos2d::CCPoint offset);
+        float getTriggerTextPropertyScale();
+        void setTriggerTextPropertyScale(float scale);
     };
 
     template<typename T> requires std::derived_from<T, GameObject>
@@ -63,7 +71,7 @@ namespace object_collab {
         static constexpr float TILE_SIZE = 30;
 
         template<typename V, typename D> requires std::is_convertible_v<D, V>
-        static std::pair<int, std::unique_ptr<PropertyInterface>> propertyFrom(int key, V& member, D&& defaultValue) {
+        static std::pair<size_t, std::unique_ptr<PropertyInterface>> propertyFrom(size_t key, V& member, D&& defaultValue) {
             return { key, std::make_unique<Property<V>>(member, std::forward<D>(defaultValue)) };
         }
 
@@ -128,32 +136,42 @@ namespace object_collab {
         /// @note It's highly recommended to use this if you want to alter default GameObject properties.
         virtual void postInit() override { }
 
+        /// Runs after the object has fully generated in the editor.
+        /// @note It's highly recommended to use this if you want to alter default GameObject properties in the editor.
+        virtual void postEditorInit() override { }
+
         /// Provides any custom details shown when the object is selected.
         /// @returns A list of custom lines shown, the default implement is none.
         virtual std::vector<std::string> getObjectDetails() override { return {}; }
 
         /// Gets the detail sprite of the object.
-        virtual cocos2d::CCSprite* getColorSprite() {
+        cocos2d::CCSprite* getColorSprite() {
             return this->m_colorSprite;
         }
 
         /// Gets the glow sprite of the object.
-        virtual cocos2d::CCSprite* getGlowSprite() {
+        cocos2d::CCSprite* getGlowSprite() {
             return this->m_glowSprite;
+        }
+
+        /// Gets the text shown on triggers.
+        /// @see GameObject::getObjectLabel
+        cocos2d::CCLabelBMFont* getTriggerText() requires std::derived_from<T, EffectGameObject> {
+            return T::getObjectLabel();
         }
 
         /// Sets the detail sprite of the object.
         /// @param frame The sprite frame name to use.
         /// @param defaultColorID The default color ID given to the detail sprite.
-        virtual void setDetailSprite(const char* frame, int defaultColorID = 1) {
-            this->addCustomColorChild(frame);
+        void setDetailSprite(geode::ZStringView frame, int defaultColorID = 1) {
+            this->addCustomColorChild(frame.c_str());
             this->setDefaultSecondaryColorMode(defaultColorID);
         }
 
         /// Sets the glow sprite of the object.
         /// @param frame The sprite frame name to use.
         /// @param color The optional color, if set it will make the glow considered custom.
-        virtual void setGlowSprite(gd::string frame, const std::optional<cocos2d::ccColor4B>& color = std::nullopt) {
+        void setGlowSprite(geode::ZStringView frame, const std::optional<cocos2d::ccColor4B>& color = std::nullopt) {
             this->createGlow(std::move(frame));
             this->addCustomColorChild(frame);
 
@@ -169,22 +187,34 @@ namespace object_collab {
             }
         }
 
+        void setTriggerTextProperty(std::optional<size_t> property, cocos2d::CCPoint offset = { 0, 0 }, float scale = 0.5f) requires std::derived_from<T, EffectGameObject> {
+            CustomObjectInterface::setTriggerTextProperty(property);
+            this->setTriggerTextPropertyOffset(std::move(offset));
+            this->setTriggerTextPropertyScale(scale);
+            this->updateTriggerText();
+        }
+
         /// Removes the detail sprite.
         /// @see GameObject::removeColorSprite
-        virtual void removeDetailSprite() {
+        void removeDetailSprite() {
             this->removeColorSprite();
         }
 
         /// Removes the glow sprite.
         /// @see GameObject::removeGlow
-        virtual void removeGlowSprite() {
+        void removeGlowSprite() {
             this->removeGlow();
+        }
+
+        void removeTriggerTextProperty() requires std::derived_from<T, EffectGameObject> {
+            CustomObjectInterface::setTriggerTextProperty(std::nullopt);
+            this->updateTriggerText();
         }
 
         /// Sets the hitbox of the object based on the size and offset.
         /// @param sizeUnits The amount of units (1 in-game tile) the hitbox size is on both axis.
         /// @param offsetUnits The amount of units (1 in-game tile) the hitbox is offset on both axis.
-        virtual void setHitbox(const cocos2d::CCSize& sizeUnits, const cocos2d::CCPoint& offsetUnits = { 0, 0 }) {
+        void setHitbox(const cocos2d::CCSize& sizeUnits, const cocos2d::CCPoint& offsetUnits = { 0, 0 }) {
             this->m_width = sizeUnits.width * CustomObject::TILE_SIZE;
             this->m_height = sizeUnits.height * CustomObject::TILE_SIZE;
             this->m_customBoxOffset = offsetUnits * CustomObject::TILE_SIZE;
@@ -192,7 +222,7 @@ namespace object_collab {
 
         /// Sets the round hitbox of the object based on the radius.
         /// @param radiusUnits The amount of units (1 in-game tile) the hitbox radius is.
-        virtual void setRoundHitbox(float radiusUnits) {
+        void setRoundHitbox(float radiusUnits) {
             this->setHitbox({ radiusUnits * 2, radiusUnits * 2 });
 
             this->m_objectRadius = this->m_width / 2;
@@ -201,7 +231,7 @@ namespace object_collab {
         /// Sets the hitbox of the object based on the size and offset using the 30 steps per grid system.
         /// @param size The size of the hitbox on both axis.
         /// @param offset The offset of the hitbox on both axis.
-        virtual void setRawHitbox(const cocos2d::CCSize& size, const cocos2d::CCPoint& offset = { 0, 0 }) {
+        void setRawHitbox(const cocos2d::CCSize& size, const cocos2d::CCPoint& offset = { 0, 0 }) {
             this->m_width = size.width;
             this->m_height = size.height;
             this->m_customBoxOffset = offset;
@@ -209,7 +239,7 @@ namespace object_collab {
 
         /// Sets the round hitbox of the object based on the radius using the 30 steps per grid system.
         /// @param radius The radius of the hitbox.
-        virtual void setRawRoundHitbox(float radius) {
+        void setRawRoundHitbox(float radius) {
             this->setHitbox({ radius * 2, radius * 2 });
 
             this->m_objectRadius = radius;
@@ -242,6 +272,12 @@ namespace object_collab {
         /// @param remapKeys The target group IDs which have to be swapped upon triggering. This is a nullptr if triggered by the player.
         virtual void triggerObject(GJBaseGameLayer* layer, int uniqueID, const gd::vector<int>* remapKeys) override {
             T::triggerObject(layer, uniqueID, remapKeys);
+        }
+
+        /// A replacement for CCNode::update().
+        /// @see GameObject::activateObject
+        virtual void activateObject() override {
+            T::activateObject();
         }
 
         /// Gets the default main color ID given when the object is created.
@@ -342,7 +378,7 @@ namespace object_collab {
         /// @param exists The key existence part of the properties map.
         virtual void customObjectSetup(gd::vector<gd::string>& values, gd::vector<void*>& exists) override {
             const CustomProperties& properties = this->getCustomProperties();
-            std::unordered_map<int, std::string> foundProperties;
+            std::unordered_map<size_t, std::string> foundProperties;
 
             T::customObjectSetup(values, exists);
 
@@ -362,36 +398,87 @@ namespace object_collab {
                     property->applyDefault();
                 } else {
                     property->applyFromString(entry->second);
-                }
             }
+                }
         }
 
         /// Gets the raw save string of the object.
         /// @see GameObject::getSaveString
         virtual gd::string getSaveString(GJBaseGameLayer* layer) override {
+            const CustomProperties& customProperties = this->getCustomProperties();
+            const std::vector<std::string_view> properties = split(T::getSaveString(layer), ',');
             geode::utils::StringBuffer buffer;
 
-            buffer.append(T::getSaveString(layer));
-
-            for (auto& [key, property] : this->getCustomProperties()) {
-                std::string value = property->getStringValue();
-
-                std::ranges::replace(value, ',', 0x1);
-                std::ranges::replace(value, ';', 0x2);
-
-                buffer.append(',');
-                buffer.append(key);
-                buffer.append(',');
-                buffer.append(value);
+            for (size_t i = 0; i < properties.size(); i += 2) {
+                if (geode::Result<size_t> key = geode::utils::numFromString<size_t>(properties[i]); key && !customProperties.contains(std::move(key).unwrap())) {
+                    buffer.append(properties[i]);
+                    buffer.append(',');
+                    buffer.append(properties[i + 1]);
+                    buffer.append(',');
+                }
             }
 
-            return buffer.str();
+            for (auto& [key, property] : this->getCustomProperties()) {
+                if (!property->isDefault()) {
+                    std::string value = property->getStringValue();
+
+                    std::ranges::replace(value, ',', 0x1);
+                    std::ranges::replace(value, ';', 0x2);
+
+                    buffer.append(key);
+                    buffer.append(',');
+                    buffer.append(value);
+                    buffer.append(',');
+                }
+            }
+
+            std::string result = buffer.str();
+
+            result.pop_back();
+
+            return result;
         }
 
-        /// A replacement for CCNode::update().
-        /// @see GameObject::activateObject
-        virtual void activateObject() override {
-            T::activateObject();
+        bool updateProperty(size_t property, std::string_view value) override {
+            const CustomProperties& customProperties = this->getCustomProperties();
+
+            if (auto entry = customProperties.find(property); entry == customProperties.end()) {
+                return false;
+            } else {
+                entry->second->applyFromString(value);
+
+                if constexpr (std::derived_from<T, EffectGameObject>) {
+                    if (property == this->getTriggerTextProperty()) this->updateTriggerText();
+                }
+
+                return true;
+            }
+        }
+
+        void updateTriggerText() requires std::derived_from<T, EffectGameObject> {
+            const CustomProperties& properties = this->getCustomProperties();
+            std::optional<size_t> property = this->getTriggerTextProperty();
+            cocos2d::CCLabelBMFont* label = this->getObjectLabel();
+
+            if (!property || !properties.contains(*property)) {
+                label->removeFromParent();
+                this->setObjectLabel(nullptr);
+
+                return;
+            }
+
+            if (label) {
+                label->setString(properties.at(*property)->getStringValue().c_str());
+            } else {
+                label = cocos2d::CCLabelBMFont::create(properties.at(*property)->getStringValue().c_str(), "bigFont.fnt");
+
+                this->addChild(label, 1);
+                this->setObjectLabel(label);
+            }
+
+            label->setScale(this->getTriggerTextPropertyScale());
+            label->setPosition(this->getContentSize() * 0.5f + this->getTriggerTextPropertyOffset());
+            label->limitLabelWidth(30, 0.5f, 0);
         }
 
         /// @note This exists for simplified use of the templated class internally.

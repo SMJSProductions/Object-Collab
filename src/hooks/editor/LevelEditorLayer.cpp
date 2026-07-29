@@ -17,6 +17,7 @@ void ModLevelEditorLayer::createObjectsFromSetup(gd::string& setup) {
                 objectVectors.second
             ))) {
                 customObject->postInit();
+                customObject->postEditorInit();
             } else {
                 log::warn("Failed to initialize object");
             }
@@ -37,6 +38,7 @@ GameObject* ModLevelEditorLayer::createObject(const int key, const CCPoint posit
     if (key >= ObjectAPI::getBaseCustomObjectID()) {
         if (CustomObjectInterface* customObject = typeinfo_cast<CustomObjectInterface*>(object)) {
             customObject->postInit();
+            customObject->postEditorInit();
         } else {
             log::warn("Failed to initialize object");
         }

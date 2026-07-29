@@ -23,10 +23,10 @@ std::variant<Popup*, editor_popup::PopupConfig> RainbowObject::getEditSpecialCon
             .title("Hue p/sec")
             .placeholder("Speed")
             .onValue([](const float value, const Selected& selected, Popup* popup) {
-                applyValueToSelected(selected, &RainbowObject::m_targetSpeed, value);
+                applyValueToSelectedProperty(selected, RainbowObject::SPEED_KEY, value);
             })
             .currentValue([](const Selected& selected, Popup* popup) {
-                return getCommonValueOrDefault(selected, &RainbowObject::m_targetSpeed, 180);
+                return getCommonPropertyValueOrDefault<float>(selected, RainbowObject::SPEED_KEY);
             })
             .inputType(NumericMenu::InputType::Slider)
             .min(0)
@@ -35,10 +35,10 @@ std::variant<Popup*, editor_popup::PopupConfig> RainbowObject::getEditSpecialCon
         .toggle(ToggleMenu::builder()
             .title("enabled")
             .onValue([](const bool value, const Selected& selected, Popup* popup) {
-                applyValueToSelected(selected, &RainbowObject::m_enabled, value);
+                applyValueToSelectedProperty(selected, RainbowObject::ENABLED_KEY, value);
             })
             .currentValue([](const Selected& selected, Popup* popup) {
-                return getCommonValueOrDefault(selected, &RainbowObject::m_enabled, true);
+                return getCommonPropertyValueOrDefault<bool>(selected, RainbowObject::ENABLED_KEY);
             })
             .build())
         .build();

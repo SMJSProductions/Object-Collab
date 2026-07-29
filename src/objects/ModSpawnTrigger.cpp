@@ -21,7 +21,7 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
         .title("Loaded Mod Spawn Group")
         .info(InfoPopup::builder()
             .title("Help")
-            .description("Works exactly like the spawn trigger with the condition that the targetted mod is installed & loaded.")
+            .description("Works exactly like the spawn trigger with the condition that the targeted mod is installed & loaded.")
             .build())
         .triggerToggles(true)
         .menu(EnumMenu::builder()
@@ -29,10 +29,10 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
             .title("Mod ID")
             .values(std::move(mods))
             .onValue([](const std::string& value, const Selected& selected, Popup* popup) {
-                applyValueToSelectedAndReport(selected, &ModSpawnTrigger::m_mod, &ModSpawnTrigger::checkMod, value);
+                applyValueToSelectedPropertyAndReport(selected, ModSpawnTrigger::MOD_KEY, value, &ModSpawnTrigger::checkMod);
             })
             .currentValue([](const Selected& selected, Popup* popup) {
-                return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_mod, "Unknown");
+                return getCommonPropertyValueOrDefault<std::string>(selected, ModSpawnTrigger::MOD_KEY);
             })
             .build())
         .menu(AxisLayoutMenu::builder()
@@ -47,10 +47,10 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                 .max(9999)
                 .precision(0)
                 .onValue([](const int value, const Selected& selected, Popup* popup) {
-                    applyValueToSelected(selected, &ModSpawnTrigger::m_targetGroupID, value);
+                    applyValueToSelectedProperty(selected, ModSpawnTrigger::TARGET_GROUP_ID, value);
                 })
                 .currentValue([](const Selected& selected, Popup* popup) {
-                    return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_targetGroupID, 0);
+                    return getCommonPropertyValueOrDefault<int>(selected, ModSpawnTrigger::TARGET_GROUP_ID);
                 })
                 .build())
             .menu(AxisLayoutMenu::builder()
@@ -114,7 +114,8 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
 }
 
 ModSpawnTrigger::ModSpawnTrigger(): CustomObject({
-    CustomObject::propertyFrom(ModSpawnTrigger::MOD_KEY, m_mod, "Unknown")
+    CustomObject::propertyFrom(ModSpawnTrigger::TARGET_GROUP_ID, m_targetGroupID, 0),
+    CustomObject::propertyFrom(ModSpawnTrigger::MOD_KEY, m_mod, "Unknown"),
 }, GameObjectType::Modifier) { }
 
 void ModSpawnTrigger::postInit() {
@@ -122,9 +123,13 @@ void ModSpawnTrigger::postInit() {
     this->checkMod();
 }
 
+void ModSpawnTrigger::postEditorInit() {
+    this->setTriggerTextProperty(ModSpawnTrigger::TARGET_GROUP_ID, { 0, -3 });
+}
+
 void ModSpawnTrigger::triggerObject(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) {
     if (m_active) {
-        SpawnTriggerGameObject::triggerObject(layer, m_uniqueID, remapKeys);
+        CustomObject::triggerObject(layer, m_uniqueID, remapKeys);
     }
 }
 

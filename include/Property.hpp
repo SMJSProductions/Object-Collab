@@ -6,6 +6,19 @@
 namespace object_collab {
     class OBJC_API_DLL PropertyInterface {
     public:
+        template<typename T>
+        static inline std::string stringifyValue(const T& value) {
+            if constexpr (std::is_convertible_v<T, std::string>) {
+                return value;
+            } else if constexpr (std::is_same_v<T, bool>) {
+                return value ? "1" : "0";
+            } else if constexpr (std::is_arithmetic_v<T>) {
+                return geode::utils::numToString(value);
+            } else {
+                return matjson::Value(value).dump();
+            }
+        }
+
         PropertyInterface& operator=(PropertyInterface&& other) noexcept = default;
         PropertyInterface& operator=(const PropertyInterface& other) noexcept = delete;
 
@@ -14,42 +27,68 @@ namespace object_collab {
         PropertyInterface() = default;
         virtual ~PropertyInterface() = default;
 
+        virtual bool isDefault() const = 0;
         virtual std::string getStringValue() const = 0;
         virtual void applyDefault() = 0;
         virtual void applyFromString(std::string_view value) = 0;
     };
 
-    template<typename V>
+    template<typename T>
     class Property : public PropertyInterface {
-        V& member;
-        V defaultValue;
+        T& m_member;
+        T m_defaultValue;
     public:
-        Property<V>& operator=(Property<V>&& other) noexcept = default;
-        Property<V>& operator=(const Property<V>& other) noexcept = delete;
+        Property<T>& operator=(Property<T>&& other) noexcept = default;
+        Property<T>& operator=(const Property<T>& other) noexcept = delete;
 
-        Property<V>(Property<V>&& other) noexcept = default;
-        Property<V>(const Property<V>& other) noexcept = delete;
-        template<typename D> requires std::is_convertible_v<D, V>
-        Property(V& member, D&& defaultValue): member(member), defaultValue(std::forward<D>(defaultValue)) { }
+        Property<T>(Property<T>&& other) noexcept = default;
+        Property<T>(const Property<T>& other) noexcept = delete;
+        template<typename D> requires std::is_convertible_v<D, T>
+        Property(T& member, D&& defaultValue): m_member(member), m_defaultValue(std::forward<D>(defaultValue)) { }
+
+        inline bool isDefault() const override {
+            return m_member == m_defaultValue;
+        }
+
+        inline const T& getValue() const {
+            return m_member;
+        }
 
         inline std::string getStringValue() const override {
-            return matjson::Value(member).dump();
+            return PropertyInterface::stringifyValue(m_member);
+        }
+
+        inline const T& getDefaultValue() const {
+            return m_defaultValue;
         }
 
         inline void applyDefault() override {
-            member = defaultValue;
+            m_member = m_defaultValue;
         }
 
         inline void applyFromString(std::string_view value) override {
-            if (geode::Result<V> result = matjson::parseAs<V>(value)) {
-                member = std::move(result).unwrap();
+            if constexpr (std::is_convertible_v<T, std::string>) {
+                m_member = value;
+            } else if constexpr (std::is_same_v<T, bool>) {
+                // This is required. matjson converts 0 to true since it looks for the constant and not the accurate conversion.
+                m_member = value != "0" && value != "" && value != "false";
+            } else if constexpr (std::is_arithmetic_v<T>) {
+                if (geode::Result<T> result = geode::utils::numFromString<T>(value)) {
+                    m_member = std::move(result).unwrap();
+                } else {
+                    this->applyDefault();
+                }
             } else {
-                this->applyDefault();
+                if (geode::Result<T> result = matjson::parseAs<T>(value)) {
+                    m_member = std::move(result).unwrap();
+                } else {
+                    this->applyDefault();
+                }
             }
         }
     };
 
-    using CustomProperties = std::unordered_map<int, std::unique_ptr<PropertyInterface>>;
+    using CustomProperties = std::unordered_map<size_t, std::unique_ptr<PropertyInterface>>;
 
     class CustomPropertiesList {
         CustomProperties m_map;

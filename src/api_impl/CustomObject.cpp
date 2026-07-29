@@ -4,7 +4,14 @@
 using namespace object_collab;
 using namespace geode::prelude;
 
-std::vector<std::string_view> split(const std::string_view string, const char delimiter) {
+struct CustomObjectInterface::Impl {
+    CustomProperties customProperties;
+    std::optional<uint32_t> triggerTextProperty;
+    CCPoint triggerTextPropertyOffset;
+    float triggerTextPropertyScale = 0;
+};
+
+std::vector<std::string_view> CustomObjectInterface::split(const std::string_view string, const char delimiter) {
     std::vector<std::string_view> results;
     size_t offset = 0;
 
@@ -17,10 +24,6 @@ std::vector<std::string_view> split(const std::string_view string, const char de
 
     return results;
 }
-
-struct CustomObjectInterface::Impl {
-    CustomProperties customProperties;
-};
 
 Result<ObjectVectors> CustomObjectInterface::createObjectVectorsFromString(std::string_view object) {
     const std::vector<std::string_view> properties = split(object, ',');
@@ -74,4 +77,28 @@ CustomObjectInterface::~CustomObjectInterface() = default;
 
 const CustomProperties& CustomObjectInterface::getCustomProperties() {
     return m_impl->customProperties;
+}
+
+std::optional<size_t> CustomObjectInterface::getTriggerTextProperty() {
+    return m_impl->triggerTextProperty;
+}
+
+void CustomObjectInterface::setTriggerTextProperty(std::optional<size_t> property) {
+    m_impl->triggerTextProperty = property;
+}
+
+const cocos2d::CCPoint& CustomObjectInterface::getTriggerTextPropertyOffset() {
+    return m_impl->triggerTextPropertyOffset;
+}
+
+void CustomObjectInterface::setTriggerTextPropertyOffset(cocos2d::CCPoint offset) {
+    m_impl->triggerTextPropertyOffset = std::move(offset);
+}
+
+float CustomObjectInterface::getTriggerTextPropertyScale() {
+    return m_impl->triggerTextPropertyScale;
+}
+
+void CustomObjectInterface::setTriggerTextPropertyScale(float scale) {
+    m_impl->triggerTextPropertyScale = scale;
 }
