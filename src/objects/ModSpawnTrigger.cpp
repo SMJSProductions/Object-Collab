@@ -134,15 +134,15 @@ void ModSpawnTrigger::triggerObject(GJBaseGameLayer* layer, const int uniqueID, 
 }
 
 std::vector<std::string> ModSpawnTrigger::getObjectDetails() {
-    return {
-        fmt::format("Mod ID: {}", m_mod),
-        fmt::format("Group ID: {}", m_targetGroupID),
-        fmt::format("Delay: {}", m_spawnDelay),
-        fmt::format("Delay+-: {}", m_delayRange),
-        fmt::format("Spawn ordered: {}", m_spawnOrdered ? "Yes" : "No"),
-        fmt::format("Preview disabled: {}", m_previewDisable ? "Yes" : "No"),
-        fmt::format("Active: {}", m_active ? "Yes" : "No")
-    };
+    return DetailsBuilder::builder()
+        .field("Mod ID: {}", m_mod)
+        .field("Group ID: {}", m_targetGroupID)
+        .field("Delay: {}", m_spawnDelay)
+        .field("Delay+-: {}", m_delayRange)
+        .field("Spawn ordered: {}", m_spawnOrdered ? "Yes" : "No")
+        .field("Preview disabled: {}", m_previewDisable ? "Yes" : "No")
+        .field("Active: {}", m_active ? "Yes" : "No")
+        .build();
 }
 
 bool ModSpawnTrigger::ignoreEditorDuration() {

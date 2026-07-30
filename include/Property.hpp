@@ -98,8 +98,8 @@ namespace object_collab {
 
         CustomPropertiesList(CustomPropertiesList&& other) noexcept = default;
         CustomPropertiesList(const CustomPropertiesList& other) noexcept = delete;
-        template<class... Pairs>
-        CustomPropertiesList(Pairs&&... pairs) {
+        template<class ...Pairs>
+        CustomPropertiesList(Pairs&& ...pairs) {
             (m_map.emplace(std::forward<Pairs>(pairs)), ...);
         }
 

@@ -50,10 +50,10 @@ RainbowObject::RainbowObject(): CustomObject({
 }) { }
 
 std::vector<std::string> RainbowObject::getObjectDetails() {
-    return {
-        fmt::format("Shift p/s: {}deg", m_targetSpeed),
-        fmt::format("Enabled: {}", m_enabled ? "yes" : "no")
-    };
+    return DetailsBuilder::builder()
+        .field("Shift p/s: {}deg", m_targetSpeed)
+        .field("Enabled: {}", m_enabled ? "yes" : "no")
+        .build();
 }
 
 void RainbowObject::postInit() {
