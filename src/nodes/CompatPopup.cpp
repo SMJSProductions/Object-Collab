@@ -108,7 +108,7 @@ bool CompatPopup::init() {
 
 void CompatPopup::onFix() {
     Loader* loader = Loader::get();
-    std::vector<std::string> missingMods { "cvolton.betterinfo" };
+    std::vector<std::string> missingMods;
 
     for (const std::string_view modID : CustomLevelData::ACTIVE.getMissingMods()) {
         if (Mod* mod = loader->getInstalledMod(modID)) {

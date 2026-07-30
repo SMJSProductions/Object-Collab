@@ -25,7 +25,7 @@ bool ToggleMenuNode::init(const Selected& selected, Popup* popup, ToggleMenu& to
     ](CCMenuItemToggler* toggler) mutable {
         onValue(!toggler->isToggled(), selected, popup);
     });
-    CCLabelBMFont* label = CCLabelBMFont::create(std::string(toggleMenu.getTitle()).c_str(), "bigFont.fnt");
+    CCLabelBMFont* label = CCLabelBMFont::create(toggleMenu.getTitle().c_str(), "bigFont.fnt");
 
     toggler->toggle(toggleMenu.releaseCurrentValue()(selected, popup));
     label->setScale(0.35f);

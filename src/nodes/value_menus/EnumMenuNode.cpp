@@ -63,7 +63,7 @@ float EnumMenuNode::getMaxLabelWidth() {
     float maxWidth = m_label->getContentWidth();
 
     for (size_t i = 0; i < m_values.size(); i++) {
-        const std::string& value = m_values[i];
+        const std::string_view value = m_values[i];
         const float width = cocos::getLabelSize(value, "bigFont.fnt").width;
 
         if (width > maxWidth) maxWidth = width;

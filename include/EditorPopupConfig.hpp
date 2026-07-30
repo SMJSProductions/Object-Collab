@@ -489,7 +489,7 @@ namespace object_collab::editor_popup {
 
     template<typename V>
     inline void applyValueToSelectedProperty(const Selected& selected, size_t property, const V& value) {
-        std::string stringValue = PropertyInterface::stringifyValue(value);
+        const std::string stringValue = PropertyInterface::stringifyValue(value);
 
         for (CustomObjectInterface* object : selected) {
             object->updateProperty(property, stringValue);
@@ -498,7 +498,7 @@ namespace object_collab::editor_popup {
 
     template<typename V, typename T>
     inline void applyValueToSelectedPropertyAndReport(const Selected& selected, size_t property, const V& value, void (T::* reportMember)()) {
-        std::string stringValue = PropertyInterface::stringifyValue(value);
+        const std::string stringValue = PropertyInterface::stringifyValue(value);
 
         for (CustomObjectInterface* object : selected) {
             if (object->updateProperty(property, stringValue)) {

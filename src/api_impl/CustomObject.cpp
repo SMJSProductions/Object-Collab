@@ -15,6 +15,8 @@ std::vector<std::string_view> CustomObjectInterface::split(const std::string_vie
     std::vector<std::string_view> results;
     size_t offset = 0;
 
+    results.reserve(std::count(string.begin(), string.end(), delimiter) + 1);
+
     do {
         const size_t nextOffset = string.find(delimiter, offset);
 
@@ -27,6 +29,7 @@ std::vector<std::string_view> CustomObjectInterface::split(const std::string_vie
 
 Result<ObjectVectors> CustomObjectInterface::createObjectVectorsFromString(std::string_view object) {
     const std::vector<std::string_view> properties = split(object, ',');
+    GJBaseGameLayer* baseGame = GJBaseGameLayer::get();
     // Rob OMFG use a map FFS
     // Yes this needs a size of 601, otherwise Rob will just offset hard to random memory with 0 bound checks... I wish I were kidding
     gd::vector<gd::string> values(601);
@@ -59,7 +62,7 @@ Result<ObjectVectors> CustomObjectInterface::createObjectVectorsFromString(std::
             values[key] = properties[i + 1];
         }
 
-        exists[key] = GJBaseGameLayer::get();
+        exists[key] = baseGame;
     }
 
     return Ok(std::make_pair(std::move(values), std::move(exists)));

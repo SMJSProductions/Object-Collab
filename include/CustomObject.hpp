@@ -398,8 +398,8 @@ namespace object_collab {
                     property->applyDefault();
                 } else {
                     property->applyFromString(entry->second);
-            }
                 }
+            }
         }
 
         /// Gets the raw save string of the object.
