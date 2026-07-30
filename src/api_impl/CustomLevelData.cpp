@@ -1,6 +1,7 @@
 #include <CustomLevelData.hpp>
 
 using namespace alpha;
+using namespace matjson;
 using namespace object_collab;
 using namespace geode::prelude;
 
@@ -84,16 +85,18 @@ struct matjson::Serialize<CustomLevelData> {
 
 CustomLevelData CustomLevelData::ACTIVE;
 
-matjson::Value CustomLevelData::raw(CCLayer* baseGameLayer) {
-    if (!baseGameLayer) return {};
-
-    return level_storage::getSavedValue<matjson::Value>(baseGameLayer, SAVE_KEY);
+Value& CustomLevelData::raw(CCLayer* baseGameLayer) {
+    return level_storage::getSaveContainer(baseGameLayer, Mod::get())[SAVE_KEY];
 }
 
 CustomLevelData CustomLevelData::load(CCLayer* baseGameLayer) {
     if (!baseGameLayer) return true;
 
     return level_storage::getSavedValue<CustomLevelData>(baseGameLayer, SAVE_KEY);
+}
+
+void CustomLevelData::clear(LevelEditorLayer* editorLayer) {
+    level_storage::getSaveContainer(editorLayer, Mod::get()).clear();
 }
 
 void CustomLevelData::save(LevelEditorLayer* editorLayer, std::span<CustomObjectInterface*> customObjects) {
@@ -110,7 +113,7 @@ void CustomLevelData::save(LevelEditorLayer* editorLayer, std::span<CustomObject
         ObjectInfo* objectInfo = ObjectAPI::getCustomObject(gameObject->m_objectID);
         const std::string_view id = objectInfo->getID();
 
-        // Yes I am temp overwriting the existing object ID to save it... Sure do hope no one assumes this thing is static.
+        // Yes I am temp overwriting the existing object ID to save it... Sure do hope no one assumes this thing is static
         if (const auto assignedID = tempLookup.find(id); assignedID == tempLookup.end()) {
             gameObject->m_objectID = offset;
             tempLookup.emplace(id, offset);

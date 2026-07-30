@@ -48,7 +48,12 @@ void ModEditorPauseLayer::saveLevel() {
         }
     }
 
-    CustomLevelData::save(m_editorLayer, customObjects);
+    if (customObjects.empty()) {
+        CustomLevelData::clear(m_editorLayer);
+    } else {
+        CustomLevelData::save(m_editorLayer, customObjects);
+    }
+
     EditorPauseLayer::saveLevel();
 
     m_editorLayer->m_objects = objectsBackup;

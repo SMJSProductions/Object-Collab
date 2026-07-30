@@ -16,8 +16,9 @@ namespace object_collab {
     public:
         static CustomLevelData ACTIVE;
 
-        static matjson::Value raw(cocos2d::CCLayer* baseGameLayer);
+        static matjson::Value& raw(cocos2d::CCLayer* baseGameLayer);
         static CustomLevelData load(cocos2d::CCLayer* baseGameLayer);
+        static void clear(LevelEditorLayer* editorLayer);
         static void save(LevelEditorLayer* editorLayer, std::span<CustomObjectInterface*> customObjects);
 
         CustomLevelData& operator=(CustomLevelData&& other) noexcept;

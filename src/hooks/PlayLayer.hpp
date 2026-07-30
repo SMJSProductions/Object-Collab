@@ -4,5 +4,5 @@
 #include <Geode/modify/PlayLayer.hpp>
 
 class $modify(ModPlayLayer, PlayLayer) {
-    $override void processCreateObjectsFromSetup();
+    $override void prepareCreateObjectsFromSetup(gd::string& levelString);
 };

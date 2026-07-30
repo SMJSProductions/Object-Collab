@@ -3,7 +3,7 @@
 using namespace object_collab::prelude;
 using namespace geode::prelude;
 
-void ModPlayLayer::processCreateObjectsFromSetup() {
+void ModPlayLayer::prepareCreateObjectsFromSetup(gd::string& levelString) {
     if (CustomLevelData::ACTIVE.isDefaulted()) {
         CustomLevelData::ACTIVE = CustomLevelData::load(this);
     }
@@ -31,5 +31,5 @@ void ModPlayLayer::processCreateObjectsFromSetup() {
     // Reset to no longer rely on the saved allocation setup
     CustomLevelData::ACTIVE = true;
 
-    PlayLayer::processCreateObjectsFromSetup();
+    PlayLayer::prepareCreateObjectsFromSetup(levelString);
 }
