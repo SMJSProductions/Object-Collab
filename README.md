@@ -1,4 +1,4 @@
-# <img src="resources/small-logo.png" height="40"> Object Collab
+# <img src="resources/small-logo.png" height="45"> Object Collab
 
 A mod which provides a complete framework for custom objects while solving compatibility issues.
 
