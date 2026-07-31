@@ -34,12 +34,12 @@ Future<Result<>> DownloadManager::download(std::string modID, ProgressCallback o
     for (Value& dependency : GEODE_CO_UNWRAP(versionJson["payload"]["dependencies"].asArray())) {
         if (!GEODE_CO_UNWRAP(dependency["required"].asBool())) continue;
 
-        GEODE_CO_UNWRAP_INTO(std::string depeendencyID, dependency["mod_id"].asString());
+        GEODE_CO_UNWRAP_INTO(std::string dependencyID, dependency["mod_id"].asString());
 
-        if (Mod* mod = loader->getInstalledMod(depeendencyID)) {
+        if (Mod* mod = loader->getInstalledMod(dependencyID)) {
             GEODE_CO_UNWRAP(mod->enable());
         } else {
-            downloads.emplace_back(this->download(std::move(depeendencyID), onProgress));
+            downloads.emplace_back(this->download(std::move(dependencyID), onProgress));
         }
     }
 
