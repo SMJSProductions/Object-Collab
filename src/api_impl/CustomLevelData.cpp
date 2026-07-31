@@ -85,14 +85,20 @@ struct matjson::Serialize<CustomLevelData> {
 
 CustomLevelData CustomLevelData::ACTIVE;
 
-Value& CustomLevelData::raw(CCLayer* baseGameLayer) {
-    return level_storage::getSaveContainer(baseGameLayer, Mod::get())[SAVE_KEY];
+const CustomLevelData& CustomLevelData::get() {
+    return CustomLevelData::ACTIVE;
 }
 
-CustomLevelData CustomLevelData::load(CCLayer* baseGameLayer) {
-    if (!baseGameLayer) return true;
+const CustomLevelData& CustomLevelData::load(CCLayer* baseGameLayer) {
+    return CustomLevelData::ACTIVE = level_storage::getSavedValue<CustomLevelData>(baseGameLayer, SAVE_KEY);
+}
 
-    return level_storage::getSavedValue<CustomLevelData>(baseGameLayer, SAVE_KEY);
+const CustomLevelData& CustomLevelData::reset() {
+    return CustomLevelData::ACTIVE = true;
+}
+
+Value& CustomLevelData::raw(CCLayer* baseGameLayer) {
+    return level_storage::getSaveContainer(baseGameLayer, Mod::get())[SAVE_KEY];
 }
 
 void CustomLevelData::clear(LevelEditorLayer* editorLayer) {
@@ -147,11 +153,11 @@ bool CustomLevelData::isDefaulted() const {
     return m_impl->defaulted;
 }
 
-const std::vector<std::string>& CustomLevelData::getMods() const {
+const std::span<std::string> CustomLevelData::getMods() const {
     return m_impl->mods;
 }
 
-const std::vector<std::string>& CustomLevelData::getMissingMods() const {
+const std::span<std::string> CustomLevelData::getMissingMods() const {
     return m_impl->missingMods;
 }
 
@@ -163,6 +169,6 @@ const MissingRegister& CustomLevelData::getMissingObjects() const {
     return m_impl->missingObjects;
 }
 
-const std::vector<std::string>& CustomLevelData::getObjects() const {
+const std::span<std::string> CustomLevelData::getObjects() const {
     return m_impl->objects;
 }

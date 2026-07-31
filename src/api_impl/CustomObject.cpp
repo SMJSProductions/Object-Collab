@@ -29,6 +29,7 @@ std::vector<std::string_view> CustomObjectInterface::split(const std::string_vie
 
 Result<ObjectVectors> CustomObjectInterface::createObjectVectorsFromString(std::string_view object) {
     const std::vector<std::string_view> properties = split(object, ',');
+    const CustomLevelData& customLevelData = CustomLevelData::get();
     GJBaseGameLayer* baseGame = GJBaseGameLayer::get();
     // Rob OMFG use a map FFS
     // Yes this needs a size of 601, otherwise Rob will just offset hard to random memory with 0 bound checks... I wish I were kidding
@@ -48,9 +49,9 @@ Result<ObjectVectors> CustomObjectInterface::createObjectVectorsFromString(std::
             exists.resize(key + 1);
         }
 
-        if (key == 1 && !CustomLevelData::ACTIVE.isDefaulted()) {
+        if (key == 1 && !customLevelData.isDefaulted()) {
             GEODE_UNWRAP_INTO(const int objectID, utils::numFromString<int>(properties[i + 1]));
-            const AllocationsRegister& allocations = CustomLevelData::ACTIVE.getAllocations();
+            const AllocationsRegister& allocations = customLevelData.getAllocations();
             const auto& entry = allocations.find(objectID);
 
             if (entry == allocations.end()) {

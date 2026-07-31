@@ -24,7 +24,7 @@ CompatPopup::CurrentModState CompatPopup::getModState() {
     Loader* loader = Loader::get();
     std::optional<CompatPopup::CurrentModState> state;
 
-    for (const std::string_view mod : CustomLevelData::ACTIVE.getMissingMods()) {
+    for (const std::string_view mod : CustomLevelData::get().getMissingMods()) {
         if (loader->isModInstalled(mod)) {
             if (state == CompatPopup::CurrentModState::Missing) {
                 return CompatPopup::CurrentModState::DisabledMissing;
@@ -54,6 +54,7 @@ bool CompatPopup::init() {
         { CompatPopup::CurrentModState::Missing, { "downloaded", "download" } }
     };
     const std::pair<std::string, std::string>& state = STATE_STRINGS.at(m_state);
+    const CustomLevelData& customLevelData = CustomLevelData::get();
 
     if (!PopupExtra::init("Missing Mods!", { 350, 270 }, makeVector<PopupExtra::ButtonConfig>(
         PopupExtra::ButtonConfig{ "cancel", "GJ_button_06.png", [this](CCMenuItemSpriteExtra*) { this->closeWithEnabled(); } },
@@ -73,11 +74,11 @@ bool CompatPopup::init() {
     NewBorder* textBorder = NewBorder::create({ contentSize.width, label->getScaledContentHeight() + 10 });
     std::string mdText;
 
-    for (const std::string_view modID : CustomLevelData::ACTIVE.getMissingMods()) {
+    for (const std::string_view modID : customLevelData.getMissingMods()) {
         mdText.append(fmt::format("\n\n<mod:{}>", modID));
     }
 
-    for (const std::string_view modID : CustomLevelData::ACTIVE.getMods()) {
+    for (const std::string_view modID : customLevelData.getMods()) {
         mdText.append(fmt::format("\n\n<mod:{}>", modID));
     }
 
@@ -110,7 +111,7 @@ void CompatPopup::onFix() {
     Loader* loader = Loader::get();
     std::vector<std::string> missingMods;
 
-    for (const std::string_view modID : CustomLevelData::ACTIVE.getMissingMods()) {
+    for (const std::string_view modID : CustomLevelData::get().getMissingMods()) {
         if (Mod* mod = loader->getInstalledMod(modID)) {
             if (Result<> result = mod->enable(); result.isErr()) log::error("Error activating mod: {}", std::move(result).unwrapErr());
         } else {
@@ -128,7 +129,7 @@ void CompatPopup::onFix() {
 void CompatPopup::closeWithEnabled() {
     Loader* loader = Loader::get();
 
-    for (const std::string_view modID : CustomLevelData::ACTIVE.getMissingMods()) {
+    for (const std::string_view modID : CustomLevelData::get().getMissingMods()) {
         if (Mod* mod = loader->getInstalledMod(modID); mod->isOrWillBeEnabled()) {
             geode::createQuickPopup(
                 "Restart GD?",

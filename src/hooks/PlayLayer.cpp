@@ -4,11 +4,9 @@ using namespace object_collab::prelude;
 using namespace geode::prelude;
 
 void ModPlayLayer::prepareCreateObjectsFromSetup(gd::string& levelString) {
-    if (CustomLevelData::ACTIVE.isDefaulted()) {
-        CustomLevelData::ACTIVE = CustomLevelData::load(this);
-    }
+    const CustomLevelData& customLevelData = CustomLevelData::get().isDefaulted() ? CustomLevelData::load(this) : CustomLevelData::get();
 
-    for (const std::string_view object : CustomLevelData::ACTIVE.getObjects()) {
+    for (const std::string_view object : customLevelData.getObjects()) {
         if (Result<ObjectVectors> objectVectorsResult = CustomObjectInterface::createObjectVectorsFromString(object)) {
             ObjectVectors objectVectors = std::move(objectVectorsResult).unwrap();
 
@@ -29,7 +27,7 @@ void ModPlayLayer::prepareCreateObjectsFromSetup(gd::string& levelString) {
     }
 
     // Reset to no longer rely on the saved allocation setup
-    CustomLevelData::ACTIVE = true;
+    CustomLevelData::reset();
 
     PlayLayer::prepareCreateObjectsFromSetup(levelString);
 }
