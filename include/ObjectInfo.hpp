@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CustomObject.hpp>
-#include <EditorPopupConfig.hpp>
+#include "CustomObject.hpp"
+#include "EditorPopupConfig.hpp"
 
 namespace object_collab {
     using PopupOptions = std::variant<geode::Popup*, editor_popup::PopupConfig>;

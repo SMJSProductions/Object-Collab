@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ObjectInfo.hpp>
+#include "ObjectInfo.hpp"
 
 namespace object_collab {
     using Register = std::unordered_map<uint32_t, ObjectInfo>;

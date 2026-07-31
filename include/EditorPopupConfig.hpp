@@ -1,6 +1,6 @@
 #pragma once
 
-#include <CustomObject.hpp>
+#include "CustomObject.hpp"
 
 namespace object_collab {
     using Selected = std::vector<CustomObjectInterface*>;

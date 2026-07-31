@@ -1,8 +1,7 @@
 #pragma once
 
-#include <dll.hpp>
-#include <Property.hpp>
-#include <Geode/Geode.hpp>
+#include "dll.hpp"
+#include "Property.hpp"
 
 template<typename T>
 concept GameObjectHasBasicInit = requires(T& object) {

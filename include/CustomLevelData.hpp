@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ObjectAPI.hpp>
 #include <alphalaneous.level-storage-api/include/LevelStorageAPI.hpp>
+#include "ObjectAPI.hpp"
 
 namespace object_collab {
     /// A map of numeric IDs and the associated object info.
@@ -9,7 +9,7 @@ namespace object_collab {
     /// A map of numeric IDs and the string IDs of the objects which aren't able to be linked due to missing info.
     using MissingRegister = std::unordered_map<uint32_t, std::string>;
 
-    /// This class 
+    /// This class is mostly used for internally solving the compatibility of levels.
     class OBJC_API_DLL CustomLevelData {
         friend class matjson::Serialize<CustomLevelData>;
 

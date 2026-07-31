@@ -1,7 +1,7 @@
 #pragma once
 
-#include <dll.hpp>
 #include <Geode/Geode.hpp>
+#include "dll.hpp"
 
 namespace object_collab {
     class OBJC_API_DLL DetailsBuilder {
