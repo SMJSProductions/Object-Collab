@@ -46,19 +46,19 @@ namespace object_collab {
         template<typename D> requires std::is_convertible_v<D, T>
         Property(T& member, D&& defaultValue): m_member(member), m_defaultValue(std::forward<D>(defaultValue)) { }
 
-        inline bool isDefault() const override {
+        [[nodiscard]] inline bool isDefault() const override {
             return m_member == m_defaultValue;
         }
 
-        inline const T& getValue() const {
+        [[nodiscard]] inline const T& getValue() const {
             return m_member;
         }
 
-        inline std::string getStringValue() const override {
+        [[nodiscard]] inline std::string getStringValue() const override {
             return PropertyInterface::stringifyValue(m_member);
         }
 
-        inline const T& getDefaultValue() const {
+        [[nodiscard]] inline const T& getDefaultValue() const {
             return m_defaultValue;
         }
 
@@ -103,7 +103,7 @@ namespace object_collab {
             (m_map.emplace(std::forward<Pairs>(pairs)), ...);
         }
 
-        inline CustomProperties&& releaseMap() && {
+        [[nodiscard]] inline CustomProperties&& releaseMap() && {
             return std::move(m_map);
         }
     };

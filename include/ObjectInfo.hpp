@@ -40,38 +40,38 @@ namespace object_collab {
             /// @note REQUIRED!
             /// @warning This should never be changed! Changing the ID will make all saved objects with this ID be considered missing.
             /// @param id The id of the object.
-            Builder&& id(std::string id) &&;
+            [[nodiscard]] Builder&& id(std::string id) &&;
             /// @note REQUIRED!
             /// @param sprite The sprite of the object.
-            Builder&& sprite(std::string sprite) &&;
+            [[nodiscard]] Builder&& sprite(std::string sprite) &&;
             /// @note Default is GameObjectType::Solid.
             /// @warning This only works for objects with no associated factory!
             /// @param objectType The object type which determines the vanilla behavior it inherits.
-            Builder&& objectType(GameObjectType objectType) &&;
+            [[nodiscard]] Builder&& objectType(GameObjectType objectType) &&;
             /// @note Default is ZLayer::Default.
             /// @warning This only works for objects with no associated factory!
             /// @param defaultZLayer The default z layer assigned when the object is created.
-            Builder&& defaultZLayer(ZLayer defaultZLayer) &&;
+            [[nodiscard]] Builder&& defaultZLayer(ZLayer defaultZLayer) &&;
             /// @note Default is 2.
             /// @warning This only works for objects with no associated factory!
             /// @param defaultZOrder The default z order assigned when the object is created.
-            Builder&& defaultZOrder(int defaultZOrder) &&;
+            [[nodiscard]] Builder&& defaultZOrder(int defaultZOrder) &&;
             /// @note Default is EditorTab::Solids.
             /// @param editorTab The editor tab the object will be shown in.
-            Builder&& editorTab(EditorTab editorTab) &&;
+            [[nodiscard]] Builder&& editorTab(EditorTab editorTab) &&;
             /// @note Without it will fallback to a simple GameObject implement.
             /// @param factory The factory method to generate a custom object.
-            Builder&& factory(ObjectFactory factory) &&;
+            [[nodiscard]] Builder&& factory(ObjectFactory factory) &&;
             /// @note Without it will default the edit object button.
             /// @param editObject The popup factory for the edit object button.
-            Builder&& editObject(ObjectPopupFactory editObject) &&;
+            [[nodiscard]] Builder&& editObject(ObjectPopupFactory editObject) &&;
             /// @note Without it will disable the edit special button.
             /// @param editSpecial The popup factory for the edit special button.
-            Builder&& editSpecial(ObjectPopupFactory editSpecial) &&;
-            ObjectInfo build() &&;
+            [[nodiscard]] Builder&& editSpecial(ObjectPopupFactory editSpecial) &&;
+            [[nodiscard]] ObjectInfo build() &&;
         };
 
-        static Builder builder();
+        [[nodiscard]] static Builder builder();
 
         ObjectInfo& operator=(ObjectInfo&& other) noexcept;
         ObjectInfo& operator=(const ObjectInfo& other) noexcept = delete;
@@ -82,17 +82,17 @@ namespace object_collab {
         ObjectInfo();
     public:
         ~ObjectInfo();
-        std::string_view getID() const;
-        geode::ZStringView getSprite() const;
-        GameObjectType getObjectType() const;
-        ZLayer getDefaultZLayer() const;
-        int getDefaultZOrder() const;
-        EditorTab getEditorTab() const;
-        bool hasFactory() const;
-        CustomObjectInterface* factory() const;
-        bool hasEditObject() const;
-        PopupOptions editObject(const Selected& selected) const;
-        bool hasEditSpecial() const;
-        PopupOptions editSpecial(const Selected& selected) const;
+        [[nodiscard]] std::string_view getID() const;
+        [[nodiscard]] geode::ZStringView getSprite() const;
+        [[nodiscard]] GameObjectType getObjectType() const;
+        [[nodiscard]] ZLayer getDefaultZLayer() const;
+        [[nodiscard]] int getDefaultZOrder() const;
+        [[nodiscard]] EditorTab getEditorTab() const;
+        [[nodiscard]] bool hasFactory() const;
+        [[nodiscard]] CustomObjectInterface* factory() const;
+        [[nodiscard]] bool hasEditObject() const;
+        [[nodiscard]] PopupOptions editObject(const Selected& selected) const;
+        [[nodiscard]] bool hasEditSpecial() const;
+        [[nodiscard]] PopupOptions editSpecial(const Selected& selected) const;
     };
 }

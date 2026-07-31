@@ -19,7 +19,8 @@ NumericMenuNode* NumericMenuNode::create(const Selected& selected, Popup* popup,
 
 bool NumericMenuNode::init(const Selected& selected, Popup* popup, NumericMenu& numericMenu) {
     const NumericMenu::InputType inputType = numericMenu.getInputType();
-    const float currentValue = numericMenu.releaseCurrentValue()(selected, popup);
+    CurrentValueCallback<float> currentValueCallback = numericMenu.releaseCurrentValue();
+    const float currentValue = currentValueCallback ? currentValueCallback(selected, popup) : 0;
     std::string currentStringValue = utils::numToString(currentValue, numericMenu.getPrecision());
     std::vector<CCNode*> nodes;
     TextInput* input = TextInput::create(70, numericMenu.getPlaceholder().empty() ? ZStringView(currentStringValue) : numericMenu.getPlaceholder());
@@ -35,6 +36,7 @@ bool NumericMenuNode::init(const Selected& selected, Popup* popup, NumericMenu& 
         input->setCallback([selected, popup, onValue = numericMenu.releaseOnValue()](const std::string& strValue) mutable {
             float value;
 
+            if (!onValue) return;
             if (GEODE_UNWRAP_INTO_IF_OK(value, utils::numFromString<float>(strValue))) onValue(value, selected, popup);
         });
     }
@@ -55,7 +57,7 @@ SliderNode* NumericMenuNode::getSlider(const Selected& selected, Popup* popup, N
         selected,
         popup,
         onValue = numericMenu.releaseOnValue()
-    ](SliderNode* sender, const float value) mutable { onValue(value, selected, popup); });
+    ](SliderNode* sender, const float value) mutable { if (onValue) onValue(value, selected, popup); });
 
     slider->setID("slider");
     slider->setMin(numericMenu.getMin().value_or(0));

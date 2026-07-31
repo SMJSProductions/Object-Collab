@@ -40,22 +40,22 @@ namespace object_collab {
         CustomObjectInterface(CustomProperties&& customProperties);
     public:
         virtual ~CustomObjectInterface();
-        virtual bool init(const char* frame) = 0;
+        [[nodiscard]] virtual bool init(const char* frame) = 0;
         virtual void postInit() = 0;
         virtual void postEditorInit() = 0;
-        virtual std::vector<std::string> getObjectDetails() = 0;
-        virtual GameObject* getGameObject() = 0;
-        virtual bool isColorTrigger() = 0;
-        virtual bool isSettingsObject() = 0;
-        virtual bool isSpawnableTrigger() = 0;
-        virtual bool isSpecialObject() = 0;
-        virtual bool isTrigger() = 0;
-        virtual bool shouldLockX() = 0;
-        virtual bool shouldNotHideAnimFreeze() = 0;
-        virtual bool usesFreezeAnimation() = 0;
-        virtual bool usesSpecialAnimation() = 0;
         virtual bool updateProperty(size_t property, std::string_view value) = 0;
-        const CustomProperties& getCustomProperties();
+        [[nodiscard]] virtual std::vector<std::string> getObjectDetails() = 0;
+        [[nodiscard]] virtual GameObject* getGameObject() = 0;
+        [[nodiscard]] virtual bool isColorTrigger() = 0;
+        [[nodiscard]] virtual bool isSettingsObject() = 0;
+        [[nodiscard]] virtual bool isSpawnableTrigger() = 0;
+        [[nodiscard]] virtual bool isSpecialObject() = 0;
+        [[nodiscard]] virtual bool isTrigger() = 0;
+        [[nodiscard]] virtual bool shouldLockX() = 0;
+        [[nodiscard]] virtual bool shouldNotHideAnimFreeze() = 0;
+        [[nodiscard]] virtual bool usesFreezeAnimation() = 0;
+        [[nodiscard]] virtual bool usesSpecialAnimation() = 0;
+        [[nodiscard]] const CustomProperties& getCustomProperties();
     private:
         std::optional<size_t> getTriggerTextProperty();
         void setTriggerTextProperty(std::optional<size_t> property);
@@ -71,7 +71,7 @@ namespace object_collab {
         static constexpr float TILE_SIZE = 30;
 
         template<typename V, typename D> requires std::is_convertible_v<D, V>
-        static std::pair<size_t, std::unique_ptr<PropertyInterface>> propertyFrom(size_t key, V& member, D&& defaultValue) {
+        [[nodiscard]] static std::pair<size_t, std::unique_ptr<PropertyInterface>> propertyFrom(size_t key, V& member, D&& defaultValue) {
             return { key, std::make_unique<Property<V>>(member, std::forward<D>(defaultValue)) };
         }
 
@@ -97,7 +97,7 @@ namespace object_collab {
         }
 
         /// @see GameObject::init
-        virtual bool init(const char* frame) override {
+        [[nodiscard]] virtual bool init(const char* frame) override {
             static_assert(GameObjectHasBasicInit<T> || GameObjectHasFrameInit<T>, "Must have either ::init(const char* frame) or ::init()");
 
             const int defaultZOrder = this->m_defaultZOrder;
@@ -142,21 +142,21 @@ namespace object_collab {
 
         /// Provides any custom details shown when the object is selected.
         /// @returns A list of custom lines shown, the default implement is none.
-        virtual std::vector<std::string> getObjectDetails() override { return {}; }
+        [[nodiscard]] virtual std::vector<std::string> getObjectDetails() override { return {}; }
 
         /// Gets the detail sprite of the object.
-        cocos2d::CCSprite* getColorSprite() {
+        [[nodiscard]] cocos2d::CCSprite* getColorSprite() {
             return this->m_colorSprite;
         }
 
         /// Gets the glow sprite of the object.
-        cocos2d::CCSprite* getGlowSprite() {
+        [[nodiscard]] cocos2d::CCSprite* getGlowSprite() {
             return this->m_glowSprite;
         }
 
         /// Gets the text shown on triggers.
         /// @see GameObject::getObjectLabel
-        cocos2d::CCLabelBMFont* getTriggerText() requires std::derived_from<T, EffectGameObject> {
+        [[nodiscard]] cocos2d::CCLabelBMFont* getTriggerText() requires std::derived_from<T, EffectGameObject> {
             return T::getObjectLabel();
         }
 
@@ -282,93 +282,93 @@ namespace object_collab {
 
         /// Gets the default main color ID given when the object is created.
         /// @note Returning 0 will deactivate colors.
-        virtual int getDefaultMainColorID() {
+        [[nodiscard]] virtual int getDefaultMainColorID() {
             return this->isTrigger() ? 0 : 1004;
         }
 
         /// If the object can be rotated without 90deg snapping.
         /// @warning This feature is currently unimplemented due to too much inlining!
         /// @see GameObject::canRotateFree
-        virtual bool canRotateFree() {
+        [[nodiscard]] virtual bool canRotateFree() {
             return T::canRotateFree();
         }
 
         /// If the trigger duration handling should be removed.
         /// @see GameObject::ignoreEditorDuration
-        virtual bool ignoreEditorDuration() {
+        [[nodiscard]] virtual bool ignoreEditorDuration() {
             return !this->isTrigger();
         }
 
         /// If the trigger can affect color channels.
         /// @see GameObject::isColorTrigger
-        virtual bool isColorTrigger() override {
+        [[nodiscard]] virtual bool isColorTrigger() override {
             return false;
         }
 
         /// If the trigger should be simulated in the editor.
         /// @see GameObject::isEditorSpawnableTrigger
-        virtual bool isEditorSpawnableTrigger() {
+        [[nodiscard]] virtual bool isEditorSpawnableTrigger() {
             return this->isTrigger();
         }
 
         /// If the play layer should ignore this object as its reserved for the editor.
         /// @see GameObject::isSettingsObject
-        virtual bool isSettingsObject() override {
+        [[nodiscard]] virtual bool isSettingsObject() override {
             return false;
         }
 
         /// If the trigger can be spawned.
         /// @see GameObject::isSpawnableTrigger
-        virtual bool isSpawnableTrigger() override {
+        [[nodiscard]] virtual bool isSpawnableTrigger() override {
             return this->isTrigger();
         }
 
         /// If the object should be omitted from rendering in the custom delete & delete all buttons.
         /// @see GameObject::isSpecialObject
-        virtual bool isSpecialObject() override {
+        [[nodiscard]] virtual bool isSpecialObject() override {
             return false;
         }
 
         /// If the object can change the gameplay speed.
         /// @warning This feature is currently unimplemented due to too much inlining!
         /// @see GameObject::isSpeedObject
-        virtual bool isSpeedObject() {
+        [[nodiscard]] virtual bool isSpeedObject() {
             return false;
         }
 
         /// If the trigger can be manipulated by a stop trigger.
         /// @see GameObject::isStoppableTrigger
-        virtual bool isStoppableTrigger() {
+        [[nodiscard]] virtual bool isStoppableTrigger() {
             return this->isTrigger();
         }
 
         /// If the object should be considered a trigger.
         /// @see GameObject::isTrigger
-        bool isTrigger() override {
+        [[nodiscard]] bool isTrigger() override {
             return this->m_classType == GameObjectClassType::Effect && this->m_objectType == GameObjectType::Modifier;
         }
 
         /// If the object can be affected by move triggers on the X axis.
         /// @see GameObject::shouldLockX
-        virtual bool shouldLockX() override {
+        [[nodiscard]] virtual bool shouldLockX() override {
             return false;
         }
 
         /// If the object should end the animation dirty.
         /// @see GameObject::shouldNotHideAnimFreeze
-        virtual bool shouldNotHideAnimFreeze() override {
+        [[nodiscard]] virtual bool shouldNotHideAnimFreeze() override {
             return false;
         }
 
         /// If the object uses an animation with a delayed start.
         /// @see GameObject::usesFreezeAnimation
-        virtual bool usesFreezeAnimation() override {
+        [[nodiscard]] virtual bool usesFreezeAnimation() override {
             return false;
         }
 
         /// If the object is animated.
         /// @see GameObject::usesSpecialAnimation
-        virtual bool usesSpecialAnimation() override {
+        [[nodiscard]] virtual bool usesSpecialAnimation() override {
             return false;
         }
 
@@ -404,7 +404,7 @@ namespace object_collab {
 
         /// Gets the raw save string of the object.
         /// @see GameObject::getSaveString
-        virtual gd::string getSaveString(GJBaseGameLayer* layer) override {
+        [[nodiscard]] virtual gd::string getSaveString(GJBaseGameLayer* layer) override {
             const CustomProperties& customProperties = this->getCustomProperties();
             const std::vector<std::string_view> properties = split(T::getSaveString(layer), ',');
             geode::utils::StringBuffer buffer;
@@ -483,7 +483,7 @@ namespace object_collab {
 
         /// @note This exists for simplified use of the templated class internally.
         /// @returns The instance as a game object.
-        inline GameObject* getGameObject() override {
+        [[nodiscard]] inline GameObject* getGameObject() override {
             return this;
         }
     };

@@ -20,14 +20,15 @@ ToggleMenuNode* ToggleMenuNode::create(const Selected& selected, Popup* popup, T
 bool ToggleMenuNode::init(const Selected& selected, Popup* popup, ToggleMenu& toggleMenu) {
     if (!ValueMenuNode::init()) return false;
 
+    CurrentValueCallback<bool> currentValueCallback = toggleMenu.releaseCurrentValue();
     CCMenuItemToggler* toggler = CCMenuItemExt::createTogglerWithStandardSprites(0.7f, [
         selected, popup, onValue = toggleMenu.releaseOnValue()
     ](CCMenuItemToggler* toggler) mutable {
-        onValue(!toggler->isToggled(), selected, popup);
+        if (onValue) onValue(!toggler->isToggled(), selected, popup);
     });
     CCLabelBMFont* label = CCLabelBMFont::create(toggleMenu.getTitle().c_str(), "bigFont.fnt");
 
-    toggler->toggle(toggleMenu.releaseCurrentValue()(selected, popup));
+    toggler->toggle(currentValueCallback ? currentValueCallback(selected, popup) : false);
     label->setScale(0.35f);
     this->registerValue(toggler);
     this->registerTitle(label);

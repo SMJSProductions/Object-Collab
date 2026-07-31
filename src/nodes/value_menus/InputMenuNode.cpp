@@ -18,7 +18,8 @@ InputMenuNode* InputMenuNode::create(const Selected& selected, Popup* popup, Inp
 }
 
 bool InputMenuNode::init(const Selected& selected, Popup* popup, InputMenu& inputMenu) {
-    std::string currentValue = inputMenu.releaseCurrentValue()(selected, popup);
+    CurrentValueCallback<std::string> currentValueCallback = inputMenu.releaseCurrentValue();
+    std::string currentValue = currentValueCallback ? currentValueCallback(selected, popup) : "";
     TextInput* input = TextInput::create(240, inputMenu.getPlaceholder().empty() ? ZStringView(currentValue) : inputMenu.getPlaceholder());
     CCSprite* clearSprite = CCSprite::createWithSpriteFrameName("GJ_resetBtn_001.png");
     CCMenuItemSpriteExtra* clearButton = CCMenuItemExt::createSpriteExtra(clearSprite, [input](CCMenuItemSpriteExtra* sender) {
@@ -31,7 +32,7 @@ bool InputMenuNode::init(const Selected& selected, Popup* popup, InputMenu& inpu
     input->setMaxCharCount(inputMenu.getMaxSize());
     input->setCallbackEnabled(true);
     input->setCallback([selected, popup, onValue = inputMenu.releaseOnValue()](const std::string& value) mutable {
-        onValue(value, selected, popup);
+        if (onValue) onValue(value, selected, popup);
     });
     clearButton->setID("clear");
 

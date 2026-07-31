@@ -46,15 +46,15 @@ namespace object_collab::editor_popup {
         public:
             ~Builder();
             /// @param id The ID assigned to the menu.
-            Builder&& id(std::string id) &&;
+            [[nodiscard]] Builder&& id(std::string id) &&;
             /// @param title The title of the popup section.
-            Builder&& title(std::string title) &&;
+            [[nodiscard]] Builder&& title(std::string title) &&;
             /// @param description The description of the info popup which supports color tags (e.g. `<cy></c>`).
-            Builder&& description(std::string description) &&;
-            InfoPopup build() &&;
+            [[nodiscard]] Builder&& description(std::string description) &&;
+            [[nodiscard]] InfoPopup build() &&;
         };
 
-        static Builder builder();
+        [[nodiscard]] static Builder builder();
 
         InfoPopup& operator=(InfoPopup&& other) noexcept;
         InfoPopup& operator=(const InfoPopup& other) noexcept = delete;
@@ -62,9 +62,9 @@ namespace object_collab::editor_popup {
         InfoPopup(InfoPopup&& other) noexcept;
         InfoPopup(const InfoPopup& other) noexcept = delete;
         ~InfoPopup();
-        geode::ZStringView getID() const;
-        geode::ZStringView getTitle() const;
-        geode::ZStringView getDescription() const;
+        [[nodiscard]] geode::ZStringView getID() const;
+        [[nodiscard]] geode::ZStringView getTitle() const;
+        [[nodiscard]] geode::ZStringView getDescription() const;
     };
 
     class OBJC_API_DLL ToggleMenu : public ValueMenu {
@@ -83,17 +83,17 @@ namespace object_collab::editor_popup {
         public:
             ~Builder();
             /// @param id The ID assigned to the menu.
-            Builder&& id(std::string id) &&;
+            [[nodiscard]] Builder&& id(std::string id) &&;
             /// @param title The title of the popup section.
-            Builder&& title(std::string title) &&;
+            [[nodiscard]] Builder&& title(std::string title) &&;
             /// @param onValue A callback to digest any value changes.
-            Builder&& onValue(ValueUpdateCallback<bool> onValue) &&;
+            [[nodiscard]] Builder&& onValue(ValueUpdateCallback<bool> onValue) &&;
             /// @param currentValue The current value getter callback.
-            Builder&& currentValue(CurrentValueCallback<bool> currentValue) &&;
-            std::unique_ptr<ToggleMenu> build() &&;
+            [[nodiscard]] Builder&& currentValue(CurrentValueCallback<bool> currentValue) &&;
+            [[nodiscard]] std::unique_ptr<ToggleMenu> build() &&;
         };
 
-        static Builder builder();
+        [[nodiscard]] static Builder builder();
 
         ToggleMenu& operator=(ToggleMenu&& other) noexcept;
         ToggleMenu& operator=(const ToggleMenu& other) noexcept = delete;
@@ -101,10 +101,10 @@ namespace object_collab::editor_popup {
         ToggleMenu(ToggleMenu&& other) noexcept;
         ToggleMenu(const ToggleMenu& other) noexcept = delete;
         ~ToggleMenu();
-        geode::ZStringView getID() const;
-        geode::ZStringView getTitle() const;
-        ValueUpdateCallback<bool> releaseOnValue();
-        CurrentValueCallback<bool> releaseCurrentValue();
+        [[nodiscard]] geode::ZStringView getID() const;
+        [[nodiscard]] geode::ZStringView getTitle() const;
+        [[nodiscard]] ValueUpdateCallback<bool> releaseOnValue();
+        [[nodiscard]] CurrentValueCallback<bool> releaseCurrentValue();
     };
 
     class OBJC_API_DLL NumericMenu : public ValueMenu {
@@ -132,37 +132,37 @@ namespace object_collab::editor_popup {
         public:
             ~Builder();
             /// @param id The ID assigned to the menu.
-            Builder&& id(std::string id) &&;
+            [[nodiscard]] Builder&& id(std::string id) &&;
             /// @param title The title of the popup section.
-            Builder&& title(std::string title) &&;
+            [[nodiscard]] Builder&& title(std::string title) &&;
             /// @param onValue A callback to digest any value changes.
-            Builder&& onValue(ValueUpdateCallback<float> onValue) &&;
+            [[nodiscard]] Builder&& onValue(ValueUpdateCallback<float> onValue) &&;
             /// @param currentValue The current value getter callback.
-            Builder&& currentValue(CurrentValueCallback<float> currentValue) &&;
+            [[nodiscard]] Builder&& currentValue(CurrentValueCallback<float> currentValue) &&;
             /// @note Default is "Num".
             /// @param placeholder A placeholder label set when no value is present.
-            Builder&& placeholder(std::string placeholder) &&;
+            [[nodiscard]] Builder&& placeholder(std::string placeholder) &&;
             /// @note Default is NumericMenu::InputType::TextBox.
             /// @param inputType The type of input style.
-            Builder&& inputType(InputType inputType) &&;
+            [[nodiscard]] Builder&& inputType(InputType inputType) &&;
             /// @note Default is 2.
             /// @param precision The precision of the numeric value.
-            Builder&& precision(size_t precision) &&;
+            [[nodiscard]] Builder&& precision(size_t precision) &&;
             /// @note Default is 1.
             /// @param stepSize The step size of the input.
-            Builder&& stepSize(float stepSize) &&;
+            [[nodiscard]] Builder&& stepSize(float stepSize) &&;
             /// @note Default is std::nullopt.
             /// @note std::nullopt = No min value if range is false, 0 if true.
             /// @param min The min numeric value.
-            Builder&& min(std::optional<float> min) &&;
+            [[nodiscard]] Builder&& min(std::optional<float> min) &&;
             /// @note Default is std::nullopt.
             /// @note std::nullopt = No max value if range is false, 100 if true.
             /// @param max The max numeric value.
-            Builder&& max(std::optional<float> max) &&;
-            std::unique_ptr<NumericMenu> build() &&;
+            [[nodiscard]] Builder&& max(std::optional<float> max) &&;
+            [[nodiscard]] std::unique_ptr<NumericMenu> build() &&;
         };
 
-        static Builder builder();
+        [[nodiscard]] static Builder builder();
 
         NumericMenu& operator=(NumericMenu&& other) noexcept;
         NumericMenu& operator=(const NumericMenu& other) noexcept = delete;
@@ -170,16 +170,16 @@ namespace object_collab::editor_popup {
         NumericMenu(NumericMenu&& other) noexcept;
         NumericMenu(const NumericMenu& other) noexcept = delete;
         ~NumericMenu();
-        geode::ZStringView getID() const;
-        geode::ZStringView getTitle() const;
-        ValueUpdateCallback<float> releaseOnValue();
-        CurrentValueCallback<float> releaseCurrentValue();
-        geode::ZStringView getPlaceholder() const;
-        InputType getInputType() const;
-        size_t getPrecision() const;
-        float getStepSize() const;
-        const std::optional<float>& getMin() const;
-        const std::optional<float>& getMax() const;
+        [[nodiscard]] geode::ZStringView getID() const;
+        [[nodiscard]] geode::ZStringView getTitle() const;
+        [[nodiscard]] ValueUpdateCallback<float> releaseOnValue();
+        [[nodiscard]] CurrentValueCallback<float> releaseCurrentValue();
+        [[nodiscard]] geode::ZStringView getPlaceholder() const;
+        [[nodiscard]] InputType getInputType() const;
+        [[nodiscard]] size_t getPrecision() const;
+        [[nodiscard]] float getStepSize() const;
+        [[nodiscard]] const std::optional<float>& getMin() const;
+        [[nodiscard]] const std::optional<float>& getMax() const;
     };
 
     class OBJC_API_DLL InputMenu : public ValueMenu {
@@ -198,27 +198,27 @@ namespace object_collab::editor_popup {
         public:
             ~Builder();
             /// @param id The ID assigned to the menu.
-            Builder&& id(std::string id) &&;
+            [[nodiscard]] Builder&& id(std::string id) &&;
             /// @param title The title of the popup section.
-            Builder&& title(std::string title) &&;
+            [[nodiscard]] Builder&& title(std::string title) &&;
             /// @param onValue A callback to digest any value changes.
-            Builder&& onValue(ValueUpdateCallback<const std::string&> onValue) &&;
+            [[nodiscard]] Builder&& onValue(ValueUpdateCallback<const std::string&> onValue) &&;
             /// @param currentValue The current value getter callback.
-            Builder&& currentValue(CurrentValueCallback<std::string> currentValue) &&;
+            [[nodiscard]] Builder&& currentValue(CurrentValueCallback<std::string> currentValue) &&;
             /// @note Default is "Text".
             /// @param placeholder A placeholder label set when no text is present.
-            Builder&& placeholder(std::string placeholder) &&;
+            [[nodiscard]] Builder&& placeholder(std::string placeholder) &&;
             /// @note Empty = No filter.
             /// @param allowedChars The characters allowed in the input (due to limitations in Cocos it can't support any characters Cocos doesn't natively support).
-            Builder&& allowedChars(std::string allowedChars) &&;
+            [[nodiscard]] Builder&& allowedChars(std::string allowedChars) &&;
             /// @note Default is std::string::npos.
             /// @note std::string::npos = No limit.
             /// @param maxSize The max amount of characters in the input.
-            Builder&& maxSize(size_t maxSize) &&;
-            std::unique_ptr<InputMenu> build() &&;
+            [[nodiscard]] Builder&& maxSize(size_t maxSize) &&;
+            [[nodiscard]] std::unique_ptr<InputMenu> build() &&;
         };
 
-        static Builder builder();
+        [[nodiscard]] static Builder builder();
 
         InputMenu& operator=(InputMenu&& other) noexcept;
         InputMenu& operator=(const InputMenu& other) noexcept = delete;
@@ -226,13 +226,13 @@ namespace object_collab::editor_popup {
         InputMenu(InputMenu&& other) noexcept;
         InputMenu(const InputMenu& other) noexcept = delete;
         ~InputMenu();
-        geode::ZStringView getID() const;
-        geode::ZStringView getTitle() const;
-        ValueUpdateCallback<const std::string&> releaseOnValue();
-        CurrentValueCallback<std::string> releaseCurrentValue();
-        geode::ZStringView getPlaceholder() const;
-        geode::ZStringView getAllowedChars() const;
-        size_t getMaxSize() const;
+        [[nodiscard]] geode::ZStringView getID() const;
+        [[nodiscard]] geode::ZStringView getTitle() const;
+        [[nodiscard]] ValueUpdateCallback<const std::string&> releaseOnValue();
+        [[nodiscard]] CurrentValueCallback<std::string> releaseCurrentValue();
+        [[nodiscard]] geode::ZStringView getPlaceholder() const;
+        [[nodiscard]] geode::ZStringView getAllowedChars() const;
+        [[nodiscard]] size_t getMaxSize() const;
     };
 
     class OBJC_API_DLL EnumMenu : public ValueMenu {
@@ -251,22 +251,22 @@ namespace object_collab::editor_popup {
         public:
             ~Builder();
             /// @param id The ID assigned to the menu.
-            Builder&& id(std::string id) &&;
+            [[nodiscard]] Builder&& id(std::string id) &&;
             /// @param title The title of the popup section.
-            Builder&& title(std::string title) &&;
+            [[nodiscard]] Builder&& title(std::string title) &&;
             /// @param onValue A callback to digest any value changes.
-            Builder&& onValue(ValueUpdateCallback<const std::string&> onValue) &&;
+            [[nodiscard]] Builder&& onValue(ValueUpdateCallback<const std::string&> onValue) &&;
             /// @param currentValue The current value getter callback.
-            Builder&& currentValue(CurrentValueCallback<std::string> currentValue) &&;
+            [[nodiscard]] Builder&& currentValue(CurrentValueCallback<std::string> currentValue) &&;
             /// @param value An enum value.
-            Builder&& value(std::string value) &&;
+            [[nodiscard]] Builder&& value(std::string value) &&;
             /// @note An empty vector is considered invalid and will skip this node in the list.
             /// @param values The list of enum values.
-            Builder&& values(std::vector<std::string> values) &&;
-            std::unique_ptr<EnumMenu> build() &&;
+            [[nodiscard]] Builder&& values(std::vector<std::string> values) &&;
+            [[nodiscard]] std::unique_ptr<EnumMenu> build() &&;
         };
 
-        static Builder builder();
+        [[nodiscard]] static Builder builder();
 
         EnumMenu& operator=(EnumMenu&& other) noexcept;
         EnumMenu& operator=(const EnumMenu& other) noexcept = delete;
@@ -274,12 +274,12 @@ namespace object_collab::editor_popup {
         EnumMenu(EnumMenu&& other) noexcept;
         EnumMenu(const EnumMenu& other) noexcept = delete;
         ~EnumMenu();
-        geode::ZStringView getID() const;
-        geode::ZStringView getTitle() const;
-        ValueUpdateCallback<const std::string&> releaseOnValue();
-        CurrentValueCallback<std::string> releaseCurrentValue();
-        std::span<std::string> getValues() const;
-        std::vector<std::string> releaseValues();
+        [[nodiscard]] geode::ZStringView getID() const;
+        [[nodiscard]] geode::ZStringView getTitle() const;
+        [[nodiscard]] ValueUpdateCallback<const std::string&> releaseOnValue();
+        [[nodiscard]] CurrentValueCallback<std::string> releaseCurrentValue();
+        [[nodiscard]] std::span<std::string> getValues() const;
+        [[nodiscard]] std::vector<std::string> releaseValues();
     };
 
     class OBJC_API_DLL CustomValueMenu : public ValueMenu {
@@ -298,15 +298,15 @@ namespace object_collab::editor_popup {
         public:
             ~Builder();
             /// @param id The ID assigned to the menu.
-            Builder&& id(std::string id) &&;
+            [[nodiscard]] Builder&& id(std::string id) &&;
             /// @param title The title of the popup section.
-            Builder&& title(std::string title) &&;
+            [[nodiscard]] Builder&& title(std::string title) &&;
             /// @param factory The node factory for a custom value menu.
-            Builder&& factory(CustomMenuFactory factory) &&;
-            std::unique_ptr<CustomValueMenu> build() &&;
+            [[nodiscard]] Builder&& factory(CustomMenuFactory factory) &&;
+            [[nodiscard]] std::unique_ptr<CustomValueMenu> build() &&;
         };
 
-        static Builder builder();
+        [[nodiscard]] static Builder builder();
 
         CustomValueMenu& operator=(CustomValueMenu&& other) noexcept;
         CustomValueMenu& operator=(const CustomValueMenu& other) noexcept = delete;
@@ -314,9 +314,9 @@ namespace object_collab::editor_popup {
         CustomValueMenu(CustomValueMenu&& other) noexcept;
         CustomValueMenu(const CustomValueMenu& other) noexcept = delete;
         ~CustomValueMenu();
-        geode::ZStringView getID() const;
-        geode::ZStringView getTitle() const;
-        CustomMenuFactory releaseFactory();
+        [[nodiscard]] geode::ZStringView getID() const;
+        [[nodiscard]] geode::ZStringView getTitle() const;
+        [[nodiscard]] CustomMenuFactory releaseFactory();
     };
 
     class OBJC_API_DLL AxisLayoutMenu : public ValueMenu {
@@ -335,45 +335,45 @@ namespace object_collab::editor_popup {
         public:
             ~Builder();
             /// @param id The ID assigned to the menu.
-            Builder&& id(std::string id) &&;
+            [[nodiscard]] Builder&& id(std::string id) &&;
             /// @param title The title of the popup section.
-            Builder&& title(std::string title) &&;
+            [[nodiscard]] Builder&& title(std::string title) &&;
             /// @note Default is geode::Axis::Column.
             /// @see geode::SimpleAxisLayout::setAxis
             /// @param axis The layout axis.
-            Builder&& axis(geode::Axis axis) &&;
+            [[nodiscard]] Builder&& axis(geode::Axis axis) &&;
             /// @note Default is 10.
             /// @see geode::SimpleAxisLayout::setGap
             /// @param gap The layout gap.
-            Builder&& gap(float gap) &&;
+            [[nodiscard]] Builder&& gap(float gap) &&;
             /// @note Default is geode::AxisDirection::LeftToRight.
             /// @see geode::SimpleAxisLayout::setMainAxisDirection
             /// @param direction The layout main axis direction.
-            Builder&& mainAxisDirection(geode::AxisDirection direction) &&;
+            [[nodiscard]] Builder&& mainAxisDirection(geode::AxisDirection direction) &&;
             /// @note Default is geode::MainAxisAlignment::Start.
             /// @see geode::SimpleAxisLayout::setMainAxisAlignment
             /// @param direction The layout main axis alignment.
-            Builder&& mainAxisAlignment(geode::MainAxisAlignment alignment) &&;
+            [[nodiscard]] Builder&& mainAxisAlignment(geode::MainAxisAlignment alignment) &&;
             /// @note Default is geode::AxisDirection::LeftToRight.
             /// @see geode::SimpleAxisLayout::setCrossAxisDirection
             /// @param direction The layout cross axis direction.
-            Builder&& crossAxisDirection(geode::AxisDirection direction) &&;
+            [[nodiscard]] Builder&& crossAxisDirection(geode::AxisDirection direction) &&;
             /// @note Default is geode::CrossAxisAlignment::Center.
             /// @see geode::SimpleAxisLayout::setCrossAxisAlignment
             /// @param direction The layout cross axis alignment.
-            Builder&& crossAxisAlignment(geode::CrossAxisAlignment alignment) &&;
+            [[nodiscard]] Builder&& crossAxisAlignment(geode::CrossAxisAlignment alignment) &&;
             /// @note Default is true.
             /// @see geode::SimpleAxisLayout::ignoreInvisibleChildren
             /// @param enabled If invisible children should be ignored in the layout.
-            Builder&& ignoreInvisibleChildren(bool enabled) &&;
+            [[nodiscard]] Builder&& ignoreInvisibleChildren(bool enabled) &&;
             /// @param menu A value menu shown in the layout.
-            Builder&& menu(std::unique_ptr<ValueMenu> menu) &&;
+            [[nodiscard]] Builder&& menu(std::unique_ptr<ValueMenu> menu) &&;
             /// @param menus A list of value menus shown in the layout.
-            Builder&& menus(std::vector<std::unique_ptr<ValueMenu>> menus) &&;
-            std::unique_ptr<AxisLayoutMenu> build() &&;
+            [[nodiscard]] Builder&& menus(std::vector<std::unique_ptr<ValueMenu>> menus) &&;
+            [[nodiscard]] std::unique_ptr<AxisLayoutMenu> build() &&;
         };
 
-        static Builder builder();
+        [[nodiscard]] static Builder builder();
 
         AxisLayoutMenu& operator=(AxisLayoutMenu&& other) noexcept;
         AxisLayoutMenu& operator=(const AxisLayoutMenu& other) noexcept = delete;
@@ -381,17 +381,17 @@ namespace object_collab::editor_popup {
         AxisLayoutMenu(AxisLayoutMenu&& other) noexcept;
         AxisLayoutMenu(const AxisLayoutMenu& other) noexcept = delete;
         ~AxisLayoutMenu();
-        geode::ZStringView getID() const;
-        geode::ZStringView getTitle() const;
-        geode::Axis getAxis() const;
-        float getGap() const;
-        geode::AxisDirection getMainAxisDirection() const;
-        geode::MainAxisAlignment getMainAxisAlignment() const;
-        geode::AxisDirection getCrossAxisDirection() const;
-        geode::CrossAxisAlignment getCrossAxisAlignment() const;
-        bool getIgnoreInvisibleChildren() const;
-        std::span<std::unique_ptr<ValueMenu>> getMenus() const;
-        std::vector<std::unique_ptr<ValueMenu>> releaseMenus();
+        [[nodiscard]] geode::ZStringView getID() const;
+        [[nodiscard]] geode::ZStringView getTitle() const;
+        [[nodiscard]] geode::Axis getAxis() const;
+        [[nodiscard]] float getGap() const;
+        [[nodiscard]] geode::AxisDirection getMainAxisDirection() const;
+        [[nodiscard]] geode::MainAxisAlignment getMainAxisAlignment() const;
+        [[nodiscard]] geode::AxisDirection getCrossAxisDirection() const;
+        [[nodiscard]] geode::CrossAxisAlignment getCrossAxisAlignment() const;
+        [[nodiscard]] bool getIgnoreInvisibleChildren() const;
+        [[nodiscard]] std::span<std::unique_ptr<ValueMenu>> getMenus() const;
+        [[nodiscard]] std::vector<std::unique_ptr<ValueMenu>> releaseMenus();
     };
 
     class OBJC_API_DLL PopupConfig {
@@ -410,42 +410,42 @@ namespace object_collab::editor_popup {
         public:
             ~Builder();
             /// @param id The ID assigned to the menu.
-            Builder&& id(std::string id) &&;
+            [[nodiscard]] Builder&& id(std::string id) &&;
             /// @param title The title of the popup section.
-            Builder&& title(std::string title) &&;
+            [[nodiscard]] Builder&& title(std::string title) &&;
             /// @note Default is 300.
             /// @param width The popup width.
-            Builder&& width(float width) &&;
+            [[nodiscard]] Builder&& width(float width) &&;
             /// @note Default is 200.
             /// @param height The popup height.
-            Builder&& height(float height) &&;
+            [[nodiscard]] Builder&& height(float height) &&;
             /// @note Default is 10.
             /// @param gap The gap on the X axis.
-            Builder&& gapX(float gap) &&;
+            [[nodiscard]] Builder&& gapX(float gap) &&;
             /// @note Default is 10.
             /// @param gap The gap on the Y axis.
-            Builder&& gapY(float gap) &&;
+            [[nodiscard]] Builder&& gapY(float gap) &&;
             /// @note Empty = No info.
             /// @param info The info button details of the popup.
-            Builder&& info(InfoPopup info) &&;
+            [[nodiscard]] Builder&& info(InfoPopup info) &&;
             /// @param menu A value menu shown in the popup.
-            Builder&& menu(std::unique_ptr<ValueMenu> menu) &&;
+            [[nodiscard]] Builder&& menu(std::unique_ptr<ValueMenu> menu) &&;
             /// @param menus A list of value menus shown in the popup.
-            Builder&& menus(std::vector<std::unique_ptr<ValueMenu>> menus) &&;
+            [[nodiscard]] Builder&& menus(std::vector<std::unique_ptr<ValueMenu>> menus) &&;
             /// @note Default is false.
             /// @param enabled If true, adds the default trigger toggles to the toggle list.
-            Builder&& triggerToggles(bool enabled) &&;
+            [[nodiscard]] Builder&& triggerToggles(bool enabled) &&;
             /// @note Default is false.
             /// @param enabled If true, adds the default no multi activate toggle to the toggle list.
-            Builder&& noMultiActivateToggle(bool enabled) &&;
+            [[nodiscard]] Builder&& noMultiActivateToggle(bool enabled) &&;
             /// @param toggle A toggle in the bottom left corner of the popup.
-            Builder&& toggle(std::unique_ptr<ToggleMenu> toggle) &&;
+            [[nodiscard]] Builder&& toggle(std::unique_ptr<ToggleMenu> toggle) &&;
             /// @param toggles A list of toggles in the bottom left corner of the popup.
-            Builder&& toggles(std::vector<std::unique_ptr<ToggleMenu>> toggles) &&;
-            PopupConfig build() &&;
+            [[nodiscard]] Builder&& toggles(std::vector<std::unique_ptr<ToggleMenu>> toggles) &&;
+            [[nodiscard]] PopupConfig build() &&;
         };
 
-        static Builder builder();
+        [[nodiscard]] static Builder builder();
 
         PopupConfig& operator=(PopupConfig&& other) noexcept;
         PopupConfig& operator=(const PopupConfig& other) noexcept = delete;
@@ -453,19 +453,19 @@ namespace object_collab::editor_popup {
         PopupConfig(PopupConfig&& other) noexcept;
         PopupConfig(const PopupConfig& other) noexcept = delete;
         ~PopupConfig();
-        geode::ZStringView getID() const;
-        geode::ZStringView getTitle() const;
-        float getWidth() const;
-        float getHeight() const;
-        float getGapX() const;
-        float getGapY() const;
-        const InfoPopup& getInfo() const;
-        std::span<std::unique_ptr<ValueMenu>> getMenus() const;
-        std::vector<std::unique_ptr<ValueMenu>> releaseMenus();
-        bool getTriggerToggles() const;
-        bool getNoMultiActivateToggle() const;
-        std::span<std::unique_ptr<ToggleMenu>> getToggles() const;
-        std::vector<std::unique_ptr<ToggleMenu>> releaseToggles();
+        [[nodiscard]] geode::ZStringView getID() const;
+        [[nodiscard]] geode::ZStringView getTitle() const;
+        [[nodiscard]] float getWidth() const;
+        [[nodiscard]] float getHeight() const;
+        [[nodiscard]] float getGapX() const;
+        [[nodiscard]] float getGapY() const;
+        [[nodiscard]] const InfoPopup& getInfo() const;
+        [[nodiscard]] std::span<std::unique_ptr<ValueMenu>> getMenus() const;
+        [[nodiscard]] std::vector<std::unique_ptr<ValueMenu>> releaseMenus();
+        [[nodiscard]] bool getTriggerToggles() const;
+        [[nodiscard]] bool getNoMultiActivateToggle() const;
+        [[nodiscard]] std::span<std::unique_ptr<ToggleMenu>> getToggles() const;
+        [[nodiscard]] std::vector<std::unique_ptr<ToggleMenu>> releaseToggles();
     };
 
     template<typename V, typename T>
@@ -508,7 +508,7 @@ namespace object_collab::editor_popup {
     }
 
     template<typename V, typename T>
-    inline V getCommonValueOrDefault(const Selected& selected, V T::* member, auto defaultValue) {
+    [[nodiscard]] inline V getCommonValueOrDefault(const Selected& selected, V T::* member, auto defaultValue) {
         if (selected.empty()) return defaultValue;
 
         const V& firstValue = geode::cast::typeinfo_cast<T*>(selected[0])->*member;
@@ -521,7 +521,7 @@ namespace object_collab::editor_popup {
     }
 
     template<typename V>
-    inline V getCommonPropertyValueOrDefault(const Selected& selected, size_t property) {
+    [[nodiscard]] inline V getCommonPropertyValueOrDefault(const Selected& selected, size_t property) {
         if (selected.empty()) return V();
 
         const CustomProperties& firstCustomProperties = selected[0]->getCustomProperties();

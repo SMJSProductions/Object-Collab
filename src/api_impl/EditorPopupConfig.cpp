@@ -18,7 +18,11 @@ using namespace object_collab::editor_popup;
     }
 
 #define CONFIG_GETTER(name, type, variable, title) type name::get##title() const { return m_impl->variable; }
-#define VALUE_RELEASE(name, type, variable, title) type name::release##title() { return std::move(m_impl->variable); }
+#define VALUE_RELEASE(name, type, variable, title, default) type name::release##title() { \
+        auto variable = std::move(m_impl->variable); \
+        m_impl->variable = default; \
+        return std::move(variable); \
+    }
 
 #define CONFIG_VALUE(name, inType, outType, variable, title) \
     BUILDER_PARAM(name, inType, variable) \
@@ -30,7 +34,7 @@ using namespace object_collab::editor_popup;
     VECTOR_PARAM(name, type, variable) \
     CONFIG_GETTER(name, std::span<type>, variable##s, title) \
     BUILDER_PARAM(name, std::vector<type>, variable##s) \
-    VALUE_RELEASE(name, std::vector<type>, variable##s, title)
+    VALUE_RELEASE(name, std::vector<type>, variable##s, title, std::vector<type>())
 
 #define IMPL_VALUES() \
     std::string id; \
@@ -58,8 +62,8 @@ using namespace object_collab::editor_popup;
     PTR_BUILD_IMPL(name) \
     BUILDER_PARAM(name, ValueUpdateCallback<type __VA_ARGS__>, onValue) \
     BUILDER_PARAM(name, CurrentValueCallback<type>, currentValue) \
-    VALUE_RELEASE(name, ValueUpdateCallback<type __VA_ARGS__>, onValue, OnValue) \
-    VALUE_RELEASE(name, CurrentValueCallback<type>, currentValue, CurrentValue)
+    VALUE_RELEASE(name, ValueUpdateCallback<type __VA_ARGS__>, onValue, OnValue, nullptr) \
+    VALUE_RELEASE(name, CurrentValueCallback<type>, currentValue, CurrentValue, nullptr)
 
 struct InfoPopup::Impl {
     IMPL_VALUES();
@@ -122,7 +126,7 @@ struct CustomValueMenu::Impl {
 CONFIG_IMPL(CustomValueMenu);
 PTR_BUILD_IMPL(CustomValueMenu);
 BUILDER_PARAM(CustomValueMenu, CustomMenuFactory, factory);
-VALUE_RELEASE(CustomValueMenu, CustomMenuFactory, factory, Factory);
+VALUE_RELEASE(CustomValueMenu, CustomMenuFactory, factory, Factory, nullptr);
 
 struct AxisLayoutMenu::Impl {
     IMPL_VALUES();

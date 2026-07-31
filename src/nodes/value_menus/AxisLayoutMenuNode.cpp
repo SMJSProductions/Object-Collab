@@ -31,8 +31,8 @@ bool AxisLayoutMenuNode::init(const Selected& selected, Popup* popup, AxisLayout
             menuContainer->addChild(EnumMenuNode::create(selected, popup, *enumMenu));
         } else if (CustomValueMenu* customValueMenu = typeinfo_cast<CustomValueMenu*>(menu.get())) {
             menuContainer->addChild(CustomValueMenuNode::create(selected, popup, *customValueMenu));
-        } else if (AxisLayoutMenu* axisLayoutMenu = typeinfo_cast<AxisLayoutMenu*>(menu.get())) {
-            menuContainer->addChild(AxisLayoutMenuNode::create(selected, popup, *axisLayoutMenu));
+        } else if (AxisLayoutMenu* subAxisLayoutMenu = typeinfo_cast<AxisLayoutMenu*>(menu.get())) {
+            menuContainer->addChild(AxisLayoutMenuNode::create(selected, popup, *subAxisLayoutMenu));
         }
     }
 

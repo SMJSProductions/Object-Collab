@@ -81,7 +81,7 @@ void EditorPopup::addInfo(const InfoPopup& info) {
 void EditorPopup::addMenus(PopupConfig& config) {
     CCMenu* menuContainer = CCMenu::create();
 
-    for (const std::unique_ptr<ValueMenu>& menu : config.releaseMenus()) {
+    for (const std::unique_ptr<ValueMenu>& menu : config.getMenus()) {
         if (ToggleMenu* toggleMenu = typeinfo_cast<ToggleMenu*>(menu.get())) {
             menuContainer->addChild(ToggleMenuNode::create(m_selected, this, *toggleMenu));
         } else if (NumericMenu* numericMenu = typeinfo_cast<NumericMenu*>(menu.get())) {
@@ -120,7 +120,7 @@ void EditorPopup::addToggles(PopupConfig& config) {
         this->addNoMultiActivateToggle(container);
     }
 
-    for (const std::unique_ptr<ToggleMenu>& toggleMenu : config.releaseToggles()) {
+    for (const std::unique_ptr<ToggleMenu>& toggleMenu : config.getToggles()) {
         container->addChild(ToggleMenuNode::create(m_selected, this, *toggleMenu.get()));
     }
 

@@ -18,7 +18,12 @@ CustomValueMenuNode* CustomValueMenuNode::create(const Selected& selected, Popup
 }
 
 bool CustomValueMenuNode::init(const Selected& selected, Popup* popup, CustomValueMenu& customValueMenu) {
-    return this->initBaseMenuInverted(customValueMenu.getID(), customValueMenu.getTitle(), nullptr, {
-        customValueMenu.releaseFactory()(selected, popup)
-    });
+    CustomMenuFactory factory = customValueMenu.releaseFactory();
+    std::vector<CCNode*> nodes;
+
+    if (factory) {
+        nodes.emplace_back(factory(selected, popup));
+    }
+
+    return this->initBaseMenuInverted(customValueMenu.getID(), customValueMenu.getTitle(), nullptr, std::move(nodes));
 }

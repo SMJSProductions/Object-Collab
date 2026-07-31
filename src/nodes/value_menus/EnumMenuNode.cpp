@@ -31,6 +31,7 @@ bool EnumMenuNode::init(EnumMenu& enumMenu) {
     CCNode* container = CCNode::create();
     CCSprite* leftSprite = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
     CCSprite* rightSprite = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
+    CurrentValueCallback<std::string> currentValueCallback = enumMenu.releaseCurrentValue();
 
     leftSprite->setScale(0.56f);
     rightSprite->setScale(0.56f);
@@ -42,7 +43,7 @@ bool EnumMenuNode::init(EnumMenu& enumMenu) {
     m_right = CCMenuItemExt::createSpriteExtra(rightSprite, [this](CCMenuItemSpriteExtra* sender) {
         this->onClick(sender);
     });
-    m_label = CCLabelBMFont::create(enumMenu.releaseCurrentValue()(m_selected, m_popup).c_str(), "bigFont.fnt");
+    m_label = CCLabelBMFont::create(currentValueCallback ? currentValueCallback(m_selected, m_popup).c_str() : "", "bigFont.fnt");
 
     this->registerValue(m_label);
     m_left->setID("left");
@@ -82,7 +83,7 @@ void EnumMenuNode::onClick(CCMenuItemSpriteExtra* sender) {
         m_index = (m_index + (m_index == m_values.size() ? 0 : 1)) % m_values.size();
     }
 
-    m_onValue(m_values[m_index], m_selected, m_popup);
+    if (m_onValue) m_onValue(m_values[m_index], m_selected, m_popup);
     m_label->setString(m_values[m_index].c_str());
     m_label->getParent()->updateLayout();
 }
