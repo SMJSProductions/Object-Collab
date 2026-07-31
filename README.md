@@ -1,4 +1,4 @@
-# ![ ](smjs.object-collab/small-logo.png) Object Collab
+# <img src="resources/small-logo.png" height="40"> Object Collab
 
 A mod which provides a complete framework for custom objects while solving compatibility issues.
 

@@ -27,6 +27,9 @@
     "alphalaneous.level-storage-api": ">=v1.0.4"
 	},
   "resources": {
+    "sprites": [
+      "resources/small-logo.png"
+    ],
     "spritesheets": {
       "objects": [
         "resources/objects/*.png"
