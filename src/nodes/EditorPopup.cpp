@@ -59,7 +59,8 @@ bool EditorPopup::init(PopupConfig& config) {
 
     this->setID(config.getID());
     this->addInfo(config.getInfo());
-    this->addToggles(config);
+    this->addToggles(config, true);
+    this->addToggles(config, false);
     this->addMenus(config);
 
     return true;
@@ -108,19 +109,19 @@ void EditorPopup::addMenus(PopupConfig& config) {
     m_contentLayer->updateLayout();
 }
 
-void EditorPopup::addToggles(PopupConfig& config) {
+void EditorPopup::addToggles(PopupConfig& config, const bool left) {
     CCNode* container = CCNode::create();
     bool shouldAddMultiTrigger = false;
 
-    if (config.getTriggerToggles()) {
+    if (left && config.getTriggerToggles()) {
         shouldAddMultiTrigger = this->addTriggerToggles(container);
     }
 
-    if (config.getNoMultiActivateToggle()) {
+    if (left && config.getNoMultiActivateToggle()) {
         this->addNoMultiActivateToggle(container);
     }
 
-    for (const std::unique_ptr<ToggleMenu>& toggleMenu : config.getToggles()) {
+    for (const std::unique_ptr<ToggleMenu>& toggleMenu : (left ? config.getLeftToggles() : config.getRightToggles())) {
         container->addChild(ToggleMenuNode::create(m_selected, this, *toggleMenu.get()));
     }
 
@@ -132,12 +133,14 @@ void EditorPopup::addToggles(PopupConfig& config) {
         m_extraButtons->getPositionX() - m_extraButtons->getContentWidth() * m_extraButtons->getAnchorPoint().x - 20,
         40
     });
+    container->setAnchorPoint({ static_cast<float>(!left), 0 });
     container->setLayout(TableLayout::create(Axis::Column)
         ->setGap(10)
         ->setMinScale(0.4f)
         ->setMaxScale(1)
-        ->inverseMainAxis(true));
-    m_buttonMenu->addChildAtPosition(container, Anchor::BottomLeft, { 10, 10 });
+        ->inverseMainAxis(true)
+        ->inverseCrossAxis(!left));
+    m_buttonMenu->addChildAtPosition(container, left ? Anchor::BottomLeft : Anchor::BottomRight, { left ? 10.0f : -10.0f, 10 });
 }
 
 bool EditorPopup::addTriggerToggles(CCNode* container) {

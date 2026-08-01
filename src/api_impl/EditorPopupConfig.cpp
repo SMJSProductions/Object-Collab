@@ -188,7 +188,8 @@ struct PopupConfig::Impl {
     std::vector<std::unique_ptr<ValueMenu>> menus;
     bool triggerToggles = false;
     bool noMultiActivateToggle = false;
-    std::vector<std::unique_ptr<ToggleMenu>> toggles;
+    std::vector<std::unique_ptr<ToggleMenu>> leftToggles;
+    std::vector<std::unique_ptr<ToggleMenu>> rightToggles;
 };
 
 CONFIG_IMPL(PopupConfig);
@@ -201,4 +202,5 @@ CONFIG_VALUE(PopupConfig, InfoPopup, const InfoPopup&, info, Info);
 VECTOR_VALUE(PopupConfig, std::unique_ptr<ValueMenu>, menu, Menus);
 PRIMITIVE_CONFIG_VALUE(PopupConfig, bool, triggerToggles, TriggerToggles);
 PRIMITIVE_CONFIG_VALUE(PopupConfig, bool, noMultiActivateToggle, NoMultiActivateToggle);
-VECTOR_VALUE(PopupConfig, std::unique_ptr<ToggleMenu>, toggle, Toggles);
+VECTOR_VALUE(PopupConfig, std::unique_ptr<ToggleMenu>, leftToggle, LeftToggles);
+VECTOR_VALUE(PopupConfig, std::unique_ptr<ToggleMenu>, rightToggle, RightToggles);

@@ -454,9 +454,13 @@ namespace object_collab::editor_popup {
             /// @param enabled If true, adds the default no multi activate toggle to the toggle list.
             [[nodiscard]] Builder&& noMultiActivateToggle(bool enabled) &&;
             /// @param toggle A toggle in the bottom left corner of the popup.
-            [[nodiscard]] Builder&& toggle(std::unique_ptr<ToggleMenu> toggle) &&;
+            [[nodiscard]] Builder&& leftToggle(std::unique_ptr<ToggleMenu> toggle) &&;
             /// @param toggles A list of toggles in the bottom left corner of the popup.
-            [[nodiscard]] Builder&& toggles(std::vector<std::unique_ptr<ToggleMenu>> toggles) &&;
+            [[nodiscard]] Builder&& leftToggles(std::vector<std::unique_ptr<ToggleMenu>> toggles) &&;
+            /// @param toggle A toggle in the bottom right corner of the popup.
+            [[nodiscard]] Builder&& rightToggle(std::unique_ptr<ToggleMenu> toggle) &&;
+            /// @param toggles A list of toggles in the bottom right corner of the popup.
+            [[nodiscard]] Builder&& rightToggles(std::vector<std::unique_ptr<ToggleMenu>> toggles) &&;
             [[nodiscard]] PopupConfig build() &&;
         };
 
@@ -479,8 +483,10 @@ namespace object_collab::editor_popup {
         [[nodiscard]] std::vector<std::unique_ptr<ValueMenu>> releaseMenus();
         [[nodiscard]] bool getTriggerToggles() const;
         [[nodiscard]] bool getNoMultiActivateToggle() const;
-        [[nodiscard]] std::span<std::unique_ptr<ToggleMenu>> getToggles() const;
-        [[nodiscard]] std::vector<std::unique_ptr<ToggleMenu>> releaseToggles();
+        [[nodiscard]] std::span<std::unique_ptr<ToggleMenu>> getLeftToggles() const;
+        [[nodiscard]] std::vector<std::unique_ptr<ToggleMenu>> releaseLeftToggles();
+        [[nodiscard]] std::span<std::unique_ptr<ToggleMenu>> getRightToggles() const;
+        [[nodiscard]] std::vector<std::unique_ptr<ToggleMenu>> releaseRightToggles();
     };
 
     template<typename V, typename T>

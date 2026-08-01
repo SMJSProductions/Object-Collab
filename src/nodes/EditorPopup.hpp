@@ -17,7 +17,7 @@ private:
     bool init(object_collab::editor_popup::PopupConfig& config);
     void addInfo(const object_collab::editor_popup::InfoPopup& info);
     void addMenus(object_collab::editor_popup::PopupConfig& info);
-    void addToggles(object_collab::editor_popup::PopupConfig& config);
+    void addToggles(object_collab::editor_popup::PopupConfig& config, const bool left);
     bool addTriggerToggles(cocos2d::CCNode* container);
     void addNoMultiActivateToggle(cocos2d::CCNode* container);
     void addMultiTriggerToggle(cocos2d::CCNode* container);
