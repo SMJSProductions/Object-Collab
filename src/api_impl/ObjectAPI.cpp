@@ -70,16 +70,13 @@ bool ObjectAPI::unregisterObject(std::string_view objectID) {
 
         objToolbox->m_allKeys.erase(objToolbox->m_allKeys.find(numericID.value()));
 
-        return LOOKUP_TABLE.erase(objectID) && REGISTER.erase(numericID.value());
+        return LOOKUP_TABLE.erase(LOOKUP_TABLE.find(objectID)) != LOOKUP_TABLE.end() &&
+            REGISTER.erase(REGISTER.find(numericID.value())) != REGISTER.end();
     } else {
         return false;
     }
 }
 
 bool ObjectAPI::unregisterObject(int numericID) {
-    if (REGISTER.contains(numericID)) {
-        return LOOKUP_TABLE.erase(REGISTER.at(numericID).getID()) && REGISTER.erase(numericID);
-    } else {
-        return false;
-    }
+    return ObjectAPI::unregisterObject(REGISTER.at(numericID).getID());
 }
