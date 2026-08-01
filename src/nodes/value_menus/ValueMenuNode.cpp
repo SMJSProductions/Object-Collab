@@ -2,14 +2,14 @@
 
 using namespace geode::prelude;
 
-bool ValueMenuNode::initBaseMenu(const ZStringView id, const ZStringView title, const std::span<CCNode*> nodes) {
+bool ValueMenuNode::initBaseMenu(const ZStringView id, const ZStringView title, std::vector<CCNode*> nodes) {
     if (!this->init()) return false;
 
     CCMenu* horizontalMenu = CCMenu::create();
 
     if (CCLabelBMFont* titleNode = this->createMenuTitle(title)) this->addChild(titleNode);
 
-    for (CCNode* node : nodes) {
+    for (CCNode* node : std::move(nodes)) {
         horizontalMenu->addChild(node);
     }
 
@@ -22,7 +22,7 @@ bool ValueMenuNode::initBaseMenu(const ZStringView id, const ZStringView title, 
     return true;
 }
 
-bool ValueMenuNode::initBaseMenuInverted(const ZStringView id, const ZStringView title, CCNode* titleButton, const std::span<CCNode*> nodes) {
+bool ValueMenuNode::initBaseMenuInverted(const ZStringView id, const ZStringView title, CCNode* titleButton, std::vector<CCNode*> nodes) {
     if (!this->init()) return false;
 
     CCMenu* horizontalMenu = CCMenu::create();
@@ -38,7 +38,7 @@ bool ValueMenuNode::initBaseMenuInverted(const ZStringView id, const ZStringView
 
     this->setID(id);
 
-    for (CCNode* node : nodes) {
+    for (CCNode* node : std::move(nodes)) {
         this->addChild(node);
     }
 

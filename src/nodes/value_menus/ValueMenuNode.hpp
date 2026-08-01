@@ -15,8 +15,8 @@ public:
         return m_titleNode;
     }
 protected:
-    bool initBaseMenu(const geode::ZStringView id, const geode::ZStringView title, const std::span<CCNode*> nodes);
-    bool initBaseMenuInverted(const geode::ZStringView id, const geode::ZStringView title, CCNode* titleButton, const std::span<CCNode*> nodes);
+    bool initBaseMenu(const geode::ZStringView id, const geode::ZStringView title, std::vector<CCNode*> nodes);
+    bool initBaseMenuInverted(const geode::ZStringView id, const geode::ZStringView title, CCNode* titleButton, std::vector<CCNode*> nodes);
     geode::SimpleAxisLayout* createStandardLayout(const geode::Axis axis, const float gap = 10);
     cocos2d::CCLabelBMFont* createMenuTitle(const geode::ZStringView title);
     void registerValue(cocos2d::CCNode* valueNode);

@@ -48,7 +48,7 @@ bool NumericMenuNode::init(const Selected& selected, Popup* popup, NumericMenu& 
 
         return this->initBaseMenu(numericMenu.getID(), numericMenu.getTitle(), { arrows.first, input, arrows.second });
     } else {
-        return this->initBaseMenuInverted(numericMenu.getID(), numericMenu.getTitle(), input, nodes);
+        return this->initBaseMenuInverted(numericMenu.getID(), numericMenu.getTitle(), input, std::move(nodes));
     }
 }
 
