@@ -2,7 +2,7 @@
 
 using namespace geode::prelude;
 
-bool ValueMenuNode::initBaseMenu(const ZStringView id, const ZStringView title, const std::vector<CCNode*>& nodes) {
+bool ValueMenuNode::initBaseMenu(const ZStringView id, const ZStringView title, const std::span<CCNode*> nodes) {
     if (!this->init()) return false;
 
     CCMenu* horizontalMenu = CCMenu::create();
@@ -22,7 +22,7 @@ bool ValueMenuNode::initBaseMenu(const ZStringView id, const ZStringView title, 
     return true;
 }
 
-bool ValueMenuNode::initBaseMenuInverted(const ZStringView id, const ZStringView title, CCNode* titleButton, const std::vector<CCNode*>& nodes) {
+bool ValueMenuNode::initBaseMenuInverted(const ZStringView id, const ZStringView title, CCNode* titleButton, const std::span<CCNode*> nodes) {
     if (!this->init()) return false;
 
     CCMenu* horizontalMenu = CCMenu::create();
