@@ -11,15 +11,15 @@ bool endsWithPlaceholder(const std::string_view levelString) {
 }
 
 gd::string& cleanLevel(gd::string& levelString) {
-    #define levelStringName GEODE_CONCAT(levelString, GEODE_ANDROID(Android))
-
     if (endsWithPlaceholder(levelString)) {
         #ifdef GEODE_IS_ANDROID
-            std::string levelStringName = levelString;
-        #endif
+            std::string androidLevelString = levelString;
 
-        levelStringName.erase(levelString.size() - VANILLA_PLACEHOLDER.size());
-        GEODE_ANDROID(levelString = levelStringName);
+            androidLevelString.erase(levelString.size() - VANILLA_PLACEHOLDER.size());
+            levelString = levelStringName;
+        #else
+            levelString.erase(levelString.size() - VANILLA_PLACEHOLDER.size());
+        #endif
     }
 
     return levelString;
