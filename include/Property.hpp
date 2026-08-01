@@ -37,7 +37,7 @@ namespace object_collab {
 
     template<typename T>
     class Property : public PropertyInterface {
-        T m_member;
+        T& m_member;
         T m_defaultValue;
     public:
         Property<T>& operator=(Property<T>&& other) noexcept = default;
