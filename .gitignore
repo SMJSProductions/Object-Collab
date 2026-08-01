@@ -1,5 +1,4 @@
 .cache
-.github
 .clangd
 .vscode
 build
