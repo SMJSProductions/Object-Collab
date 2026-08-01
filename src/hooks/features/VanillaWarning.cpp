@@ -16,7 +16,7 @@ gd::string& cleanLevel(gd::string& levelString) {
             std::string androidLevelString = levelString;
 
             androidLevelString.erase(levelString.size() - VANILLA_PLACEHOLDER.size());
-            levelString = levelStringName;
+            levelString = androidLevelString;
         #else
             levelString.erase(levelString.size() - VANILLA_PLACEHOLDER.size());
         #endif
