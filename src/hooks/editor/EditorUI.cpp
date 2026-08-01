@@ -6,10 +6,6 @@ using namespace geode::prelude;
 
 EditorUI* ModEditorUI::INSTANCE = nullptr;
 
-void ModEditorUI::onModify(auto& self) {
-    (void) self.setHookPriorityAfterPost("EditorUI::init", "hjfod.betteredit");
-}
-
 EditorUI* ModEditorUI::getEarly() {
     return ModEditorUI::INSTANCE;
 }

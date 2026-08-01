@@ -3,10 +3,6 @@
 using namespace object_collab::prelude;
 using namespace geode::prelude;
 
-void ModEditorPauseLayer::onModify(auto& self) {
-    (void) self.setHookPriorityBeforePre("EditorPauseLayer::saveLevel", "alphalaneous.level-storage-api");
-}
-
 bool ModEditorPauseLayer::init(LevelEditorLayer* layer) {
     if (!EditorPauseLayer::init(layer)) return false;
 

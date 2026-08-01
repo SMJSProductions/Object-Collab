@@ -7,7 +7,9 @@
 class $modify(ModEditorUI, EditorUI) {
     static EditorUI* INSTANCE;
 public:
-    static void onModify(auto& self);
+    static void onModify(auto& self) {
+        (void) self.setHookPriorityAfterPost("EditorUI::init", "hjfod.betteredit");
+    }
 
     static EditorUI* getEarly();
 
