@@ -3,6 +3,7 @@
 #include "ObjectInfo.hpp"
 
 namespace object_collab {
+    /// A register which contains pairs of GD numeric object IDs and the associated object info.
     using Register = std::unordered_map<uint32_t, ObjectInfo>;
 
     class OBJC_API_DLL ObjectAPI {

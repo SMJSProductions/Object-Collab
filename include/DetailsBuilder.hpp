@@ -14,12 +14,17 @@ namespace object_collab {
 
         DetailsBuilder() = default;
     public:
-        [[nodiscard]] inline DetailsBuilder&& reserve(size_t n) && {
-            m_fields.reserve(n);
+        /// Reserves a size in the internal list.
+        /// @param capacity The capacity.
+        [[nodiscard]] inline DetailsBuilder&& reserve(size_t capacity) && {
+            m_fields.reserve(capacity);
 
             return std::move(*this);
         }
 
+        /// Adds a formatted field to the internal list.
+        /// @param fmt The FMT string.
+        /// @param args The list of templated args to add to the string.
         template<typename ...T>
         [[nodiscard]] inline DetailsBuilder&& field(fmt::format_string<T...> fmt, T&& ...args) && {
             m_fields.emplace_back(fmt::format(fmt, std::forward<T>(args)...));

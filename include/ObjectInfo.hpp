@@ -4,9 +4,13 @@
 #include "EditorPopupConfig.hpp"
 
 namespace object_collab {
+    /// The variant of either the raw popup or the builder based configuration.
     using PopupOptions = std::variant<geode::Popup*, editor_popup::PopupConfig>;
-    using ObjectFactory = geode::Function<CustomObjectInterface*()>;
+    /// The method which returns the configuration for the edit popup.
+    /// @param selected The selected objects.
     using ObjectPopupFactory = geode::Function<PopupOptions(const Selected& selected)>;
+    /// The method which produces the custom object.
+    using ObjectFactory = geode::Function<CustomObjectInterface*()>;
 
     enum class EditorTab {
         Solids = 0,

@@ -6,6 +6,8 @@
 namespace object_collab {
     class OBJC_API_DLL PropertyInterface {
     public:
+        /// Stringifies the value to a minimal format using either the GD format or matjson.
+        /// @param value The value to stringify.
         template<typename T>
         static inline std::string stringifyValue(const T& value) {
             if constexpr (std::is_convertible_v<T, std::string>) {
@@ -35,7 +37,7 @@ namespace object_collab {
 
     template<typename T>
     class Property : public PropertyInterface {
-        T& m_member;
+        T m_member;
         T m_defaultValue;
     public:
         Property<T>& operator=(Property<T>&& other) noexcept = default;
@@ -46,26 +48,33 @@ namespace object_collab {
         template<typename D> requires std::is_convertible_v<D, T>
         Property(T& member, D&& defaultValue): m_member(member), m_defaultValue(std::forward<D>(defaultValue)) { }
 
+        /// If the value is defaulted.
         [[nodiscard]] inline bool isDefault() const override {
             return m_member == m_defaultValue;
         }
 
+        /// Gets the currently assigned value.
         [[nodiscard]] inline const T& getValue() const {
             return m_member;
         }
 
+        /// Gets the stringified version of the value.
         [[nodiscard]] inline std::string getStringValue() const override {
             return PropertyInterface::stringifyValue(m_member);
         }
 
+        /// Gets the default value.
         [[nodiscard]] inline const T& getDefaultValue() const {
             return m_defaultValue;
         }
 
+        /// Sets the property value to default.
         inline void applyDefault() override {
             m_member = m_defaultValue;
         }
 
+        /// Converts the value to a the parsed value using either the GD format or matjson and assigns it to the property.
+        /// @param value The value to assign.
         inline void applyFromString(std::string_view value) override {
             if constexpr (std::is_convertible_v<T, std::string>) {
                 m_member = value;

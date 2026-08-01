@@ -14,6 +14,7 @@ concept GameObjectHasFrameInit = requires(T& object, const char* name) {
 };
 
 namespace object_collab {
+    /// The pair of vectors GD uses to configure the properties. The void* vector will be nullptr to present not present and has a pointer when present.
     using ObjectVectors = std::pair<gd::vector<gd::string>, gd::vector<void*>>;
 
     class OBJC_API_DLL CustomObjectInterface {
@@ -24,11 +25,11 @@ namespace object_collab {
 
         std::unique_ptr<Impl> m_impl;
 
-        static std::vector<std::string_view> split(const std::string_view string, const char delimiter);
+        [[nodiscard]] static std::vector<std::string_view> split(const std::string_view string, const char delimiter);
     public:
         /// @param objectString The object string with the delimited data.
         /// @returns The vector pair GD uses to initialize objects.
-        static geode::Result<ObjectVectors> createObjectVectorsFromString(std::string_view objectString);
+        [[nodiscard]] static geode::Result<ObjectVectors> createObjectVectorsFromString(std::string_view objectString);
 
         CustomObjectInterface& operator=(CustomObjectInterface&& other) noexcept;
         CustomObjectInterface& operator=(const CustomObjectInterface& other) noexcept = delete;
@@ -153,7 +154,7 @@ namespace object_collab {
             return this->m_glowSprite;
         }
 
-        /// Gets the text shown on triggers.
+        /// Gets the text shown on a trigger.
         /// @see GameObject::getObjectLabel
         [[nodiscard]] cocos2d::CCLabelBMFont* getTriggerText() requires std::derived_from<T, EffectGameObject> {
             return T::getObjectLabel();
@@ -186,7 +187,12 @@ namespace object_collab {
             }
         }
 
-        void setTriggerTextProperty(std::optional<size_t> property, cocos2d::CCPoint offset = { 0, 0 }, float scale = 0.5f) requires std::derived_from<T, EffectGameObject> {
+        /// Sets the shown on triggers based on the value of a property.
+        /// @warning This method is only functional when the custom object is templated with EffectGameObject or an inheritor of!
+        /// @param property The property ID to use.
+        /// @param offset The offset of the label.
+        /// @param scale The scale of the label.
+        void setTriggerTextProperty(size_t property, cocos2d::CCPoint offset = { 0, 0 }, float scale = 0.5f) requires std::derived_from<T, EffectGameObject> {
             CustomObjectInterface::setTriggerTextProperty(property);
             this->setTriggerTextPropertyOffset(std::move(offset));
             this->setTriggerTextPropertyScale(scale);
@@ -205,6 +211,7 @@ namespace object_collab {
             this->removeGlow();
         }
 
+        /// Removes the text shown on a trigger.
         void removeTriggerTextProperty() requires std::derived_from<T, EffectGameObject> {
             CustomObjectInterface::setTriggerTextProperty(std::nullopt);
             this->updateTriggerText();
@@ -438,6 +445,9 @@ namespace object_collab {
             return result;
         }
 
+        /// Updates a property with a stringified value & updates the trigger text if applicable.
+        /// @param property The property ID to use.
+        /// @param value The stringified value to assign.
         bool updateProperty(size_t property, std::string_view value) override {
             const CustomProperties& customProperties = this->getCustomProperties();
 
@@ -454,6 +464,8 @@ namespace object_collab {
             }
         }
 
+        /// Updates the trigger text with the new property value.
+        /// @warning This method is only functional when the custom object is templated with EffectGameObject or an inheritor of!
         void updateTriggerText() requires std::derived_from<T, EffectGameObject> {
             const CustomProperties& properties = this->getCustomProperties();
             std::optional<size_t> property = this->getTriggerTextProperty();
