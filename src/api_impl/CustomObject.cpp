@@ -60,7 +60,7 @@ Result<ObjectVectors> CustomObjectInterface::createObjectVectorsFromString(std::
                 values[key] = utils::numToString(ObjectAPI::getCustomObjectNumericID(entry->second->getID()).value_or(objectID));
             }
         } else {
-            values[key] = properties[i + 1];
+            values[key] = std::string(properties[i + 1]);
         }
 
         exists[key] = baseGame;
