@@ -112,11 +112,38 @@ PRIMITIVE_CONFIG_VALUE(InputMenu, size_t, maxSize, MaxSize);
 
 struct EnumMenu::Impl {
     VALUE_IMPL_VALUES(std::string, const&);
-    std::vector<std::string> values;
+    EnumValues values = std::vector<std::string>();
 };
 
 VALUE_IMPL(EnumMenu, std::string, const&);
-VECTOR_VALUE(EnumMenu, std::string, value, Values);
+
+EnumMenu::Builder&& EnumMenu::Builder::value(std::string value) && {
+    if (std::holds_alternative<std::vector<EnumMenu::AliasedValue>>(m_impl->values)) {
+        m_impl->values = std::vector<std::string>();
+    }
+
+    std::get<std::vector<std::string>>(m_impl->values).emplace_back(std::move(value));
+
+    return std::move(*this);
+}
+
+EnumMenu::Builder&& EnumMenu::Builder::values(EnumValues values) && {
+    m_impl->values = std::move(values);
+
+    return std::move(*this);
+}
+
+const EnumMenu::EnumValues& EnumMenu::getValues() const {
+    return m_impl->values;
+}
+
+EnumMenu::EnumValues EnumMenu::releaseValues() {
+    EnumValues values = std::move(m_impl->values);
+
+    m_impl->values = std::vector<std::string>();
+
+    return std::move(values);
+}
 
 struct CustomValueMenu::Impl {
     IMPL_VALUES();
@@ -125,8 +152,8 @@ struct CustomValueMenu::Impl {
 
 CONFIG_IMPL(CustomValueMenu);
 PTR_BUILD_IMPL(CustomValueMenu);
-BUILDER_PARAM(CustomValueMenu, CustomMenuFactory, factory);
-VALUE_RELEASE(CustomValueMenu, CustomMenuFactory, factory, Factory, nullptr);
+BUILDER_PARAM(CustomValueMenu, CustomValueMenu::CustomMenuFactory, factory);
+VALUE_RELEASE(CustomValueMenu, CustomValueMenu::CustomMenuFactory, factory, Factory, nullptr);
 
 struct AxisLayoutMenu::Impl {
     IMPL_VALUES();

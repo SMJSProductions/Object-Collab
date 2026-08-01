@@ -9,6 +9,8 @@ public:
     static ModSpawnTrigger* create();
     static object_collab::PopupOptions getEditObjectConfig(const object_collab::Selected& selected);
 private:
+    static std::string getModName(std::string modID);
+
     std::string m_mod;
     bool m_active;
 public:

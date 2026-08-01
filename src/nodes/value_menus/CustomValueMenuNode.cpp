@@ -18,7 +18,7 @@ CustomValueMenuNode* CustomValueMenuNode::create(const Selected& selected, Popup
 }
 
 bool CustomValueMenuNode::init(const Selected& selected, Popup* popup, CustomValueMenu& customValueMenu) {
-    CustomMenuFactory factory = customValueMenu.releaseFactory();
+    CustomValueMenu::CustomMenuFactory factory = customValueMenu.releaseFactory();
     std::vector<CCNode*> nodes;
 
     if (factory) {

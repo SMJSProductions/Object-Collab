@@ -8,10 +8,10 @@ ModSpawnTrigger* ModSpawnTrigger::create() {
 }
 
 PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
-    std::vector<std::string> mods;
+    EnumMenu::EnumAliasList mods;
 
     for (Mod* mod : Loader::get()->getAllMods()) {
-        mods.emplace_back(mod->getID());
+        mods.emplace_back(mod->getName(), mod->getID());
     }
 
     return PopupConfig::builder()
@@ -32,7 +32,9 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                 applyValueToSelectedPropertyAndReport(selected, ModSpawnTrigger::MOD_KEY, value, &ModSpawnTrigger::checkMod);
             })
             .currentValue([](const Selected& selected, Popup* popup) {
-                return getCommonPropertyValueOrDefault<std::string>(selected, ModSpawnTrigger::MOD_KEY);
+                std::string modID = getCommonPropertyValueOrDefault<std::string>(selected, ModSpawnTrigger::MOD_KEY);
+
+                return ModSpawnTrigger::getModName(std::move(modID));
             })
             .build())
         .menu(AxisLayoutMenu::builder()
@@ -113,6 +115,14 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
         .build();
 }
 
+std::string ModSpawnTrigger::getModName(std::string modID) {
+    if (Mod* mod = Loader::get()->getInstalledMod(modID)) {
+        return mod->getName();
+    } else {
+        return modID;
+    }
+}
+
 ModSpawnTrigger::ModSpawnTrigger(): CustomObject({
     CustomObject::propertyFrom(ModSpawnTrigger::TARGET_GROUP_ID, m_targetGroupID, 0),
     CustomObject::propertyFrom(ModSpawnTrigger::MOD_KEY, m_mod, "Unknown"),
@@ -135,7 +145,7 @@ void ModSpawnTrigger::triggerObject(GJBaseGameLayer* layer, const int uniqueID, 
 
 std::vector<std::string> ModSpawnTrigger::getObjectDetails() {
     return DetailsBuilder::builder()
-        .field("Mod ID: {}", m_mod)
+        .field("Mod ID: {}", ModSpawnTrigger::getModName(m_mod))
         .field("Group ID: {}", m_targetGroupID)
         .field("Delay: {}", m_spawnDelay)
         .field("Delay+-: {}", m_delayRange)

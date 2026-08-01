@@ -21,10 +21,6 @@ namespace object_collab::editor_popup {
     template<typename T>
     using CurrentValueCallback = geode::Function<T(const Selected& selected, geode::Popup* popup)>;
 
-    /// @param popup The editor popup instance.
-    /// @returns The custom menu to add.
-    using CustomMenuFactory = geode::Function<cocos2d::CCMenu*(const Selected& selected, geode::Popup* popup)>;
-
     class OBJC_API_DLL ValueMenu {
     public:
         virtual ~ValueMenu() = default;
@@ -242,6 +238,20 @@ namespace object_collab::editor_popup {
 
         EnumMenu(std::unique_ptr<Impl> impl);
     public:
+        struct AliasedValue {
+            /// The client facing value.
+            std::string display;
+            /// The code facing value.
+            std::string value;
+        };
+
+        /// A list of values which both serve as display and value.
+        using EnumList = std::vector<std::string>;
+        /// A list of aliased values which uses the individual values to show the client value A and the internal code value B.
+        using EnumAliasList = std::vector<AliasedValue>;
+        /// Either a list of values to select from or a map of values to select from with aliases.
+        using EnumValues = std::variant<EnumList, EnumAliasList>;
+
         class OBJC_API_DLL Builder {
             friend class EnumMenu;
 
@@ -258,11 +268,12 @@ namespace object_collab::editor_popup {
             [[nodiscard]] Builder&& onValue(ValueUpdateCallback<const std::string&> onValue) &&;
             /// @param currentValue The current value getter callback.
             [[nodiscard]] Builder&& currentValue(CurrentValueCallback<std::string> currentValue) &&;
+            /// @warning This will reset a map if one is set.
             /// @param value An enum value.
             [[nodiscard]] Builder&& value(std::string value) &&;
-            /// @note An empty vector is considered invalid and will skip this node in the list.
+            /// @note An empty vector/map is considered invalid and will skip this node in the list.
             /// @param values The list of enum values.
-            [[nodiscard]] Builder&& values(std::vector<std::string> values) &&;
+            [[nodiscard]] Builder&& values(EnumValues values) &&;
             [[nodiscard]] std::unique_ptr<EnumMenu> build() &&;
         };
 
@@ -278,8 +289,8 @@ namespace object_collab::editor_popup {
         [[nodiscard]] geode::ZStringView getTitle() const;
         [[nodiscard]] ValueUpdateCallback<const std::string&> releaseOnValue();
         [[nodiscard]] CurrentValueCallback<std::string> releaseCurrentValue();
-        [[nodiscard]] std::span<std::string> getValues() const;
-        [[nodiscard]] std::vector<std::string> releaseValues();
+        [[nodiscard]] const EnumValues& getValues() const;
+        [[nodiscard]] EnumValues releaseValues();
     };
 
     class OBJC_API_DLL CustomValueMenu : public ValueMenu {
@@ -289,6 +300,10 @@ namespace object_collab::editor_popup {
 
         CustomValueMenu(std::unique_ptr<Impl> impl);
     public:
+        /// @param popup The editor popup instance.
+        /// @returns The custom menu to add.
+        using CustomMenuFactory = geode::Function<cocos2d::CCMenu*(const Selected& selected, geode::Popup* popup)>;
+
         class OBJC_API_DLL Builder {
             friend class CustomValueMenu;
 

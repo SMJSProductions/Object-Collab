@@ -20,12 +20,9 @@ EnumMenuNode* EnumMenuNode::create(const Selected& selected, Popup* popup, EnumM
 EnumMenuNode::EnumMenuNode(const Selected& selected, Popup* popup, EnumMenu& enumMenu):
 m_selected(selected),
 m_popup(popup),
-m_onValue(enumMenu.releaseOnValue()) {
-    const std::span<std::string> values = enumMenu.getValues();
-
-    m_index = values.size();
-    m_values.assign(values.begin(), values.end());
-}
+m_onValue(enumMenu.releaseOnValue()),
+m_values(enumMenu.releaseValues()),
+m_index(this->getSize()) { }
 
 bool EnumMenuNode::init(EnumMenu& enumMenu) {
     CCNode* container = CCNode::create();
@@ -61,29 +58,68 @@ bool EnumMenuNode::init(EnumMenu& enumMenu) {
 }
 
 float EnumMenuNode::getMaxLabelWidth() {
+    const size_t size = this->getSize();
+    const char* labelString = m_label->getString();
     float maxWidth = m_label->getContentWidth();
 
-    for (size_t i = 0; i < m_values.size(); i++) {
-        const std::string_view value = m_values[i];
-        const float width = cocos::getLabelSize(value, "bigFont.fnt").width;
+    for (size_t i = 0; i < size; i++) {
+        const std::string_view display = this->getDisplayString(i);
+        const float width = cocos::getLabelSize(display, "bigFont.fnt").width;
 
         if (width > maxWidth) maxWidth = width;
-        if (value.compare(m_label->getString()) == 0) m_index = i;
+        if (
+            display == labelString ||
+            (std::holds_alternative<EnumMenu::EnumAliasList>(m_values) && std::get<EnumMenu::EnumAliasList>(m_values)[i].value == labelString)
+        ) m_index = i;
     }
 
     return maxWidth;
 }
 
 void EnumMenuNode::onClick(CCMenuItemSpriteExtra* sender) {
+    const size_t size = this->getSize();
     const float width = m_label->getContentWidth();
 
     if (sender == m_left) {
-        m_index = (m_index ? m_index : m_values.size()) - 1;
+        m_index = (m_index ? m_index : size) - 1;
     } else {
-        m_index = (m_index + (m_index == m_values.size() ? 0 : 1)) % m_values.size();
+        m_index = (m_index + (m_index == size ? 0 : 1)) % size;
     }
 
-    if (m_onValue) m_onValue(m_values[m_index], m_selected, m_popup);
-    m_label->setString(m_values[m_index].c_str());
+    if (m_onValue) m_onValue(std::string(this->getValueString(m_index)), m_selected, m_popup);
+    m_label->setString(this->getDisplayString(m_index));
     m_label->getParent()->updateLayout();
+}
+
+size_t EnumMenuNode::getSize() {
+    return std::visit(makeVisitor{
+        [](const std::span<std::string> values) {
+            return values.size();
+        },
+        [](const std::span<EnumMenu::AliasedValue> values) {
+            return values.size();
+        }
+    }, m_values);
+}
+
+const char* EnumMenuNode::getDisplayString(const size_t index) {
+    return std::visit(makeVisitor{
+        [index](const std::span<std::string> values) {
+            return values[index].c_str();
+        },
+        [index](const std::span<EnumMenu::AliasedValue> values) {
+            return values[index].display.c_str();
+        }
+    }, m_values);
+}
+
+std::string_view EnumMenuNode::getValueString(const size_t index) {
+    return std::visit<std::string_view>(makeVisitor{
+        [index](const std::span<std::string> values) -> std::string_view {
+            return values[index];
+        },
+        [index](const std::span<EnumMenu::AliasedValue> values) -> std::string_view {
+            return values[index].value;
+        }
+    }, m_values);
 }

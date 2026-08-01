@@ -10,7 +10,7 @@ private:
     const object_collab::Selected& m_selected;
     geode::Popup* m_popup;
     object_collab::editor_popup::ValueUpdateCallback<std::string> m_onValue;
-    std::vector<std::string> m_values;
+    object_collab::editor_popup::EnumMenu::EnumValues m_values;
     CCMenuItemSpriteExtra* m_left;
     CCMenuItemSpriteExtra* m_right;
     cocos2d::CCLabelBMFont* m_label;
@@ -20,4 +20,7 @@ private:
     bool init(object_collab::editor_popup::EnumMenu& enumMenu);
     float getMaxLabelWidth();
     void onClick(CCMenuItemSpriteExtra* sender);
+    size_t getSize();
+    const char* getDisplayString(const size_t index);
+    std::string_view getValueString(const size_t index);
 };
