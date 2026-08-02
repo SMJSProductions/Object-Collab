@@ -108,7 +108,7 @@ jobs:
       - name: Upload pages
         uses: actions/upload-pages-artifact@v5
         with:
-          path: ./Object-Collab
+          path: ./pages/Object-Collab
       - name: Deploy pages
         id: deployment
         uses: actions/deploy-pages@v5
