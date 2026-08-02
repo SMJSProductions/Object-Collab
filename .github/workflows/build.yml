@@ -102,7 +102,9 @@ jobs:
           export GEODE_SDK="${{ github.workspace }}/geode"
           echo "GEODE_SDK=$GEODE_SDK" >> $GITHUB_ENV
           geode sdk update ${{ steps.geode.outputs.version }} && geode sdk install-binaries
-          ./flash.exe -i Object-Toolbox -o pages --overwrite
+          mkdir pages
+          cd pages
+          ../flash.exe -i ../Object-Toolbox -o . --overwrite
       - name: Upload pages
         uses: actions/upload-pages-artifact@v5
         with:
