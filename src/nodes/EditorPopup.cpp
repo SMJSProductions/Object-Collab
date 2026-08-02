@@ -138,8 +138,7 @@ void EditorPopup::addToggles(PopupConfig& config, const bool left) {
         ->setGap(10)
         ->setMinScale(0.4f)
         ->setMaxScale(1)
-        ->inverseMainAxis(true)
-        ->inverseCrossAxis(!left));
+        ->inverseMainAxis(true));
     m_buttonMenu->addChildAtPosition(container, left ? Anchor::BottomLeft : Anchor::BottomRight, { left ? 10.0f : -10.0f, 10 });
 }
 

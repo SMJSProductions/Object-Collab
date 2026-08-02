@@ -28,7 +28,6 @@ bool ToggleMenuNode::init(const Selected& selected, Popup* popup, ToggleMenu& to
     });
     CCLabelBMFont* label = CCLabelBMFont::create(toggleMenu.getTitle().c_str(), "bigFont.fnt");
 
-    toggler->toggle(currentValueCallback ? currentValueCallback(selected, popup) : false);
     label->setScale(0.35f);
     this->registerValue(toggler);
     this->registerTitle(label);
@@ -37,6 +36,7 @@ bool ToggleMenuNode::init(const Selected& selected, Popup* popup, ToggleMenu& to
     this->addChild(label);
     this->setContentHeight(toggler->getContentHeight());
     this->setLayout(this->createStandardLayout(Axis::Row)->setCrossAxisScaling(AxisScaling::None));
+    toggler->toggle(currentValueCallback ? currentValueCallback(selected, popup) : false);
 
     return true;
 }
