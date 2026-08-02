@@ -28,7 +28,7 @@ std::vector<std::string_view> CustomObjectInterface::split(const std::string_vie
 }
 
 Result<ObjectVectors> CustomObjectInterface::createObjectVectorsFromString(std::string_view object) {
-    const std::vector<std::string_view> properties = split(object, ',');
+    const std::vector<std::string_view> properties = CustomObjectInterface::split(object, ',');
     const CustomLevelData& customLevelData = CustomLevelData::get();
     GJBaseGameLayer* baseGame = GJBaseGameLayer::get();
     // Rob OMFG use a map FFS

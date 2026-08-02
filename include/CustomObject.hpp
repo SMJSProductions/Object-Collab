@@ -413,7 +413,8 @@ namespace object_collab {
         /// @see GameObject::getSaveString
         [[nodiscard]] virtual gd::string getSaveString(GJBaseGameLayer* layer) override {
             const CustomProperties& customProperties = this->getCustomProperties();
-            const std::vector<std::string_view> properties = split(T::getSaveString(layer), ',');
+            const gd::string saveString = T::getSaveString(layer);
+            const std::vector<std::string_view> properties = CustomObjectInterface::split(saveString, ',');
             geode::utils::StringBuffer buffer;
 
             for (size_t i = 0; i < properties.size(); i += 2) {
