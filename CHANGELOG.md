@@ -1,5 +1,11 @@
 # Object-Collab Changelog
 
+## v0.1.0-alpha.4
+
+- Reworked properties
+- Properly separated quick & complex objects
+- Fix some undefined behavior on save string splitting
+
 ## v0.1.0-alpha.3
 
 - Fix triggers being visible in the PlayLayer
