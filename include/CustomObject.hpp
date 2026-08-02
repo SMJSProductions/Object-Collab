@@ -246,7 +246,7 @@ namespace object_collab {
 
         /// Called when the object was activated by the given player.
         /// @note This method is not called by InverseMirrorPortal, NormalMirrorPortal, Modifier, EnterEffectObject, DualPortal, SoloPortal, SecretCoin, Collectible & UserCoin.
-        /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of!
+        /// @warning This method is only called when the custom object is templated with EnhancedGameObject or an inheritor of!
         /// @see GameObject::activatedByPlayer
         /// @param player The player who triggered the object.
         virtual void activatedByPlayer(PlayerObject* player) override {
@@ -492,4 +492,6 @@ namespace object_collab {
             return this;
         }
     };
+
+    #define $object(name, inheritance) name : public object_collab::CustomObject<inheritance>
 }

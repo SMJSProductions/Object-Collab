@@ -2,7 +2,7 @@
 
 #include <object_collab.hpp>
 
-class ModSpawnTrigger : public object_collab::CustomObject<SpawnTriggerGameObject> {
+class $object(ModSpawnTrigger, SpawnTriggerGameObject) {
 public:
     static constexpr size_t TARGET_GROUP_ID = 51;
     static constexpr size_t MOD_KEY = 140;
