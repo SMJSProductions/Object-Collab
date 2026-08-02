@@ -1,0 +1,36 @@
+[project]
+name = "Object Collab"
+version = "v0.1.0-alpha.1"
+repository = "https://github.com/SMJSProductions/Object-Collab"
+icon = "logo.png"
+
+[tutorials]
+dir = "docs"
+
+[templates]
+head = "docs/head.html"
+
+[include]
+patterns-full = [
+    "^object_collab"
+]
+
+[[sources]]
+name = "Object Collab"
+dir = "include"
+include = [
+    "*.hpp"
+]
+
+[cmake]
+config-args = [
+     "-G", "Ninja",
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DCMAKE_CXX_COMPILER=clang++",
+    "-DCMAKE_C_COMPILER=clang",
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+    "-DGEODE_DISABLE_PRECOMPILED_HEADERS=ON",
+    "-DGEODE_CODEGEN_CMAKE_ARGS=-DCMAKE_CXX_COMPILER=clang++;-DCMAKE_C_COMPILER=clang"
+]
+build-dir = "build_docs"
+infer-args-from = "src/api_impl/object_collab.cpp"

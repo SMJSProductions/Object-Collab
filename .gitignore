@@ -1,6 +1,7 @@
 .cache
 .clangd
 .vscode
-build
+build*
 vscode
+pages
 TODO
