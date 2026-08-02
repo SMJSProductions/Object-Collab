@@ -11,6 +11,10 @@
 	"version": "v0.1.0-alpha.5",
 	"developer": "SMJS",
 	"description": "A framework for custom objects & object mod compatibility.",
+  "links": {
+    "source": "https://github.com/SMJSProductions/Object-Collab",
+		"community": "https://discord.gg/EDkFkAv66K"
+  },
   "tags": [
     "gameplay",
     "editor",
