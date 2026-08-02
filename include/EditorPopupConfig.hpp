@@ -489,7 +489,10 @@ namespace object_collab::editor_popup {
         [[nodiscard]] std::vector<std::unique_ptr<ToggleMenu>> releaseRightToggles();
     };
 
-    template<typename V, typename T>
+    /// Gets the property associated to the member using an object as reference.
+    /// @param reference The object to get the params list from.
+    /// @param member The member to look for.
+    template<typename V, typename T> requires std::derived_from<T, GameObject>
     [[nodiscard]] inline Property<T, V>* getAssociatedProperty(CustomObjectInterface* reference, V T::* member) {
         for (auto& [_, property] : reference->getCustomProperties()) {
             Property<T, V>* internalProperty = geode::cast::typeinfo_cast<Property<T, V>*>(property.get());
@@ -502,7 +505,11 @@ namespace object_collab::editor_popup {
         return nullptr;
     }
 
-    template<typename V, typename T>
+    /// Applies a given value to all selected objects while making sure to update properties if applicable.
+    /// @param selected The selected list of objects.
+    /// @param member The member to update.
+    /// @param value The value to apply.
+    template<typename V, typename T> requires std::derived_from<T, GameObject>
     inline void applyValueToSelected(const Selected& selected, V T::* member, const V& value) {
         if (selected.empty()) return;
 
@@ -521,7 +528,12 @@ namespace object_collab::editor_popup {
         }
     }
 
-    template<typename V, typename T>
+    /// Applies a given value to all selected objects while making sure to update properties if applicable. Reports back when a value is applied.
+    /// @param selected The selected list of objects.
+    /// @param member The member to update.
+    /// @param value The value to apply.
+    /// @param reportMember The method to report an apply to.
+    template<typename V, typename T> requires std::derived_from<T, GameObject>
     inline void applyValueToSelectedAndReport(const Selected& selected, V T::* member, const V& value, void (T::* reportMember)()) {
         if (selected.empty()) return;
 
@@ -544,7 +556,10 @@ namespace object_collab::editor_popup {
         }
     }
 
-    template<typename V, typename T>
+    /// Gets the value if all selected objects have it in common. Otherwise get the default from the property if applicable or the type constructor.
+    /// @param selected The selected list of objects.
+    /// @param member The member to compare.
+    template<typename V, typename T> requires std::derived_from<T, GameObject>
     [[nodiscard]] inline V getCommonValueOrDefault(const Selected& selected, V T::* member) {
         if (selected.empty()) return V();
 

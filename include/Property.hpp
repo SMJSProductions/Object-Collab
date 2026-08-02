@@ -6,12 +6,12 @@
 namespace object_collab {
     class CustomObjectInterface;
 
-    template<typename T, typename V>
+    template<typename T, typename V> requires std::derived_from<T, GameObject>
     class Property;
 
     class OBJC_API_DLL PropertyInterface {
     public:
-        template<typename T, typename V, typename D> requires std::is_convertible_v<D, V>
+        template<typename T, typename V, typename D> requires std::is_convertible_v<D, V> && std::derived_from<T, GameObject>
         [[nodiscard]] static std::pair<size_t, std::unique_ptr<PropertyInterface>> from(size_t key, V T::* member, D&& defaultValue) {
             return { key, std::make_unique<Property<T, V>>(key, member, std::forward<D>(defaultValue)) };
         }
@@ -45,7 +45,7 @@ namespace object_collab {
         virtual void applyFromString(CustomObjectInterface* object, std::string_view value) = 0;
     };
 
-    template<typename T, typename V>
+    template<typename T, typename V> requires std::derived_from<T, GameObject>
     class Property : public PropertyInterface {
         size_t m_key;
         V T::* m_member;
