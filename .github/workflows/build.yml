@@ -1,0 +1,113 @@
+name: Build Geode Mod
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+      - "pipeline-tests"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+      
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - name: Windows
+          os: windows-latest
+
+        - name: macOS
+          os: macos-latest
+
+        - name: iOS
+          os: macos-latest
+          target: iOS
+
+        - name: Android32
+          os: ubuntu-latest
+          target: Android32
+
+        - name: Android64
+          os: ubuntu-latest
+          target: Android64
+
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build the mod
+        uses: geode-sdk/build-geode-mod@main
+        with:
+          combine: true
+          export-symbols: true
+          target: ${{ matrix.config.target }}
+
+  package:
+    name: Package builds
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Combine builds
+        uses: geode-sdk/build-geode-mod/combine@main
+        id: build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: Object-Collab Build
+          path: ${{ steps.build.outputs.build-output }}
+
+  deploy-pages:
+    name: Deploy pages
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout More Icons
+        uses: actions/checkout@v7
+        with:
+          path: ./Object-Toolbox
+      - name: Download Flash
+        uses: robinraju/release-downloader@v1.13
+        with:
+          repository: hiimjasmine00/flash
+          latest: true
+          fileName: flash.exe
+      - name: Setup Geode CLI
+        uses: geode-sdk/cli/.github/actions/setup@main
+      - name: Get Geode Version
+        id: geode
+        shell: bash
+        run: |
+          cd Object-Toolbox
+          GEODE_VERSION=$(jq -r '.geode' mod.json)
+          GEODE_VERSION=v${GEODE_VERSION#v}
+          echo "Geode Version: $GEODE_VERSION"
+          # set GITHUB_OUTPUT
+          echo "version=$GEODE_VERSION" >> $GITHUB_OUTPUT
+      - name: Generate Documentation
+        shell: bash
+        run: |
+          mkdir -p "${{ github.workspace }}/cli-profile/geode/mods"
+          geode profile add --name Object-Toolbox "${{ github.workspace }}/cli-profile/GeometryDash.exe" win
+          geode sdk install "${{ github.workspace }}/geode"
+          export GEODE_SDK="${{ github.workspace }}/geode"
+          echo "GEODE_SDK=$GEODE_SDK" >> $GITHUB_ENV
+          geode sdk update ${{ steps.geode.outputs.version }} && geode sdk install-binaries
+          flash.exe -i Object-Toolbox -o pages --overwrite
+      - name: Upload Pages
+        uses: actions/upload-pages-artifact@5
+        with:
+          path: ./pages
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

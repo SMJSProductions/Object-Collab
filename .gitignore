@@ -1,7 +1,7 @@
-.cache
+.cache/
+.vscode/
+build*/
+vscode/
+pages/
 .clangd
-.vscode
-build*
-vscode
-pages
 TODO
