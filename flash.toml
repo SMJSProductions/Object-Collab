@@ -1,6 +1,6 @@
 [project]
 name = "Object Collab"
-version = "v0.1.0-alpha.1"
+version = "v0.1.0-alpha.5"
 repository = "https://github.com/SMJSProductions/Object-Collab"
 icon = "logo.png"
 
