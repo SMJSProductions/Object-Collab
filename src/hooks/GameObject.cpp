@@ -7,12 +7,19 @@ GameObject* ModGameObject::createWithKey(const int key) {
     if (ObjectAPI::getBaseCustomObjectID() > key) {
         return GameObject::createWithKey(key);
     } else if (ObjectInfo* info = ObjectAPI::getCustomObject(key)) {
-        CustomObjectInterface* object = info->hasFactory() ? info->factory() : new CustomObject<GameObject>(
-            {},
-            info->getObjectType(),
-            info->getDefaultZLayer(),
-            info->getDefaultZOrder()
-        );
+        CustomObjectInterface* object = std::visit<CustomObjectInterface*>(makeVisitor{
+            [info](const QuickObject& object) {
+                return new CustomObject<GameObject>(
+                    info,
+                    object.getObjectType(),
+                    object.getDefaultZLayer(),
+                    object.getDefaultZOrder()
+                );
+            },
+            [info](const ComplexObject& object) {
+                return object.hasFactory() ? object.factory(info) : nullptr;
+            }
+        }, info->getConstruction());
 
         if (object && object->init(info->getSprite().c_str())) {
             GameObject* gameObject = object->getGameObject();

@@ -4,8 +4,18 @@
 #include "dll.hpp"
 
 namespace object_collab {
+    class CustomObjectInterface;
+
+    template<typename T, typename V>
+    class Property;
+
     class OBJC_API_DLL PropertyInterface {
     public:
+        template<typename T, typename V, typename D> requires std::is_convertible_v<D, V>
+        [[nodiscard]] static std::pair<size_t, std::unique_ptr<PropertyInterface>> from(size_t key, V T::* member, D&& defaultValue) {
+            return { key, std::make_unique<Property<T, V>>(key, member, std::forward<D>(defaultValue)) };
+        }
+
         /// Stringifies the value to a minimal format using either the GD format or matjson.
         /// @param value The value to stringify.
         template<typename T>
@@ -29,69 +39,89 @@ namespace object_collab {
         PropertyInterface() = default;
         virtual ~PropertyInterface() = default;
 
-        virtual bool isDefault() const = 0;
-        virtual std::string getStringValue() const = 0;
-        virtual void applyDefault() = 0;
-        virtual void applyFromString(std::string_view value) = 0;
+        virtual bool isDefault(CustomObjectInterface* object) const = 0;
+        virtual std::string getStringValue(CustomObjectInterface* object) const = 0;
+        virtual void applyDefault(CustomObjectInterface* object) = 0;
+        virtual void applyFromString(CustomObjectInterface* object, std::string_view value) = 0;
     };
 
-    template<typename T>
+    template<typename T, typename V>
     class Property : public PropertyInterface {
-        T& m_member;
-        T m_defaultValue;
+        size_t m_key;
+        V T::* m_member;
+        V m_defaultValue;
     public:
-        Property<T>& operator=(Property<T>&& other) noexcept = default;
-        Property<T>& operator=(const Property<T>& other) noexcept = delete;
+        Property& operator=(Property&& other) noexcept = default;
+        Property& operator=(const Property& other) noexcept = delete;
 
-        Property<T>(Property<T>&& other) noexcept = default;
-        Property<T>(const Property<T>& other) noexcept = delete;
-        template<typename D> requires std::is_convertible_v<D, T>
-        Property(T& member, D&& defaultValue): m_member(member), m_defaultValue(std::forward<D>(defaultValue)) { }
+        Property(Property&& other) noexcept = default;
+        Property(const Property& other) noexcept = delete;
+        template<typename D> requires std::is_convertible_v<D, V>
+        Property(size_t key, V T::* member, D&& defaultValue): m_key(key), m_member(member), m_defaultValue(std::forward<D>(defaultValue)) { }
 
-        /// If the value is defaulted.
-        [[nodiscard]] inline bool isDefault() const override {
-            return m_member == m_defaultValue;
+        [[nodiscard]] inline size_t getKey() const {
+            return m_key;
         }
 
-        /// Gets the currently assigned value.
-        [[nodiscard]] inline const T& getValue() const {
+        /// Gets the target member
+        [[nodiscard]] inline V T::* getMember() const {
             return m_member;
         }
 
+        /// Gets the currently assigned value.
+        [[nodiscard]] inline V& getValue(CustomObjectInterface* object) {
+            return geode::cast::typeinfo_cast<T*>(object)->*m_member;
+        }
+
+        /// Gets the currently assigned value.
+        [[nodiscard]] inline const V& getValue(CustomObjectInterface* object) const {
+            return geode::cast::typeinfo_cast<T*>(object)->*m_member;
+        }
+
+        /// If the value is defaulted.
+        [[nodiscard]] inline bool isDefault(CustomObjectInterface* object) const override {
+            return this->getValue(object) == m_defaultValue;
+        }
+
         /// Gets the stringified version of the value.
-        [[nodiscard]] inline std::string getStringValue() const override {
-            return PropertyInterface::stringifyValue(m_member);
+        [[nodiscard]] inline std::string getStringValue(CustomObjectInterface* object) const override {
+            return PropertyInterface::stringifyValue(this->getValue(object));
         }
 
         /// Gets the default value.
-        [[nodiscard]] inline const T& getDefaultValue() const {
+        [[nodiscard]] inline const V& getDefaultValue() const {
             return m_defaultValue;
         }
 
         /// Sets the property value to default.
-        inline void applyDefault() override {
-            m_member = m_defaultValue;
+        inline void applyDefault(CustomObjectInterface* object) override {
+            this->getValue(object) = m_defaultValue;
+        }
+
+        /// Sets the property value.
+        inline void apply(CustomObjectInterface* object, V value) {
+            this->getValue(object) = std::move(value);
         }
 
         /// Converts the value to a the parsed value using either the GD format or matjson and assigns it to the property.
         /// @param value The value to assign.
-        inline void applyFromString(std::string_view value) override {
-            if constexpr (std::is_convertible_v<T, std::string>) {
-                m_member = value;
-            } else if constexpr (std::is_same_v<T, bool>) {
+        inline void applyFromString(CustomObjectInterface* object, std::string_view value) override {
+            if constexpr (std::is_convertible_v<V, std::string>) {
+                this->getValue(object) = value;
+            } else if constexpr (std::is_same_v<V, bool>) {
                 // This is required. matjson converts 0 to true since it looks for the constant and not the accurate conversion.
-                m_member = value != "0" && value != "" && value != "false";
-            } else if constexpr (std::is_arithmetic_v<T>) {
-                if (geode::Result<T> result = geode::utils::numFromString<T>(value)) {
-                    m_member = std::move(result).unwrap();
+                this->getValue(object) = value != "0" && value != "" && value != "false";
+            } else if constexpr (std::is_arithmetic_v<V>) {
+                if (geode::Result<V> result = geode::utils::numFromString<V>(value)) {
+                    this->getValue(object) = std::move(result).unwrap();
                 } else {
-                    this->applyDefault();
+                    this->applyDefault(object);
                 }
             } else {
-                if (geode::Result<T> result = matjson::parseAs<T>(value)) {
-                    m_member = std::move(result).unwrap();
+                if (geode::Result<V> result = matjson::parseAs<V>(value)) {
+                    this->getValue(object) = std::move(result).unwrap();
                 } else {
-                    this->applyDefault();
+                    this->applyDefault(object);
                 }
             }
         }

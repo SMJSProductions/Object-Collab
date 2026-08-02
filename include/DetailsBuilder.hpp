@@ -22,11 +22,34 @@ namespace object_collab {
             return std::move(*this);
         }
 
-        /// Adds a formatted field to the internal list.
+        /// Adds a field to the internal list in a standardized format.
+        /// @param name The property name.
+        /// @param value The property value.
+        template<typename T>
+        [[nodiscard]] inline DetailsBuilder&& field(std::string_view name, T value) && {
+            geode::utils::StringBuffer buffer;
+
+            buffer.append(name);
+            buffer.append(": ");
+
+            if constexpr (std::is_same_v<T, bool>) {
+                buffer.append(value ? "Yes" : "No");
+            } else if constexpr (std::is_floating_point_v<T>) {
+                buffer.append(geode::utils::numToString(value, 2));
+            } else {
+                buffer.append(value);
+            }
+            
+            m_fields.emplace_back(buffer.str());
+
+            return std::move(*this);
+        }
+
+        /// Adds a raw formatted field to the internal list.
         /// @param fmt The FMT string.
         /// @param args The list of templated args to add to the string.
         template<typename ...T>
-        [[nodiscard]] inline DetailsBuilder&& field(fmt::format_string<T...> fmt, T&& ...args) && {
+        [[nodiscard]] inline DetailsBuilder&& rawField(fmt::format_string<T...> fmt, T&& ...args) && {
             m_fields.emplace_back(fmt::format(fmt, std::forward<T>(args)...));
 
             return std::move(*this);

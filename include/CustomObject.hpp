@@ -14,6 +14,8 @@ concept GameObjectHasFrameInit = requires(T& object, const char* name) {
 };
 
 namespace object_collab {
+    class ObjectInfo;
+
     /// The pair of vectors GD uses to configure the properties. The void* vector will be nullptr to present not present and has a pointer when present.
     using ObjectVectors = std::pair<gd::vector<gd::string>, gd::vector<void*>>;
 
@@ -37,7 +39,7 @@ namespace object_collab {
         CustomObjectInterface(CustomObjectInterface&& other) noexcept;
         CustomObjectInterface(const CustomObjectInterface& other) noexcept = delete;
     protected:
-        CustomObjectInterface(CustomProperties&& customProperties);
+        CustomObjectInterface(ObjectInfo* info);
     public:
         virtual ~CustomObjectInterface();
         [[nodiscard]] virtual bool init(const char* frame) = 0;
@@ -70,27 +72,17 @@ namespace object_collab {
     public:
         static constexpr float TILE_SIZE = 30;
 
-        template<typename V, typename D> requires std::is_convertible_v<D, V>
-        [[nodiscard]] static std::pair<size_t, std::unique_ptr<PropertyInterface>> propertyFrom(size_t key, V& member, D&& defaultValue) {
-            return { key, std::make_unique<Property<V>>(member, std::forward<D>(defaultValue)) };
-        }
-
         CustomObject& operator=(CustomObject&& other) noexcept = default;
         CustomObject& operator=(const CustomObject& other) noexcept = delete;
 
         CustomObject(CustomObject&& other) noexcept = default;
         CustomObject(const CustomObject& other) noexcept = delete;
         /// @note Make sure to check https://flowvix.github.io/gd-info-explorer/props to prevent custom property overlaps!
-        /// @param customPropertiesList The custom properties list this object uses. This will automate saving and loading data.
+        /// @param info The object info of this object to populate properties.
         /// @param objectType The type of object, this copies some standard properties of the specified type.
         /// @param defaultZLayer The default z layer given when the object is created.
         /// @param defaultZOrder The default z order given when the object is created.
-        CustomObject(
-            CustomPropertiesList customPropertiesList,
-            GameObjectType objectType = GameObjectType::Solid,
-            ZLayer defaultZLayer = ZLayer::Default,
-            int defaultZOrder = 2
-        ): CustomObjectInterface(std::move(customPropertiesList).releaseMap()) {
+        CustomObject(ObjectInfo* info, GameObjectType objectType = GameObjectType::Solid, ZLayer defaultZLayer = ZLayer::Default, int defaultZOrder = 2): CustomObjectInterface(info) {
             this->m_objectType = objectType;
             this->m_defaultZLayer = defaultZLayer;
             this->m_defaultZOrder = defaultZOrder;
@@ -117,7 +109,7 @@ namespace object_collab {
         /// @see GameObject::firstSetup
         virtual void firstSetup() override {
             for (auto& [_, property] : this->getCustomProperties()) {
-                property->applyDefault();
+                property->applyDefault(this);
             }
         }
 
@@ -402,9 +394,9 @@ namespace object_collab {
 
             for (auto& [key, property] : properties) {
                 if (auto entry = foundProperties.find(key); entry == foundProperties.end()) {
-                    property->applyDefault();
+                    property->applyDefault(this);
                 } else {
-                    property->applyFromString(entry->second);
+                    property->applyFromString(this, entry->second);
                 }
             }
         }
@@ -427,8 +419,8 @@ namespace object_collab {
             }
 
             for (auto& [key, property] : this->getCustomProperties()) {
-                if (!property->isDefault()) {
-                    std::string value = property->getStringValue();
+                if (!property->isDefault(this)) {
+                    std::string value = property->getStringValue(this);
 
                     std::ranges::replace(value, ',', 0x1);
                     std::ranges::replace(value, ';', 0x2);
@@ -456,7 +448,7 @@ namespace object_collab {
             if (auto entry = customProperties.find(property); entry == customProperties.end()) {
                 return false;
             } else {
-                entry->second->applyFromString(value);
+                entry->second->applyFromString(this, value);
 
                 if constexpr (std::derived_from<T, EffectGameObject>) {
                     if (property == this->getTriggerTextProperty()) this->updateTriggerText();
@@ -481,9 +473,9 @@ namespace object_collab {
             }
 
             if (label) {
-                label->setString(properties.at(*property)->getStringValue().c_str());
+                label->setString(properties.at(*property)->getStringValue(this).c_str());
             } else {
-                label = cocos2d::CCLabelBMFont::create(properties.at(*property)->getStringValue().c_str(), "bigFont.fnt");
+                label = cocos2d::CCLabelBMFont::create(properties.at(*property)->getStringValue(this).c_str(), "bigFont.fnt");
 
                 this->addChild(label, 1);
                 this->setObjectLabel(label);

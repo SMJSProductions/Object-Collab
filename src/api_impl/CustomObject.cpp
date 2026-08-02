@@ -5,8 +5,8 @@ using namespace object_collab;
 using namespace geode::prelude;
 
 struct CustomObjectInterface::Impl {
-    CustomProperties customProperties;
-    std::optional<uint32_t> triggerTextProperty;
+    const CustomProperties& customProperties;
+    std::optional<size_t> triggerTextProperty;
     CCPoint triggerTextPropertyOffset;
     float triggerTextPropertyScale = 0;
 };
@@ -73,8 +73,17 @@ CustomObjectInterface& CustomObjectInterface::operator=(CustomObjectInterface&& 
 
 CustomObjectInterface::CustomObjectInterface(CustomObjectInterface&& other) noexcept = default;
 
-CustomObjectInterface::CustomObjectInterface(CustomProperties&& customProperties): m_impl(std::make_unique<Impl>()) {
-    m_impl->customProperties = std::forward<CustomProperties>(customProperties);
+CustomObjectInterface::CustomObjectInterface(ObjectInfo* info) {
+    static const CustomProperties DEFAULT_PROPERTIES = CustomProperties();
+
+    m_impl = std::make_unique<Impl>(std::visit(makeVisitor{
+        [](const QuickObject& object) -> const CustomProperties& {
+            return DEFAULT_PROPERTIES;
+        },
+        [](const ComplexObject& object) -> const CustomProperties& {
+            return object.getCustomProperties();
+        }
+    }, info->getConstruction()));
 }
 
 CustomObjectInterface::~CustomObjectInterface() = default;

@@ -490,77 +490,73 @@ namespace object_collab::editor_popup {
     };
 
     template<typename V, typename T>
+    [[nodiscard]] inline Property<T, V>* getAssociatedProperty(CustomObjectInterface* reference, V T::* member) {
+        for (auto& [_, property] : reference->getCustomProperties()) {
+            Property<T, V>* internalProperty = geode::cast::typeinfo_cast<Property<T, V>*>(property.get());
+
+            if (internalProperty && internalProperty->getMember() == member) {
+                return internalProperty;
+            }
+        }
+
+        return nullptr;
+    }
+
+    template<typename V, typename T>
     inline void applyValueToSelected(const Selected& selected, V T::* member, const V& value) {
-        for (CustomObjectInterface* object : selected) {
-            T* castedObject = geode::cast::typeinfo_cast<T*>(object);
+        if (selected.empty()) return;
 
-            castedObject->*member = value;
-        }
-    }
+        Property<T, V>* property = getAssociatedProperty(selected[0], member);
 
-    template<typename V, typename T>
-    inline void applyValueToSelectedAndReport(const Selected& selected, V T::* member, const V& value, void (T::* reportMember)()) {
-        for (CustomObjectInterface* object : selected) {
-            T* castedObject = geode::cast::typeinfo_cast<T*>(object);
+        if (property) {
+            const std::string stringValue = PropertyInterface::stringifyValue(value);
 
-            castedObject->*member = value;
-            (castedObject->*reportMember)();
-        }
-    }
-
-    template<typename V>
-    inline void applyValueToSelectedProperty(const Selected& selected, size_t property, const V& value) {
-        const std::string stringValue = PropertyInterface::stringifyValue(value);
-
-        for (CustomObjectInterface* object : selected) {
-            object->updateProperty(property, stringValue);
-        }
-    }
-
-    template<typename V, typename T>
-    inline void applyValueToSelectedPropertyAndReport(const Selected& selected, size_t property, const V& value, void (T::* reportMember)()) {
-        const std::string stringValue = PropertyInterface::stringifyValue(value);
-
-        for (CustomObjectInterface* object : selected) {
-            if (object->updateProperty(property, stringValue)) {
-                (geode::cast::typeinfo_cast<T*>(object)->*reportMember)();
+            for (CustomObjectInterface* object : selected) {
+                object->updateProperty(property->getKey(), stringValue);
+            }
+        } else {
+            for (CustomObjectInterface* object : selected) {
+                geode::cast::typeinfo_cast<T*>(object)->*member = value;
             }
         }
     }
 
     template<typename V, typename T>
-    [[nodiscard]] inline V getCommonValueOrDefault(const Selected& selected, V T::* member, auto defaultValue) {
-        if (selected.empty()) return defaultValue;
+    inline void applyValueToSelectedAndReport(const Selected& selected, V T::* member, const V& value, void (T::* reportMember)()) {
+        if (selected.empty()) return;
+
+        Property<T, V>* property = getAssociatedProperty(selected[0], member);
+
+        if (property) {
+            const std::string stringValue = PropertyInterface::stringifyValue(value);
+
+            for (CustomObjectInterface* object : selected) {
+                object->updateProperty(property->getKey(), stringValue);
+                (geode::cast::typeinfo_cast<T*>(object)->*reportMember)();
+            }
+        } else {
+            for (CustomObjectInterface* object : selected) {
+                T* castedObject = geode::cast::typeinfo_cast<T*>(object);
+
+                castedObject->*member = value;
+                (castedObject->*reportMember)();
+            }
+        }
+    }
+
+    template<typename V, typename T>
+    [[nodiscard]] inline V getCommonValueOrDefault(const Selected& selected, V T::* member) {
+        if (selected.empty()) return V();
 
         const V& firstValue = geode::cast::typeinfo_cast<T*>(selected[0])->*member;
 
         for (size_t i = 1; i < selected.size(); i++) {
-            if (firstValue != geode::cast::typeinfo_cast<T*>(selected[i])->*member) return defaultValue;
-        }
-
-        return firstValue;
-    }
-
-    template<typename V>
-    [[nodiscard]] inline V getCommonPropertyValueOrDefault(const Selected& selected, size_t property) {
-        if (selected.empty()) return V();
-
-        const CustomProperties& firstCustomProperties = selected[0]->getCustomProperties();
-        auto firstEntry = firstCustomProperties.find(property);
-
-        if (firstEntry == firstCustomProperties.end()) return V();
-
-        const Property<V>* firstProperty = geode::cast::typeinfo_cast<const Property<V>*>(firstEntry->second.get());
-        V firstValue = firstProperty->getValue();
-
-        for (size_t i = 1; i < selected.size(); i++) {
-            const CustomProperties& customProperties = selected[i]->getCustomProperties();
-            auto entry = customProperties.find(property);
-
-            if (entry == customProperties.end()) {
-                return firstProperty->getDefaultValue();
-            } else if (const Property<V>* property = geode::cast::typeinfo_cast<const Property<V>*>(entry->second.get()); !property || property->getValue() != firstValue) {
-                return firstProperty->getDefaultValue();
+            if (firstValue != geode::cast::typeinfo_cast<T*>(selected[i])->*member) {
+                if (Property<T, V>* property = getAssociatedProperty(selected[0], member)) {
+                    return property->getDefaultValue();
+                } else {
+                    return V();
+                }
             }
         }
 

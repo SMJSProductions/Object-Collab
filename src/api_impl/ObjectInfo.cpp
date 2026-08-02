@@ -3,17 +3,119 @@
 using namespace object_collab;
 using namespace geode::prelude;
 
-struct ObjectInfo::Impl {
-    std::string id;
-    std::string sprite;
+struct QuickObject::Impl {
     GameObjectType objectType = GameObjectType::Solid;
     ZLayer defaultZLayer = ZLayer::Default;
     int defaultZOrder = 2;
-    EditorTab editorTab = EditorTab::Solids;
+};
+
+struct ComplexObject::Impl {
     ObjectFactory factory = nullptr;
+    CustomProperties customProperties;
+};
+
+struct ObjectInfo::Impl {
+    std::string id;
+    std::string sprite;
+    ObjectConstruction construction = QuickObject::builder().build();
+    EditorTab editorTab = EditorTab::Solids;
     ObjectPopupFactory editObject = nullptr;
     ObjectPopupFactory editSpecial = nullptr;
 };
+
+QuickObject::Builder::Builder(): m_config(std::unique_ptr<QuickObject>(new QuickObject())) { }
+
+QuickObject::Builder::~Builder() = default;
+
+QuickObject::Builder QuickObject::builder() {
+    return QuickObject::Builder();
+}
+
+QuickObject::Builder&& QuickObject::Builder::objectType(GameObjectType objectType) && {
+    m_config->m_impl->objectType = objectType;
+
+    return std::forward<QuickObject::Builder>(*this);
+}
+
+QuickObject::Builder&& QuickObject::Builder::defaultZLayer(ZLayer defaultZLayer) && {
+    m_config->m_impl->defaultZLayer = defaultZLayer;
+
+    return std::forward<QuickObject::Builder>(*this);
+}
+
+QuickObject::Builder&& QuickObject::Builder::defaultZOrder(int defaultZOrder) && {
+    m_config->m_impl->defaultZOrder = defaultZOrder;
+
+    return std::forward<QuickObject::Builder>(*this);
+}
+
+QuickObject QuickObject::Builder::build() && {
+    return std::move(*m_config);
+}
+
+QuickObject& QuickObject::operator=(QuickObject&& other) noexcept = default;
+
+QuickObject::QuickObject(QuickObject&& other) noexcept = default;
+
+QuickObject::QuickObject(): m_impl(std::make_unique<Impl>()) { }
+
+QuickObject::~QuickObject() = default;
+
+GameObjectType QuickObject::getObjectType() const {
+    return m_impl->objectType;
+}
+
+ZLayer QuickObject::getDefaultZLayer() const {
+    return m_impl->defaultZLayer;
+}
+
+int QuickObject::getDefaultZOrder() const {
+    return m_impl->defaultZOrder;
+}
+
+ComplexObject::Builder::Builder(): m_config(std::unique_ptr<ComplexObject>(new ComplexObject())) { }
+
+ComplexObject::Builder::~Builder() = default;
+
+ComplexObject::Builder&& ComplexObject::Builder::factory(ObjectFactory factory) && {
+    m_config->m_impl->factory = std::move(factory);
+
+    return std::forward<ComplexObject::Builder>(*this);
+}
+
+ComplexObject::Builder&& ComplexObject::Builder::customProperties(CustomPropertiesList customProperties) && {
+    m_config->m_impl->customProperties = std::forward<CustomPropertiesList>(customProperties).releaseMap();
+
+    return std::forward<ComplexObject::Builder>(*this);
+}
+
+ComplexObject ComplexObject::Builder::build() && {
+    return std::move(*m_config);
+}
+
+ComplexObject::Builder ComplexObject::builder() {
+    return ComplexObject::Builder();
+}
+
+ComplexObject& ComplexObject::operator=(ComplexObject&& other) noexcept = default;
+
+ComplexObject::ComplexObject(ComplexObject&& other) noexcept = default;
+
+ComplexObject::ComplexObject(): m_impl(std::make_unique<Impl>()) { }
+
+ComplexObject::~ComplexObject() = default;
+
+bool ComplexObject::hasFactory() const {
+    return m_impl->factory != nullptr;
+}
+
+CustomObjectInterface* ComplexObject::factory(ObjectInfo* info) const {
+    return m_impl->factory(info);
+}
+
+const CustomProperties& ComplexObject::getCustomProperties() const {
+    return m_impl->customProperties;
+}
 
 ObjectInfo::Builder::Builder(): m_config(std::unique_ptr<ObjectInfo>(new ObjectInfo())) { }
 
@@ -31,32 +133,14 @@ ObjectInfo::Builder&& ObjectInfo::Builder::sprite(std::string sprite) && {
     return std::forward<ObjectInfo::Builder>(*this);
 }
 
-ObjectInfo::Builder&& ObjectInfo::Builder::objectType(GameObjectType objectType) && {
-    m_config->m_impl->objectType = objectType;
-
-    return std::forward<ObjectInfo::Builder>(*this);
-}
-
-ObjectInfo::Builder&& ObjectInfo::Builder::defaultZLayer(ZLayer defaultZLayer) && {
-    m_config->m_impl->defaultZLayer = defaultZLayer;
-
-    return std::forward<ObjectInfo::Builder>(*this);
-}
-
-ObjectInfo::Builder&& ObjectInfo::Builder::defaultZOrder(int defaultZOrder) && {
-    m_config->m_impl->defaultZOrder = defaultZOrder;
+ObjectInfo::Builder&& ObjectInfo::Builder::construction(ObjectConstruction construction) && {
+    m_config->m_impl->construction = std::move(construction);
 
     return std::forward<ObjectInfo::Builder>(*this);
 }
 
 ObjectInfo::Builder&& ObjectInfo::Builder::editorTab(EditorTab editorTab) && {
     m_config->m_impl->editorTab = editorTab;
-
-    return std::forward<ObjectInfo::Builder>(*this);
-}
-
-ObjectInfo::Builder&& ObjectInfo::Builder::factory(ObjectFactory factory) && {
-    m_config->m_impl->factory = std::move(factory);
 
     return std::forward<ObjectInfo::Builder>(*this);
 }
@@ -97,28 +181,12 @@ ZStringView ObjectInfo::getSprite() const {
     return m_impl->sprite;
 }
 
-GameObjectType ObjectInfo::getObjectType() const {
-    return m_impl->objectType;
-}
-
-ZLayer ObjectInfo::getDefaultZLayer() const {
-    return m_impl->defaultZLayer;
-}
-
-int ObjectInfo::getDefaultZOrder() const {
-    return m_impl->defaultZOrder;
+const ObjectConstruction& ObjectInfo::getConstruction() const {
+    return m_impl->construction;
 }
 
 EditorTab ObjectInfo::getEditorTab() const {
     return m_impl->editorTab;
-}
-
-bool ObjectInfo::hasFactory() const {
-    return m_impl->factory != nullptr;
-}
-
-CustomObjectInterface* ObjectInfo::factory() const {
-    return m_impl->factory();
 }
 
 bool ObjectInfo::hasEditObject() const {

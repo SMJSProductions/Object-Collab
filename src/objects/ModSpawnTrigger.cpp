@@ -3,8 +3,8 @@
 using namespace object_collab::prelude;
 using namespace geode::prelude;
 
-ModSpawnTrigger* ModSpawnTrigger::create() {
-    return new ModSpawnTrigger();
+ModSpawnTrigger* ModSpawnTrigger::create(ObjectInfo* info) {
+    return new ModSpawnTrigger(info);
 }
 
 PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
@@ -29,10 +29,10 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
             .title("Mod ID")
             .values(std::move(mods))
             .onValue([](const std::string& value, const Selected& selected, Popup* popup) {
-                applyValueToSelectedPropertyAndReport(selected, ModSpawnTrigger::MOD_KEY, value, &ModSpawnTrigger::checkMod);
+                applyValueToSelectedAndReport(selected, &ModSpawnTrigger::m_mod, value, &ModSpawnTrigger::checkMod);
             })
             .currentValue([](const Selected& selected, Popup* popup) {
-                std::string modID = getCommonPropertyValueOrDefault<std::string>(selected, ModSpawnTrigger::MOD_KEY);
+                std::string modID = getCommonValueOrDefault(selected, &ModSpawnTrigger::m_mod);
 
                 return ModSpawnTrigger::getModName(std::move(modID));
             })
@@ -49,10 +49,10 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                 .max(9999)
                 .precision(0)
                 .onValue([](const int value, const Selected& selected, Popup* popup) {
-                    applyValueToSelectedProperty(selected, ModSpawnTrigger::TARGET_GROUP_ID, value);
+                    applyValueToSelected(selected, &ModSpawnTrigger::m_targetGroupID, value);
                 })
                 .currentValue([](const Selected& selected, Popup* popup) {
-                    return getCommonPropertyValueOrDefault<int>(selected, ModSpawnTrigger::TARGET_GROUP_ID);
+                    return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_targetGroupID);
                 })
                 .build())
             .menu(AxisLayoutMenu::builder()
@@ -63,7 +63,7 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                         applyValueToSelected(selected, &ModSpawnTrigger::m_previewDisable, value);
                     })
                     .currentValue([](const Selected& selected, Popup* popup) {
-                        return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_previewDisable, false);
+                        return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_previewDisable);
                     })
                     .build())
                 .menu(ToggleMenu::builder()
@@ -73,7 +73,7 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                         applyValueToSelected(selected, &ModSpawnTrigger::m_spawnOrdered, value);
                     })
                     .currentValue([](const Selected& selected, Popup* popup) {
-                        return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_spawnOrdered, false);
+                        return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_spawnOrdered);
                     })
                     .build())
                 .build())
@@ -93,7 +93,7 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                     applyValueToSelected(selected, &ModSpawnTrigger::m_spawnDelay, value);
                 })
                 .currentValue([](const Selected& selected, Popup* popup) {
-                    return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_spawnDelay, 0);
+                    return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_spawnDelay);
                 })
                 .build())
             .menu(NumericMenu::builder()
@@ -108,7 +108,7 @@ PopupOptions ModSpawnTrigger::getEditObjectConfig(const Selected& selected) {
                     applyValueToSelected(selected, &ModSpawnTrigger::m_delayRange, value);
                 })
                 .currentValue([](const Selected& selected, Popup* popup) {
-                    return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_delayRange, 0);
+                    return getCommonValueOrDefault(selected, &ModSpawnTrigger::m_delayRange);
                 })
                 .build())
             .build())
@@ -123,10 +123,7 @@ std::string ModSpawnTrigger::getModName(std::string modID) {
     }
 }
 
-ModSpawnTrigger::ModSpawnTrigger(): CustomObject({
-    CustomObject::propertyFrom(ModSpawnTrigger::TARGET_GROUP_ID, m_targetGroupID, 0),
-    CustomObject::propertyFrom(ModSpawnTrigger::MOD_KEY, m_mod, "Unknown"),
-}, GameObjectType::Modifier) { }
+ModSpawnTrigger::ModSpawnTrigger(ObjectInfo* info): CustomObject(info, GameObjectType::Modifier) { }
 
 void ModSpawnTrigger::postInit() {
     this->setHitbox({ 1, 1 });
@@ -145,13 +142,13 @@ void ModSpawnTrigger::triggerObject(GJBaseGameLayer* layer, const int uniqueID, 
 
 std::vector<std::string> ModSpawnTrigger::getObjectDetails() {
     return DetailsBuilder::builder()
-        .field("Mod ID: {}", ModSpawnTrigger::getModName(m_mod))
-        .field("Group ID: {}", m_targetGroupID)
-        .field("Delay: {}", m_spawnDelay)
-        .field("Delay+-: {}", m_delayRange)
-        .field("Spawn ordered: {}", m_spawnOrdered ? "Yes" : "No")
-        .field("Preview disabled: {}", m_previewDisable ? "Yes" : "No")
-        .field("Active: {}", m_active ? "Yes" : "No")
+        .field("Mod ID", ModSpawnTrigger::getModName(m_mod))
+        .field("Group ID", m_targetGroupID)
+        .field("Delay", m_spawnDelay)
+        .field("Delay+-", m_delayRange)
+        .field("Spawn ordered", m_spawnOrdered)
+        .field("Preview disabled", m_previewDisable)
+        .field("Active", m_active)
         .build();
 }
 
@@ -167,7 +164,13 @@ $on_mod(Loaded) {
     ObjectAPI::registerObject(ObjectInfo::builder()
         .id("mod-spawn-trigger"_spr)
         .sprite("mod-trigger.png"_spr)
-        .factory(ModSpawnTrigger::create)
+        .construction(ComplexObject::builder()
+            .factory(ModSpawnTrigger::create)
+            .customProperties({
+                PropertyInterface::from(ModSpawnTrigger::TARGET_GROUP_ID, &ModSpawnTrigger::m_targetGroupID, 0),
+                PropertyInterface::from(ModSpawnTrigger::MOD_KEY, &ModSpawnTrigger::m_mod, "Unknown"),
+            })
+            .build())
         .editObject(ModSpawnTrigger::getEditObjectConfig)
         .editorTab(EditorTab::Triggers)
         .build());

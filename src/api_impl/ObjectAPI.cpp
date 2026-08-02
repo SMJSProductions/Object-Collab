@@ -54,6 +54,8 @@ void ObjectAPI::registerObject(ObjectInfo info, Mod* mod) {
         return log::error("[{}] Object ID must have at least 1 character besides the mod ID!", modID);
     } else if (info.getSprite().empty()) {
         return log::error("[{}] Sprite is required!", modID);
+    } else if (std::holds_alternative<ComplexObject>(info.getConstruction()) && !std::get<ComplexObject>(info.getConstruction()).hasFactory()) {
+        return log::error("[{}] Factory is required for complex objects!", modID);
     }
 
     const uint32_t numericID = ObjectAPI::BASE_CUSTOM_OBJECT_ID + ID_OFFSET++;
