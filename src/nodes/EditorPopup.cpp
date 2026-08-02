@@ -3,34 +3,6 @@
 using namespace object_collab::prelude;
 using namespace geode::prelude;
 
-template<typename Value, typename T, typename Member>
-inline void applyValueToSelectedGameObjects(const Selected& selected, Member T::* member, const Value& value) {
-    for (CustomObjectInterface* object : selected) {
-        if (T* gameObject = typeinfo_cast<T*>(object->getGameObject())) {
-            gameObject->*member = value;
-        }
-    }
-}
-
-template<typename Value, typename T, typename Member>
-    inline Value getGameObjectsCommonValueOrDefault(const Selected& selected, Member T::* member, Value defaultValue) {
-        if (selected.empty()) return defaultValue;
-
-        T* firstGameObject = typeinfo_cast<T*>(selected[0]->getGameObject());
-
-        if (!firstGameObject) return defaultValue;
-
-        const Value& firstValue = firstGameObject->*member;
-
-        for (size_t i = 1; i < selected.size(); i++) {
-            T* gameObject = typeinfo_cast<T*>(selected[i]->getGameObject());
-
-            if (!gameObject || firstValue != gameObject->*member) return defaultValue;
-        }
-
-        return firstValue;
-    }
-
 EditorPopup* EditorPopup::create(Selected selected, PopupConfig& config) {
     EditorPopup* popup = new EditorPopup(std::move(selected));
 
@@ -147,7 +119,7 @@ bool EditorPopup::addTriggerToggles(CCNode* container) {
         .id("touch-trigger"_spr)
         .title("Touch\nTrigger")
         .currentValue([](const Selected& selected, Popup* popup) {
-            return getGameObjectsCommonValueOrDefault(selected, &EffectGameObject::m_isTouchTriggered, false);
+            return getCommonValueOrDefault(selected, &EffectGameObject::m_isTouchTriggered);
         })
         .onValue([this, container](const bool value, const Selected& selected, Popup* popup) {
             if (value) {
@@ -162,7 +134,7 @@ bool EditorPopup::addTriggerToggles(CCNode* container) {
                 container->updateLayout();
             }
 
-            applyValueToSelectedGameObjects(selected, &EffectGameObject::m_isTouchTriggered, value);
+            applyValueToSelected(selected, &EffectGameObject::m_isTouchTriggered, value);
         })
         .build()
         .get());
@@ -170,7 +142,7 @@ bool EditorPopup::addTriggerToggles(CCNode* container) {
         .id("spawn-trigger"_spr)
         .title("Spawn\nTrigger")
         .currentValue([](const Selected& selected, Popup* popup) {
-            return getGameObjectsCommonValueOrDefault(selected, &EffectGameObject::m_isSpawnTriggered, false);
+            return getCommonValueOrDefault(selected, &EffectGameObject::m_isSpawnTriggered);
         })
         .onValue([this, container](const bool value, const Selected& selected, Popup* popup) {
             if (value) {
@@ -185,7 +157,7 @@ bool EditorPopup::addTriggerToggles(CCNode* container) {
                 container->updateLayout();
             }
 
-            applyValueToSelectedGameObjects(selected, &EffectGameObject::m_isSpawnTriggered, value);
+            applyValueToSelected(selected, &EffectGameObject::m_isSpawnTriggered, value);
         })
         .build()
         .get());
@@ -201,10 +173,10 @@ void EditorPopup::addNoMultiActivateToggle(CCNode* container) {
         .id("no-multi-activate"_spr)
         .title("No Multi\nActivate")
         .currentValue([](const Selected& selected, Popup* popup) {
-            return getGameObjectsCommonValueOrDefault(selected, &EnhancedGameObject::m_isNoMultiActivate, false);
+            return getCommonValueOrDefault(selected, &EnhancedGameObject::m_isNoMultiActivate);
         })
         .onValue([](const bool value, const Selected& selected, Popup* popup) {
-            applyValueToSelectedGameObjects(selected, &EnhancedGameObject::m_isNoMultiActivate, value);
+            applyValueToSelected(selected, &EnhancedGameObject::m_isNoMultiActivate, value);
         })
         .build()
         .get()));
@@ -217,10 +189,10 @@ void EditorPopup::addMultiTriggerToggle(CCNode* container) {
         .id("multi-trigger"_spr)
         .title("Multi\nTrigger")
         .currentValue([](const Selected& selected, Popup* popup) {
-            return getGameObjectsCommonValueOrDefault(selected, &EffectGameObject::m_isMultiTriggered, false);
+            return getCommonValueOrDefault(selected, &EffectGameObject::m_isMultiTriggered);
         })
         .onValue([](const bool value, const Selected& selected, Popup* popup) {
-            applyValueToSelectedGameObjects(selected, &EffectGameObject::m_isMultiTriggered, value);
+            applyValueToSelected(selected, &EffectGameObject::m_isMultiTriggered, value);
         })
         .build()
         .get()));
