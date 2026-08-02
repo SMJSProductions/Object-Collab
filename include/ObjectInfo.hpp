@@ -21,7 +21,7 @@ namespace object_collab {
         Hazards = 3,
         ThreeDimensionals = 4,
         Modifiers = 5,
-        Effects = 6,
+        Animated = 6,
         Pixels = 7,
         Collectables = 8,
         Particles = 9,
@@ -127,7 +127,7 @@ namespace object_collab {
             ~Builder();
             /// @note REQUIRED!
             /// @warning This should never be changed! Changing the ID will make all saved objects with this ID be considered missing.
-            /// @param id The id of the object.
+            /// @param id The id of the object which must be suffixed by _spr.
             [[nodiscard]] Builder&& id(std::string id) &&;
             /// @note REQUIRED!
             /// @param sprite The sprite of the object.
