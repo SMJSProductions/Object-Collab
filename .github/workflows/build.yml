@@ -72,8 +72,7 @@ jobs:
       name: pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout More Icons
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           path: ./Object-Toolbox
       - name: Download Flash
@@ -84,7 +83,7 @@ jobs:
           fileName: flash.exe
       - name: Setup Geode CLI
         uses: geode-sdk/cli/.github/actions/setup@main
-      - name: Get Geode Version
+      - name: Get Geode version
         id: geode
         shell: bash
         run: |
@@ -94,7 +93,7 @@ jobs:
           echo "Geode Version: $GEODE_VERSION"
           # set GITHUB_OUTPUT
           echo "version=$GEODE_VERSION" >> $GITHUB_OUTPUT
-      - name: Generate Documentation
+      - name: Generate documentation
         shell: bash
         run: |
           mkdir -p "${{ github.workspace }}/cli-profile/geode/mods"
@@ -103,11 +102,11 @@ jobs:
           export GEODE_SDK="${{ github.workspace }}/geode"
           echo "GEODE_SDK=$GEODE_SDK" >> $GITHUB_ENV
           geode sdk update ${{ steps.geode.outputs.version }} && geode sdk install-binaries
-          flash.exe -i Object-Toolbox -o pages --overwrite
-      - name: Upload Pages
+          ./flash.exe -i Object-Toolbox -o pages --overwrite
+      - name: Upload pages
         uses: actions/upload-pages-artifact@v5
         with:
           path: ./pages
-      - name: Deploy Pages
+      - name: Deploy pages
         id: deployment
         uses: actions/deploy-pages@v5
