@@ -105,7 +105,7 @@ jobs:
           geode sdk update ${{ steps.geode.outputs.version }} && geode sdk install-binaries
           flash.exe -i Object-Toolbox -o pages --overwrite
       - name: Upload Pages
-        uses: actions/upload-pages-artifact@5
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./pages
       - name: Deploy Pages
