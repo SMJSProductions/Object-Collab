@@ -130,6 +130,7 @@ namespace object_collab {
             this->m_dontIgnoreDuration = !this->ignoreEditorDuration();
             this->m_activateTriggerInEditor = this->isEditorSpawnableTrigger();
             this->m_canBeControlled = this->isStoppableTrigger();
+            this->m_isInvisible = this->isTrigger() && !this->m_editorEnabled;
         }
 
         /// Runs after the object has fully generated.

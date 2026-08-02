@@ -8,7 +8,7 @@
 	},
 	"id": "smjs.object-collab",
 	"name": "Object Collab",
-	"version": "v0.1.0-alpha.2",
+	"version": "v0.1.0-alpha.3",
 	"developer": "SMJS",
 	"description": "Adding a compat layer between gameplay mods",
   "tags": [
