@@ -74,7 +74,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          path: ./Object-Toolbox
+          path: ./Object-Collab-Internal
       - name: Download Flash
         uses: robinraju/release-downloader@v1.13
         with:
@@ -87,7 +87,7 @@ jobs:
         id: geode
         shell: bash
         run: |
-          cd Object-Toolbox
+          cd Object-Collab-Internal
           GEODE_VERSION=$(jq -r '.geode' mod.json)
           GEODE_VERSION=v${GEODE_VERSION#v}
           echo "Geode Version: $GEODE_VERSION"
@@ -97,14 +97,12 @@ jobs:
         shell: bash
         run: |
           mkdir -p "${{ github.workspace }}/cli-profile/geode/mods"
-          geode profile add --name Object-Toolbox "${{ github.workspace }}/cli-profile/GeometryDash.exe" win
+          geode profile add --name Object-Collab "${{ github.workspace }}/cli-profile/GeometryDash.exe" win
           geode sdk install "${{ github.workspace }}/geode"
           export GEODE_SDK="${{ github.workspace }}/geode"
           echo "GEODE_SDK=$GEODE_SDK" >> $GITHUB_ENV
           geode sdk update ${{ steps.geode.outputs.version }} && geode sdk install-binaries
-          mkdir Object-Collab
-          cd Object-Collab
-          ../flash.exe -i ../Object-Toolbox -o . --overwrite
+          ./flash.exe -i ../Object-Collab-Internal -o Object-Collab --overwrite
       - name: Upload pages
         uses: actions/upload-pages-artifact@v5
         with:
