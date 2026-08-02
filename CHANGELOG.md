@@ -1,5 +1,9 @@
 # Object-Collab Changelog
 
+## v0.1.0-alpha.6
+
+- General metadata changes.
+
 ## v0.1.0-alpha.5
 
 - Added documentation.

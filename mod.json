@@ -8,7 +8,7 @@
 	},
 	"id": "smjs.object-collab",
 	"name": "Object Collab",
-	"version": "v0.1.0-alpha.5",
+	"version": "v0.1.0-alpha.6",
 	"developer": "SMJS",
 	"description": "A framework for custom objects & object mod compatibility.",
   "links": {
