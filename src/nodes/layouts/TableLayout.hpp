@@ -2,6 +2,8 @@
 
 #include <Geode/Geode.hpp>
 
+using TableAxisAlignment = geode::CrossAxisAlignment;
+
 class TableLayout : public geode::Layout {
 public:
     static TableLayout* create(const geode::Axis axis);
@@ -12,6 +14,8 @@ private:
     float m_maxScale;
     geode::Padding m_padding;
     bool m_scaleGaps;
+    TableAxisAlignment m_mainAlignment;
+    TableAxisAlignment m_crossAlignment;
     bool m_inverseMainAxis;
     bool m_inverseCrossAxis;
 public:
@@ -24,6 +28,8 @@ public:
     TableLayout* setMaxScale(const float max);
     TableLayout* setPadding(geode::Padding padding);
     TableLayout* scaleGaps(const bool toggle);
+    TableLayout* setMainAxisAlignment(const TableAxisAlignment alignment);
+    TableLayout* setCrossAxisAlignment(const TableAxisAlignment alignment);
     TableLayout* inverseMainAxis(const bool toggle);
     TableLayout* inverseCrossAxis(const bool toggle);
 
@@ -38,6 +44,7 @@ private:
     float getContentSizeForAxis(cocos2d::CCNode* from, const float scale, const bool inverse = false);
     float getSizeHintForAxis(cocos2d::CCNode* on, const bool inverse = false);
     float getBlockSizeForAxis(cocos2d::CCNode* on, const size_t blocks, const float scale, const bool inverse = false);
+    float getOffsetForAxis(const float blockSize, const float childSize, const bool inverse = false);
     float getWidthHint(cocos2d::CCNode* on) const;
     float getHeightHint(cocos2d::CCNode* on) const;
 };

@@ -16,6 +16,8 @@ m_gap(ccp(0, 0)),
 m_minScale(0.5f),
 m_maxScale(10),
 m_scaleGaps(true),
+m_mainAlignment(TableAxisAlignment::Center),
+m_crossAlignment(TableAxisAlignment::Start),
 m_inverseMainAxis(false),
 m_inverseCrossAxis(false) { }
 
@@ -67,6 +69,18 @@ TableLayout* TableLayout::scaleGaps(const bool toggle) {
     return this;
 }
 
+TableLayout* TableLayout::setMainAxisAlignment(const TableAxisAlignment alignment) {
+    m_mainAlignment = alignment;
+
+    return this;
+}
+
+TableLayout* TableLayout::setCrossAxisAlignment(const TableAxisAlignment alignment) {
+    m_crossAlignment = alignment;
+
+    return this;
+}
+
 TableLayout* TableLayout::inverseMainAxis(const bool toggle) {
     m_inverseMainAxis = toggle;
 
@@ -106,6 +120,7 @@ void TableLayout::apply(CCNode* on) {
 }
 
 void TableLayout::applyWithConfiguration(CCNode* on, const float scale, const size_t blocks) {
+    const size_t count = on->getChildrenCount();
     const float parentMainAxis = this->getSizeHintForAxis(on);
     const float parentCrossAxis = this->getSizeHintForAxis(on, true);
     const float blockMainAxis = this->getBlockSizeForAxis(on, blocks, scale);
@@ -118,32 +133,35 @@ void TableLayout::applyWithConfiguration(CCNode* on, const float scale, const si
     float currentCrossAxis = this->getInsetForAxis(true) + parentCrossAxis * m_inverseCrossAxis;
     float maxCrossAxis = 0;
 
-    for (size_t i = 0; i < on->getChildrenCount(); i++) {
+    for (size_t i = 0; i < count; i++) {
+        if (i && i % blocks == 0) {
+            currentMainAxis = mainAxisReset;
+            currentCrossAxis += (maxCrossAxis + crossAxisGap) * crossAxisMultiplier;
+            maxCrossAxis = 0;
+        }
+
+        if (maxCrossAxis == 0) {
+            for (size_t j = i; j < count && (j == i || j % blocks != 0); j++) {
+                maxCrossAxis = std::max(maxCrossAxis, this->getContentSizeForAxis(on->getChildByIndex(j), scale, true));
+            }
+        }
+
         CCNode* child = on->getChildByIndex(i);
         const float childMainAxis = this->getContentSizeForAxis(child, scale);
         const float childCrossAxis = this->getContentSizeForAxis(child, scale, true);
 
-        if (i && i % blocks == 0) {
-            currentMainAxis = mainAxisReset;
-            currentCrossAxis += (maxCrossAxis + crossAxisGap) * crossAxisMultiplier;
-            maxCrossAxis = childCrossAxis;
-        } else if (childCrossAxis > maxCrossAxis) {
-            maxCrossAxis = childCrossAxis;
-        }
-
         child->setScale(scale);
+        child->setAnchorPoint({ 0.5f, 0.5f });
 
         if (m_axis == Axis::Row) {
-            child->setAnchorPoint({ 0.5f, 1 });
             child->setPosition(ccp(
-                currentMainAxis + blockMainAxis / 2 * mainAxisMultiplier,
-                currentCrossAxis + childCrossAxis * !m_inverseCrossAxis
+                currentMainAxis + this->getOffsetForAxis(blockMainAxis, childMainAxis) * mainAxisMultiplier,
+                currentCrossAxis + this->getOffsetForAxis(maxCrossAxis, childCrossAxis, true) * crossAxisMultiplier
             ));
         } else {
-            child->setAnchorPoint({ 1, 0.5f });
             child->setPosition(ccp(
-                currentCrossAxis + childCrossAxis * !m_inverseCrossAxis,
-                currentMainAxis + blockMainAxis / 2 * mainAxisMultiplier
+                currentCrossAxis + this->getOffsetForAxis(maxCrossAxis, childCrossAxis, true) * crossAxisMultiplier,
+                currentMainAxis + this->getOffsetForAxis(blockMainAxis, childMainAxis) * mainAxisMultiplier
             ));
         }
 
@@ -173,16 +191,16 @@ bool TableLayout::testConfiguration(CCNode* on, const float scale, const size_t 
 }
 
 size_t TableLayout::calculateCrossAxisBlocks(CCNode* on, const float scale) {
-    const size_t childrenCount = on->getChildrenCount();
+    const size_t count = on->getChildrenCount();
     size_t blocks = 1;
 
     for (float mainAxisSize = this->getBlockSizeForAxis(on, blocks, scale); mainAxisSize; mainAxisSize = this->getBlockSizeForAxis(on, ++blocks, scale)) {
-        for (size_t i = 0; i < on->getChildrenCount(); i++) {
+        for (size_t i = 0; i < count; i++) {
             if (this->getContentSizeForAxis(on->getChildByIndex(i), scale) > mainAxisSize) return blocks - 1;
         }
 
         // Don't try more if it matches the children count
-        if (blocks == childrenCount) return blocks;
+        if (blocks == count) return blocks;
     }
 
     return 0;
@@ -206,6 +224,16 @@ float TableLayout::getSizeHintForAxis(cocos2d::CCNode* on, const bool inverse) {
 
 float TableLayout::getBlockSizeForAxis(cocos2d::CCNode* on, const size_t blocks, const float scale, const bool inverse) {
     return (this->getSizeHintForAxis(on, inverse) - this->getGapForAxis(scale, inverse) * (blocks - 1)) / blocks;
+}
+
+float TableLayout::getOffsetForAxis(const float blockSize, const float childSize, const bool inverse) {
+    const TableAxisAlignment alignment = inverse ? m_crossAlignment : m_mainAlignment;
+
+    switch (alignment) {
+        case TableAxisAlignment::Start: return childSize / 2;
+        case TableAxisAlignment::Center: return blockSize / 2;
+        case TableAxisAlignment::End: return blockSize - childSize / 2;
+    }
 }
 
 float TableLayout::getWidthHint(CCNode* on) const {
