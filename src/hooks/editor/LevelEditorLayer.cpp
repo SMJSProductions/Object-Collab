@@ -30,6 +30,19 @@ void ModLevelEditorLayer::createObjectsFromSetup(gd::string& setup) {
     LevelEditorLayer::createObjectsFromSetup(setup);
 }
 
+CCArray* ModLevelEditorLayer::createObjectsFromString(const gd::string& str, const bool noUndo, const bool noLimit) {
+    CCArrayExt<GameObject> objectList = LevelEditorLayer::createObjectsFromString(str, noUndo, noLimit);
+
+    for (GameObject* object : objectList) {
+        if (CustomObjectInterface* customObject = typeinfo_cast<CustomObjectInterface*>(object)) {
+            customObject->postInit();
+            customObject->postEditorInit();
+        }
+    }
+
+    return objectList.inner();
+}
+
 GameObject* ModLevelEditorLayer::createObject(const int key, const CCPoint position, const bool noUndo) {
     GameObject* object = LevelEditorLayer::createObject(key, position, noUndo);
 
