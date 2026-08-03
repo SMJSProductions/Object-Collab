@@ -1,5 +1,13 @@
 # Object-Collab Changelog
 
+## v0.2.0-beta.1
+
+- Added an optional API
+- Added a trailing newline to the object info label for compatibility
+- Added an inverse option for toggle menu
+- Fix objects not calling post inits on pasting
+- Fix the right toggle menu alignment
+
 ## v0.1.0-alpha.6
 
 - General metadata changes.
