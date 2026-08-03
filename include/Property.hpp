@@ -18,13 +18,13 @@ namespace object_collab {
 
         /// Stringifies the value to a minimal format using either the GD format or matjson.
         /// @param value The value to stringify.
-        template<typename T>
-        static inline std::string stringifyValue(const T& value) {
-            if constexpr (std::is_convertible_v<T, std::string>) {
+        template<typename V>
+        static inline std::string stringifyValue(const V& value) {
+            if constexpr (std::is_convertible_v<V, std::string>) {
                 return value;
-            } else if constexpr (std::is_same_v<T, bool>) {
+            } else if constexpr (std::is_same_v<V, bool>) {
                 return value ? "1" : "0";
-            } else if constexpr (std::is_arithmetic_v<T>) {
+            } else if constexpr (std::is_arithmetic_v<V>) {
                 return geode::utils::numToString(value);
             } else {
                 return matjson::Value(value).dump();
