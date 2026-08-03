@@ -94,7 +94,16 @@ void EditorPopup::addToggles(PopupConfig& config, const bool left) {
     }
 
     for (const std::unique_ptr<ToggleMenu>& toggleMenu : (left ? config.getLeftToggles() : config.getRightToggles())) {
-        container->addChild(ToggleMenuNode::create(m_selected, this, *toggleMenu.get()));
+        ToggleMenuNode* toggle = ToggleMenuNode::create(m_selected, this, *toggleMenu.get());
+
+        if (left) {
+            reinterpret_cast<SimpleAxisLayout*>(toggle->getLayout())->setMainAxisDirection(AxisDirection::LeftToRight);
+        } else {
+            reinterpret_cast<SimpleAxisLayout*>(toggle->getLayout())->setMainAxisDirection(AxisDirection::RightToLeft);
+        }
+
+        toggle->updateLayout();
+        container->addChild(toggle);
     }
 
     if (shouldAddMultiTrigger) {
@@ -110,7 +119,8 @@ void EditorPopup::addToggles(PopupConfig& config, const bool left) {
         ->setGap(10)
         ->setMinScale(0.4f)
         ->setMaxScale(1)
-        ->inverseMainAxis(true));
+        ->inverseMainAxis(true)
+        ->inverseCrossAxis(!left));
     m_buttonMenu->addChildAtPosition(container, left ? Anchor::BottomLeft : Anchor::BottomRight, { left ? 10.0f : -10.0f, 10 });
 }
 
