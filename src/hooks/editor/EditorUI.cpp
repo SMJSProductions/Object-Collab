@@ -132,10 +132,6 @@ void ModEditorUI::onCreateObject(const int id) {
 }
 
 void ModEditorUI::updateObjectInfoLabel() {
-    if (!m_selectedObject && m_selectedObjects->count() == 1 && Mod::get()->getSettingValue<bool>("object-info-label-fix")) {
-        m_selectedObject = reinterpret_cast<GameObject*>(m_selectedObjects->objectAtIndex(0));
-    }
-
     EditorUI::updateObjectInfoLabel();
 
     if (CustomObjectInterface* object = typeinfo_cast<CustomObjectInterface*>(m_selectedObject)) {
