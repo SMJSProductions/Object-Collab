@@ -35,7 +35,9 @@ bool ToggleMenuNode::init(const Selected& selected, Popup* popup, ToggleMenu& to
     this->addChild(toggler);
     this->addChild(label);
     this->setContentHeight(toggler->getContentHeight());
-    this->setLayout(this->createStandardLayout(Axis::Row)->setCrossAxisScaling(AxisScaling::None));
+    this->setLayout(this->createStandardLayout(Axis::Row)
+        ->setMainAxisDirection(toggleMenu.getInverse() ? AxisDirection::RightToLeft : AxisDirection::LeftToRight)
+        ->setCrossAxisScaling(AxisScaling::None));
     toggler->toggle(currentValueCallback ? currentValueCallback(selected, popup) : false);
 
     return true;

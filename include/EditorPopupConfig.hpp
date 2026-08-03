@@ -86,6 +86,8 @@ namespace object_collab::editor_popup {
             [[nodiscard]] Builder&& onValue(ValueUpdateCallback<bool> onValue) &&;
             /// @param currentValue The current value getter callback.
             [[nodiscard]] Builder&& currentValue(CurrentValueCallback<bool> currentValue) &&;
+            /// @param inverse Swaps the toggle and text.
+            [[nodiscard]] Builder&& inverse(bool inverse) &&;
             [[nodiscard]] std::unique_ptr<ToggleMenu> build() &&;
         };
 
@@ -101,6 +103,7 @@ namespace object_collab::editor_popup {
         [[nodiscard]] geode::ZStringView getTitle() const;
         [[nodiscard]] ValueUpdateCallback<bool> releaseOnValue();
         [[nodiscard]] CurrentValueCallback<bool> releaseCurrentValue();
+        [[nodiscard]] bool getInverse() const;
     };
 
     class OBJC_API_DLL NumericMenu : public ValueMenu {

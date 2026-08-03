@@ -6,7 +6,7 @@ using namespace object_collab::editor_popup;
 #define __BUILDER_PARAM__(name, type, variable, method) \
     name::Builder&& name::Builder::variable(type variable) && { \
         m_impl->variable = method(variable); \
-        return std::move(*this); \
+        return std::forward<name::Builder>(*this); \
     }
 
 #define BUILDER_PARAM(name, type, variable) __BUILDER_PARAM__(name, type, variable, std::move)
@@ -14,7 +14,7 @@ using namespace object_collab::editor_popup;
 #define VECTOR_PARAM(name, type, variable) \
     name::Builder&& name::Builder::variable(type variable) && { \
         m_impl->variable##s.emplace_back(std::move(variable)); \
-        return std::move(*this); \
+        return std::forward<name::Builder>(*this); \
     }
 
 #define CONFIG_GETTER(name, type, variable, title) type name::get##title() const { return m_impl->variable; }
@@ -76,9 +76,11 @@ CONFIG_VALUE(InfoPopup, std::string, ZStringView, description, Description);
 
 struct ToggleMenu::Impl {
     VALUE_IMPL_VALUES(bool);
+    bool inverse = false;
 };
 
 VALUE_IMPL(ToggleMenu, bool);
+PRIMITIVE_CONFIG_VALUE(ToggleMenu, bool, inverse, Inverse);
 
 struct NumericMenu::Impl {
     VALUE_IMPL_VALUES(float);
