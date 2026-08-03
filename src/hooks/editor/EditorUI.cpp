@@ -154,6 +154,7 @@ void ModEditorUI::updateObjectInfoLabel() {
         }
 
         info.append("Object Mod: {}", objectID.substr(0, objectID.find('/')));
+        info.append('\n');
         m_objectInfoLabel->setString(info.c_str());
     }
 }
