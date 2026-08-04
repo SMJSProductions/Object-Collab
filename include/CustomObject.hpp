@@ -180,7 +180,7 @@ namespace object_collab {
         GameObject* createBackFrame(geode::ZStringView frame, const cocos2d::CCPoint& offset = { 0, 0 }) {
             PlayLayer* playLayer = PlayLayer::get();
 
-            if (!playLayer) return nullptr;
+            if (!playLayer || this->m_editorEnabled) return nullptr;
 
             const bool addedGuideArt = playLayer->addGuideArt(this);
             GameObject* backFrame = GameObject::createWithFrame(frame.c_str());
