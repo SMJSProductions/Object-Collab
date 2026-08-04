@@ -130,7 +130,11 @@ namespace object_collab {
             this->m_dontIgnoreDuration = !this->ignoreEditorDuration();
             this->m_activateTriggerInEditor = this->isEditorSpawnableTrigger();
             this->m_canBeControlled = this->isStoppableTrigger();
-            this->m_isInvisible = this->isTrigger() && !this->m_editorEnabled;
+            this->m_isInvisible = !this->m_editorEnabled && !this->isSpeedObject() && this->isTrigger();
+
+            if constexpr (std::derived_from<T, EffectGameObject>) {
+                this->m_isTouchTriggered = this->m_isTouchTriggered || this->isSpeedObject();
+            }
         }
 
         /// Runs after the object has fully generated.
