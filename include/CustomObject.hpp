@@ -173,6 +173,67 @@ namespace object_collab {
             this->setDefaultSecondaryColorMode(defaultColorID);
         }
 
+        /// Creates a background object which copies all the properties of the instance, ensuring that triggers will treat it the same (This is how GD does it) and adds it to the PlayLayer.
+        /// @warning If the PlayLayer is not present it won't automatically add the object.
+        /// @param frame The sprite frame name to use.
+        /// @param offset The offset of the back frame.
+        GameObject* createBackFrame(geode::ZStringView frame, const cocos2d::CCPoint& offset = { 0, 0 }) {
+            GJBaseGameLayer* baseGame = GJBaseGameLayer::get();
+            PlayLayer* playLayer = PlayLayer::get();
+
+            if (!baseGame) return nullptr;
+
+            const bool addedGuideArt = baseGame->addGuideArt(this);
+            GameObject* backFrame = GameObject::createWithFrame(frame.c_str());
+
+            backFrame->m_objectID = 38;
+            backFrame->m_objectType = GameObjectType::Decoration;
+            backFrame->m_isDecoration2 = true;
+
+            backFrame->customSetup();
+            backFrame->setStartPos(this->getPosition() + offset);
+
+            backFrame->m_unk40C = true;
+            backFrame->m_defaultZLayer = ZLayer::PortalBack;
+            backFrame->m_defaultZOrder = this->getObjectZOrder() - 100 + addedGuideArt;
+
+            backFrame->setFlipX(this->isFlipX());
+            backFrame->setFlipY(this->isFlipY());
+            backFrame->setRotationX(this->getRotationX());
+            backFrame->setRotationY(this->getRotationY());
+
+            backFrame->m_startFlipX = this->m_startFlipX;
+            backFrame->m_startFlipY = this->m_startFlipY;
+            backFrame->m_startRotationX = this->m_startRotationX;
+            backFrame->m_startRotationY = this->m_startRotationY;
+
+            backFrame->updateCustomScaleX(this->m_scaleX);
+            backFrame->updateCustomScaleY(this->m_scaleY);
+
+            backFrame->m_startScaleX = this->m_startScaleX;
+            backFrame->m_startScaleY = this->m_startScaleY;
+            backFrame->m_isDontEnter = this->m_isDontEnter;
+            backFrame->m_isDontFade = this->m_isDontFade;
+            backFrame->m_hasNoEffects = this->m_hasNoEffects;
+
+            if (playLayer) {
+                playLayer->addToSection(backFrame);
+                playLayer->m_objects->addObject(backFrame);
+            }
+
+            backFrame->copyGroups(this);
+            baseGame->addToGroups(backFrame, true);
+
+            this->m_unk40C = true;
+            this->m_defaultZOrder = 12 + addedGuideArt;
+
+            backFrame->saveActiveColors();
+
+            backFrame->m_mainColorKeyIndex = this->m_mainColorKeyIndex;
+
+            return backFrame;
+        }
+
         /// Sets the glow sprite of the object.
         /// @param frame The sprite frame name to use.
         /// @param color The optional color, if set it will make the glow considered custom.
