@@ -42,7 +42,7 @@ void VirtualModEnhancedGameObject::setupAnimationVariables() {
 void VirtualModLevelEditorLayer::addSpecial(GameObject* object) {
     LevelEditorLayer::addSpecial(object);
 
-    CUSTOM_IMPLEMENT(object, if (custom->isColorTrigger()) {
+    CUSTOM_IMPLEMENT(object, if (custom->isTrigger() && custom->isColorTrigger()) {
         m_colorTriggers->addObject(object);
         m_colorTriggersChanged = true;
     });
@@ -51,7 +51,7 @@ void VirtualModLevelEditorLayer::addSpecial(GameObject* object) {
 void VirtualModLevelEditorLayer::removeSpecial(GameObject* object) {
     LevelEditorLayer::removeSpecial(object);
 
-    CUSTOM_IMPLEMENT(object, if (custom->isColorTrigger()) {
+    CUSTOM_IMPLEMENT(object, if (custom->isTrigger() && custom->isColorTrigger()) {
         m_colorTriggers->removeObject(object);
     });
 }
