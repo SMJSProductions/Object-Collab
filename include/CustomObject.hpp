@@ -54,6 +54,7 @@ namespace object_collab {
         [[nodiscard]] virtual bool isSettingsObject() = 0;
         [[nodiscard]] virtual bool isSpawnableTrigger() = 0;
         [[nodiscard]] virtual bool isSpecialObject() = 0;
+        [[nodiscard]] virtual bool isSpeedObject() = 0;
         [[nodiscard]] virtual bool isTrigger() = 0;
         [[nodiscard]] virtual bool shouldLockX() = 0;
         [[nodiscard]] virtual bool shouldNotHideAnimFreeze() = 0;
@@ -369,18 +370,21 @@ namespace object_collab {
         }
 
         /// If the trigger duration handling should be removed.
+        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
         /// @see GameObject::ignoreEditorDuration
         [[nodiscard]] virtual bool ignoreEditorDuration() {
-            return !this->isTrigger();
+            return !this->isTrigger() || this->isSpeedObject();
         }
 
         /// If the trigger can affect color channels.
+        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
         /// @see GameObject::isColorTrigger
         [[nodiscard]] virtual bool isColorTrigger() override {
             return false;
         }
 
         /// If the trigger should be simulated in the editor.
+        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
         /// @see GameObject::isEditorSpawnableTrigger
         [[nodiscard]] virtual bool isEditorSpawnableTrigger() {
             return this->isTrigger();
@@ -393,6 +397,7 @@ namespace object_collab {
         }
 
         /// If the trigger can be spawned.
+        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
         /// @see GameObject::isSpawnableTrigger
         [[nodiscard]] virtual bool isSpawnableTrigger() override {
             return this->isTrigger();
@@ -405,13 +410,14 @@ namespace object_collab {
         }
 
         /// If the object can change the gameplay speed.
-        /// @warning This feature is currently unimplemented due to too much inlining.
+        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
         /// @see GameObject::isSpeedObject
-        [[nodiscard]] virtual bool isSpeedObject() {
+        [[nodiscard]] virtual bool isSpeedObject() override {
             return false;
         }
 
         /// If the trigger can be manipulated by a stop trigger.
+        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
         /// @see GameObject::isStoppableTrigger
         [[nodiscard]] virtual bool isStoppableTrigger() {
             return this->isTrigger();
