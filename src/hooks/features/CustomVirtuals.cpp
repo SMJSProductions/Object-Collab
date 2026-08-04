@@ -7,16 +7,17 @@ using namespace geode::prelude;
     if (source && source->m_objectID >= ObjectAPI::getBaseCustomObjectID()) { \
         if (CustomObjectInterface* custom = typeinfo_cast<CustomObjectInterface*>(source)) __VA_ARGS__; \
     }
-#define ARTIFICIAL_VIRTUAL(method) \
-    bool VirtualModGameObject::method() { \
+#define ARTIFICIAL_VIRTUAL(type, method) \
+    type VirtualModGameObject::method() { \
         CUSTOM_IMPLEMENT(this, return custom->method()); \
         return GameObject::method(); \
     }
 
-ARTIFICIAL_VIRTUAL(isSpawnableTrigger);
-ARTIFICIAL_VIRTUAL(isSpecialObject);
-ARTIFICIAL_VIRTUAL(isTrigger);
-ARTIFICIAL_VIRTUAL(shouldLockX);
+ARTIFICIAL_VIRTUAL(bool, isSpawnableTrigger);
+ARTIFICIAL_VIRTUAL(bool, isSpecialObject);
+ARTIFICIAL_VIRTUAL(bool, isTrigger);
+ARTIFICIAL_VIRTUAL(bool, shouldLockX);
+ARTIFICIAL_VIRTUAL(void, playShineEffect);
 
 void VirtualModEnhancedGameObject::setupAnimationVariables() {
     EnhancedGameObject::setupAnimationVariables();

@@ -12,6 +12,7 @@ class $modify(VirtualModGameObject, GameObject) {
     $override bool isSpecialObject();
     $override bool isTrigger();
     $override bool shouldLockX();
+    $override void playShineEffect();
 };
 
 class $modify(VirtualModEnhancedGameObject, EnhancedGameObject) {

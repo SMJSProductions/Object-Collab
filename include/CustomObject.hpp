@@ -45,6 +45,7 @@ namespace object_collab {
         [[nodiscard]] virtual bool init(const char* frame) = 0;
         virtual void postInit() = 0;
         virtual void postEditorInit() = 0;
+        virtual void playShineEffect() = 0;
         virtual void collidedByPlayer(PlayerObject* player) = 0;
         virtual bool updateProperty(size_t property, std::string_view value) = 0;
         [[nodiscard]] virtual std::vector<std::string> getObjectDetails() = 0;
@@ -445,6 +446,10 @@ namespace object_collab {
         [[nodiscard]] virtual bool usesSpecialAnimation() override {
             return false;
         }
+
+        /// Plays an effect on activation of the object if the GameObjectType supports it.
+        /// @see GameObject::playShineEffect
+        virtual void playShineEffect() override { }
 
         /// Initializes the object with the custom variables inside a (really strange) vector/map structure.
         /// @see GameObject::customObjectSetup
