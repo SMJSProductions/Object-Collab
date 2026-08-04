@@ -45,6 +45,7 @@ namespace object_collab {
         [[nodiscard]] virtual bool init(const char* frame) = 0;
         virtual void postInit() = 0;
         virtual void postEditorInit() = 0;
+        virtual void collidedByPlayer(PlayerObject* player) = 0;
         virtual bool updateProperty(size_t property, std::string_view value) = 0;
         [[nodiscard]] virtual std::vector<std::string> getObjectDetails() = 0;
         [[nodiscard]] virtual GameObject* getGameObject() = 0;
@@ -244,9 +245,14 @@ namespace object_collab {
             this->m_objectRadius = radius;
         }
 
+        /// Called when the object was collided by the given player.
+        /// @warning This gets called every step the player is in contact with the object.
+        /// @param player The player who collided with the object.
+        virtual void collidedByPlayer(PlayerObject* player) override { }
+
         /// Called when the object was activated by the given player.
         /// @note This method is not called by InverseMirrorPortal, NormalMirrorPortal, Modifier, EnterEffectObject, DualPortal, SoloPortal, SecretCoin, Collectible & UserCoin.
-        /// @warning This method is only called when the custom object is templated with EnhancedGameObject or an inheritor of!
+        /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of!
         /// @see GameObject::activatedByPlayer
         /// @param player The player who triggered the object.
         virtual void activatedByPlayer(PlayerObject* player) override {
@@ -255,6 +261,7 @@ namespace object_collab {
 
         /// Called when the object was collided by a player.
         /// @note This method is called on InverseMirrorPortal, NormalMirrorPortal, Modifier, EnterEffectObject, DualPortal, SoloPortal, SecretCoin, Collectible & UserCoin.
+        /// @note This method ignores if the object has already been triggered. It will always be called on collision.
         /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of!
         /// @see GameObject::triggerActivated
         /// @param spawnXPosition From where the object was triggered. If by a player it will be 0.

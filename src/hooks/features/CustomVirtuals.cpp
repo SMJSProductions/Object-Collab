@@ -4,7 +4,7 @@ using namespace object_collab::prelude;
 using namespace geode::prelude;
 
 #define CUSTOM_IMPLEMENT(source, ...) \
-    if (source->m_objectID >= ObjectAPI::getBaseCustomObjectID()) { \
+    if (source && source->m_objectID >= ObjectAPI::getBaseCustomObjectID()) { \
         if (CustomObjectInterface* custom = typeinfo_cast<CustomObjectInterface*>(source)) __VA_ARGS__; \
     }
 #define ARTIFICIAL_VIRTUAL(method) \
@@ -42,6 +42,12 @@ void VirtualModPlayLayer::addObject(GameObject* object) {
     PlayLayer::addObject(object);
 }
 
+void VirtualModPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
+    PlayLayer::destroyPlayer(player, object);
+
+    CUSTOM_IMPLEMENT(object, custom->collidedByPlayer(player));
+}
+
 void VirtualModLevelEditorLayer::addSpecial(GameObject* object) {
     LevelEditorLayer::addSpecial(object);
 
@@ -57,4 +63,28 @@ void VirtualModLevelEditorLayer::removeSpecial(GameObject* object) {
     CUSTOM_IMPLEMENT(object, if (custom->isColorTrigger()) {
         m_colorTriggers->removeObject(object);
     });
+}
+
+void VirtualModLevelEditorLayer::playerTookDamage(PlayerObject* player) {
+    LevelEditorLayer::playerTookDamage(player);
+
+    for (GameObject* object : m_hazardCollisionObjects) {
+        CUSTOM_IMPLEMENT(object, custom->collidedByPlayer(player));
+    }
+}
+
+bool VirtualModPlayerObject::collidedWithObjectInternal(const float dt, GameObject* object, CCRect rect, const bool skipCheck) {
+    if (PlayerObject::collidedWithObjectInternal(dt, object, std::move(rect), skipCheck)) {
+        CUSTOM_IMPLEMENT(object, custom->collidedByPlayer(this));
+
+        return true;
+    }
+
+    return false;
+}
+
+void VirtualModPlayerObject::collidedWithSlopeInternal(const float dt, GameObject* object, const bool forced) {
+    PlayerObject::collidedWithSlopeInternal(dt, object, forced);
+
+    CUSTOM_IMPLEMENT(object, custom->collidedByPlayer(this));
 }
