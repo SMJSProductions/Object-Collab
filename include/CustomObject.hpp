@@ -78,7 +78,7 @@ namespace object_collab {
 
         CustomObject(CustomObject&& other) noexcept = default;
         CustomObject(const CustomObject& other) noexcept = delete;
-        /// @note Make sure to check https://flowvix.github.io/gd-info-explorer/props to prevent custom property overlaps!
+        /// @note Make sure to check https://flowvix.github.io/gd-info-explorer/props to prevent custom property overlaps.
         /// @param info The object info of this object to populate properties.
         /// @param objectType The type of object, this copies some standard properties of the specified type.
         /// @param defaultZLayer The default z layer given when the object is created.
@@ -254,7 +254,7 @@ namespace object_collab {
         }
 
         /// Sets the shown on triggers based on the value of a property.
-        /// @warning This method is only functional when the custom object is templated with EffectGameObject or an inheritor of!
+        /// @warning This method is only functional when the custom object is templated with EffectGameObject or an inheritor of.
         /// @param property The property ID to use.
         /// @param offset The offset of the label.
         /// @param scale The scale of the label.
@@ -324,7 +324,7 @@ namespace object_collab {
 
         /// Called when the object was activated by the given player.
         /// @note This method is not called by InverseMirrorPortal, NormalMirrorPortal, Modifier, EnterEffectObject, DualPortal, SoloPortal, SecretCoin, Collectible & UserCoin.
-        /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of!
+        /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of.
         /// @see GameObject::activatedByPlayer
         /// @param player The player who triggered the object.
         virtual void activatedByPlayer(PlayerObject* player) override {
@@ -334,7 +334,7 @@ namespace object_collab {
         /// Called when the object was collided by a player.
         /// @note This method is called on InverseMirrorPortal, NormalMirrorPortal, Modifier, EnterEffectObject, DualPortal, SoloPortal, SecretCoin, Collectible & UserCoin.
         /// @note This method ignores if the object has already been triggered. It will always be called on collision.
-        /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of!
+        /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of.
         /// @see GameObject::triggerActivated
         /// @param spawnXPosition From where the object was triggered. If by a player it will be 0.
         virtual void triggerActivated(float spawnXPosition) override {
@@ -343,7 +343,7 @@ namespace object_collab {
 
         /// Called when any trigger condition is met for a trigger object.
         /// @note This method is called on Modifier, EnterEffectObject, SecretCoin, Collectible & UserCoin.
-        /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of!
+        /// @warning This method is only called when the custom object is templated with EffectGameObject or an inheritor of.
         /// @see GameObject::triggerObject
         /// @param layer The base game layer this object belongs to.
         /// @param uniqueID The unique ID of the trigger which spawned this trigger or this->m_uniqueID if triggered by the player.
@@ -365,7 +365,7 @@ namespace object_collab {
         }
 
         /// If the object can be rotated without 90deg snapping.
-        /// @warning This feature is currently unimplemented due to too much inlining!
+        /// @warning This feature is currently unimplemented due to too much inlining.
         /// @see GameObject::canRotateFree
         [[nodiscard]] virtual bool canRotateFree() {
             return T::canRotateFree();
@@ -408,7 +408,7 @@ namespace object_collab {
         }
 
         /// If the object can change the gameplay speed.
-        /// @warning This feature is currently unimplemented due to too much inlining!
+        /// @warning This feature is currently unimplemented due to too much inlining.
         /// @see GameObject::isSpeedObject
         [[nodiscard]] virtual bool isSpeedObject() {
             return false;
@@ -538,7 +538,7 @@ namespace object_collab {
         }
 
         /// Updates the trigger text with the new property value.
-        /// @warning This method is only functional when the custom object is templated with EffectGameObject or an inheritor of!
+        /// @warning This method is only functional when the custom object is templated with EffectGameObject or an inheritor of.
         void updateTriggerText() requires std::derived_from<T, EffectGameObject> {
             const CustomProperties& properties = this->getCustomProperties();
             std::optional<size_t> property = this->getTriggerTextProperty();

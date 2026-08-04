@@ -39,7 +39,7 @@ namespace object_collab {
             } else {
                 buffer.append(value);
             }
-            
+
             m_fields.emplace_back(buffer.str());
 
             return std::move(*this);
