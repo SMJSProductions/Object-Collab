@@ -174,16 +174,15 @@ namespace object_collab {
         }
 
         /// Creates a background object which copies all the properties of the instance, ensuring that triggers will treat it the same (This is how GD does it) and adds it to the PlayLayer.
-        /// @warning If the PlayLayer is not present it won't automatically add the object.
+        /// @warning If the PlayLayer is not present it will return nullptr since the editor won't exclude back frames from saving.
         /// @param frame The sprite frame name to use.
         /// @param offset The offset of the back frame.
         GameObject* createBackFrame(geode::ZStringView frame, const cocos2d::CCPoint& offset = { 0, 0 }) {
-            GJBaseGameLayer* baseGame = GJBaseGameLayer::get();
             PlayLayer* playLayer = PlayLayer::get();
 
-            if (!baseGame) return nullptr;
+            if (!playLayer) return nullptr;
 
-            const bool addedGuideArt = baseGame->addGuideArt(this);
+            const bool addedGuideArt = playLayer->addGuideArt(this);
             GameObject* backFrame = GameObject::createWithFrame(frame.c_str());
 
             backFrame->m_objectID = 38;
@@ -216,13 +215,10 @@ namespace object_collab {
             backFrame->m_isDontFade = this->m_isDontFade;
             backFrame->m_hasNoEffects = this->m_hasNoEffects;
 
-            if (playLayer) {
-                playLayer->addToSection(backFrame);
-                playLayer->m_objects->addObject(backFrame);
-            }
-
+            playLayer->addToSection(backFrame);
+            playLayer->m_objects->addObject(backFrame);
             backFrame->copyGroups(this);
-            baseGame->addToGroups(backFrame, true);
+            playLayer->addToGroups(backFrame, true);
 
             this->m_unk40C = true;
             this->m_defaultZOrder = 12 + addedGuideArt;
