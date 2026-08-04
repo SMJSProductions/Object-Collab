@@ -364,6 +364,14 @@ namespace object_collab::editor_popup {
             /// @see geode::SimpleAxisLayout::setGap
             /// @param gap The layout gap.
             [[nodiscard]] Builder&& gap(float gap) &&;
+            /// @note Default is 0.5.
+            /// @see geode::SimpleAxisLayout::setMinRelativeScale
+            /// @param gap The layout min scale.
+            [[nodiscard]] Builder&& minScale(float scale) &&;
+            /// @note Default is 2.
+            /// @see geode::SimpleAxisLayout::setMaxRelativeScale
+            /// @param gap The layout max scale.
+            [[nodiscard]] Builder&& maxScale(float scale) &&;
             /// @note Default is geode::AxisDirection::LeftToRight.
             /// @see geode::SimpleAxisLayout::setMainAxisDirection
             /// @param direction The layout main axis direction.
@@ -372,6 +380,10 @@ namespace object_collab::editor_popup {
             /// @see geode::SimpleAxisLayout::setMainAxisAlignment
             /// @param direction The layout main axis alignment.
             [[nodiscard]] Builder&& mainAxisAlignment(geode::MainAxisAlignment alignment) &&;
+            /// @note Default is geode::AxisScaling::Fit.
+            /// @see geode::SimpleAxisLayout::setMainAxisScaling
+            /// @param direction The layout main axis scaling.
+            [[nodiscard]] Builder&& mainAxisScaling(geode::AxisScaling scaling) &&;
             /// @note Default is geode::AxisDirection::LeftToRight.
             /// @see geode::SimpleAxisLayout::setCrossAxisDirection
             /// @param direction The layout cross axis direction.
@@ -380,6 +392,10 @@ namespace object_collab::editor_popup {
             /// @see geode::SimpleAxisLayout::setCrossAxisAlignment
             /// @param direction The layout cross axis alignment.
             [[nodiscard]] Builder&& crossAxisAlignment(geode::CrossAxisAlignment alignment) &&;
+            /// @note Default is geode::AxisScaling::Fit.
+            /// @see geode::SimpleAxisLayout::setCrossAxisScaling
+            /// @param direction The layout cross axis scaling.
+            [[nodiscard]] Builder&& crossAxisScaling(geode::AxisScaling scaling) &&;
             /// @note Default is true.
             /// @see geode::SimpleAxisLayout::ignoreInvisibleChildren
             /// @param enabled If invisible children should be ignored in the layout.
@@ -403,10 +419,14 @@ namespace object_collab::editor_popup {
         [[nodiscard]] geode::ZStringView getTitle() const;
         [[nodiscard]] geode::Axis getAxis() const;
         [[nodiscard]] float getGap() const;
+        [[nodiscard]] float getMinScale() const;
+        [[nodiscard]] float getMaxScale() const;
         [[nodiscard]] geode::AxisDirection getMainAxisDirection() const;
         [[nodiscard]] geode::MainAxisAlignment getMainAxisAlignment() const;
+        [[nodiscard]] geode::AxisScaling getMainAxisScaling() const;
         [[nodiscard]] geode::AxisDirection getCrossAxisDirection() const;
         [[nodiscard]] geode::CrossAxisAlignment getCrossAxisAlignment() const;
+        [[nodiscard]] geode::AxisScaling getCrossAxisScaling() const;
         [[nodiscard]] bool getIgnoreInvisibleChildren() const;
         [[nodiscard]] std::span<std::unique_ptr<ValueMenu>> getMenus() const;
         [[nodiscard]] std::vector<std::unique_ptr<ValueMenu>> releaseMenus();
@@ -438,11 +458,21 @@ namespace object_collab::editor_popup {
             /// @param height The popup height.
             [[nodiscard]] Builder&& height(float height) &&;
             /// @note Default is 10.
-            /// @param gap The gap on the X axis.
+            /// @param gap The layout gap.
+            [[nodiscard]] Builder&& gap(float gap) &&;
+            /// @note Default is 10.
+            /// @param gap The layout gap on the X axis.
             [[nodiscard]] Builder&& gapX(float gap) &&;
             /// @note Default is 10.
-            /// @param gap The gap on the Y axis.
+            /// @param gap The layout gap on the Y axis.
             [[nodiscard]] Builder&& gapY(float gap) &&;
+            /// @note Default is 0.5.
+            /// @param gap The layout min scale.
+            [[nodiscard]] Builder&& minScale(float scale) &&;
+            /// @note Default is 2.
+            /// @see geode::SimpleAxisLayout::setMaxRelativeScale
+            /// @param gap The layout max scale.
+            [[nodiscard]] Builder&& maxScale(float scale) &&;
             /// @note Empty = No info.
             /// @param info The info button details of the popup.
             [[nodiscard]] Builder&& info(InfoPopup info) &&;
@@ -481,6 +511,8 @@ namespace object_collab::editor_popup {
         [[nodiscard]] float getHeight() const;
         [[nodiscard]] float getGapX() const;
         [[nodiscard]] float getGapY() const;
+        [[nodiscard]] float getMinScale() const;
+        [[nodiscard]] float getMaxScale() const;
         [[nodiscard]] const InfoPopup& getInfo() const;
         [[nodiscard]] std::span<std::unique_ptr<ValueMenu>> getMenus() const;
         [[nodiscard]] std::vector<std::unique_ptr<ValueMenu>> releaseMenus();

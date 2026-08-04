@@ -39,11 +39,13 @@ bool AxisLayoutMenuNode::init(const Selected& selected, Popup* popup, AxisLayout
     menuContainer->setLayout(SimpleAxisLayout::create(axisLayoutMenu.getAxis())
         ->setMainAxisDirection(axisLayoutMenu.getMainAxisDirection())
         ->setMainAxisAlignment(axisLayoutMenu.getMainAxisAlignment())
-        ->setMainAxisScaling(AxisScaling::Fit)
+        ->setMainAxisScaling(axisLayoutMenu.getMainAxisScaling())
         ->setCrossAxisDirection(axisLayoutMenu.getCrossAxisDirection())
         ->setCrossAxisAlignment(axisLayoutMenu.getCrossAxisAlignment())
-        ->setCrossAxisScaling(AxisScaling::Fit)
+        ->setCrossAxisScaling(axisLayoutMenu.getCrossAxisScaling())
         ->setGap(axisLayoutMenu.getGap())
+        ->setMinRelativeScale(axisLayoutMenu.getMinScale())
+        ->setMaxRelativeScale(axisLayoutMenu.getMaxScale())
         ->ignoreInvisibleChildren(axisLayoutMenu.getIgnoreInvisibleChildren()));
 
     return this->initBaseMenuInverted(axisLayoutMenu.getID(), axisLayoutMenu.getTitle(), nullptr, {

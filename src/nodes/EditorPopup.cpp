@@ -70,12 +70,12 @@ void EditorPopup::addMenus(PopupConfig& config) {
         }
     }
 
-    menuContainer->setContentSize(m_contentLayer->getContentSize());
+    menuContainer->setContentSize(m_contentLayer->getContentSize() - ccp(0, 10));
     menuContainer->setLayout(TableLayout::create(Axis::Row)
         ->setMainAxisGap(config.getGapX())
         ->setCrossAxisGap(config.getGapY())
-        ->setMinScale(0.4f)
-        ->setMaxScale(0.8f)
+        ->setMinScale(config.getMinScale())
+        ->setMaxScale(config.getMaxScale())
         ->inverseCrossAxis(true));
     m_contentLayer->addChild(menuContainer);
     m_contentLayer->updateLayout();

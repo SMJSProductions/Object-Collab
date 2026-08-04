@@ -162,10 +162,14 @@ struct AxisLayoutMenu::Impl {
     std::vector<std::unique_ptr<ValueMenu>> menus;
     Axis axis = Axis::Column;
     float gap = 10;
+    float minScale = 0.5f;
+    float maxScale = 2;
     AxisDirection mainAxisDirection = AxisDirection::LeftToRight;
     MainAxisAlignment mainAxisAlignment = MainAxisAlignment::Start;
+    AxisScaling mainAxisScaling = AxisScaling::Fit;
     AxisDirection crossAxisDirection = AxisDirection::LeftToRight;
     CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment::Center;
+    AxisScaling crossAxisScaling = AxisScaling::Fit;
     bool ignoreInvisibleChildren = true;
 };
 
@@ -174,10 +178,14 @@ PTR_BUILD_IMPL(AxisLayoutMenu);
 VECTOR_VALUE(AxisLayoutMenu, std::unique_ptr<ValueMenu>, menu, Menus);
 PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, Axis, axis, Axis);
 PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, float, gap, Gap);
+PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, float, minScale, MinScale);
+PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, float, maxScale, MaxScale);
 PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, AxisDirection, mainAxisDirection, MainAxisDirection);
 PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, MainAxisAlignment, mainAxisAlignment, MainAxisAlignment);
+PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, AxisScaling, mainAxisScaling, MainAxisScaling);
 PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, AxisDirection, crossAxisDirection, CrossAxisDirection);
 PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, CrossAxisAlignment, crossAxisAlignment, CrossAxisAlignment);
+PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, AxisScaling, crossAxisScaling, CrossAxisScaling);
 PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, bool, ignoreInvisibleChildren, IgnoreInvisibleChildren);
 
 struct PopupConfig::Impl {
@@ -186,6 +194,8 @@ struct PopupConfig::Impl {
     float height = 200;
     float gapX = 10;
     float gapY = 10;
+    float minScale = 0.5f;
+    float maxScale = 2;
     InfoPopup info = InfoPopup::builder().build();
     std::vector<std::unique_ptr<ValueMenu>> menus;
     bool triggerToggles = false;
@@ -198,8 +208,18 @@ CONFIG_IMPL(PopupConfig);
 BUILD_IMPL(PopupConfig);
 PRIMITIVE_CONFIG_VALUE(PopupConfig, float, width, Width);
 PRIMITIVE_CONFIG_VALUE(PopupConfig, float, height, Height);
+
+PopupConfig::Builder&& PopupConfig::Builder::gap(float gap) && {
+    m_impl->gapX = gap;
+    m_impl->gapY = gap;
+
+    return std::forward<PopupConfig::Builder>(*this);
+}
+
 PRIMITIVE_CONFIG_VALUE(PopupConfig, float, gapX, GapX);
 PRIMITIVE_CONFIG_VALUE(PopupConfig, float, gapY, GapY);
+PRIMITIVE_CONFIG_VALUE(PopupConfig, float, minScale, MinScale);
+PRIMITIVE_CONFIG_VALUE(PopupConfig, float, maxScale, MaxScale);
 CONFIG_VALUE(PopupConfig, InfoPopup, const InfoPopup&, info, Info);
 VECTOR_VALUE(PopupConfig, std::unique_ptr<ValueMenu>, menu, Menus);
 PRIMITIVE_CONFIG_VALUE(PopupConfig, bool, triggerToggles, TriggerToggles);
