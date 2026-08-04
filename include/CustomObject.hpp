@@ -84,7 +84,14 @@ namespace object_collab {
         /// @param defaultZLayer The default z layer given when the object is created.
         /// @param defaultZOrder The default z order given when the object is created.
         CustomObject(ObjectInfo* info, GameObjectType objectType = GameObjectType::Solid, ZLayer defaultZLayer = ZLayer::Default, int defaultZOrder = 2): CustomObjectInterface(info) {
-            this->m_objectType = objectType;
+            if (objectType == GameObjectType::SecretCoin || objectType == GameObjectType::UserCoin) {
+                geode::log::error("Force swapped the object type to prevent anti cheat triggering.");
+
+                this->m_objectType = GameObjectType::Collectible;
+            } else {
+                this->m_objectType = objectType;
+            }
+
             this->m_defaultZLayer = defaultZLayer;
             this->m_defaultZOrder = defaultZOrder;
         }
