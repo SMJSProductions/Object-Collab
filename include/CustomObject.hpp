@@ -136,7 +136,8 @@ namespace object_collab {
             this->m_isInvisible = !this->m_editorEnabled && !this->isSpeedObject() && this->isTrigger();
 
             if constexpr (std::derived_from<T, EffectGameObject>) {
-                this->m_isTouchTriggered = this->m_isTouchTriggered || this->isSpeedObject();
+                this->m_isTouchTriggered = this->m_isTouchTriggered || (this->isTrigger() && this->isSpeedObject());
+                // this->m_cameraDisableGridSnap = this->isTrigger() && this->isSpeedObject();
             }
         }
 

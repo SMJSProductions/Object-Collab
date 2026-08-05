@@ -22,7 +22,7 @@ class $modify(VirtualModEnhancedGameObject, EnhancedGameObject) {
 };
 
 class $modify(VirtualModEffectGameObject, EffectGameObject) {
-    $override void updateSpeedModType();
+    // $override void updateSpeedModType();
 };
 
 class $modify(VirtualModPlayLayer, PlayLayer) {
@@ -34,7 +34,7 @@ class $modify(VirtualModLevelEditorLayer, LevelEditorLayer) {
     $override void addSpecial(GameObject* object);
     $override void removeSpecial(GameObject* object);
     $override void playerTookDamage(PlayerObject* player);
-    $override bool tryUpdateSpeedObject(EffectGameObject* object, const bool noPreview);
+    // $override bool tryUpdateSpeedObject(EffectGameObject* object, const bool noPreview);
 };
 
 class $modify(VirtualModPlayerObject, PlayerObject) {
@@ -43,6 +43,6 @@ class $modify(VirtualModPlayerObject, PlayerObject) {
 };
 
 class $modify(VirtualModEditorUI, EditorUI) {
-    $override void moveObject(GameObject* object, cocos2d::CCPoint offset);
-    $override void onCreateObject(const int id);
+    // $override void moveObject(GameObject* object, cocos2d::CCPoint offset);
+    // $override void onCreateObject(const int id);
 };

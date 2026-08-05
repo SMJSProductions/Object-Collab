@@ -82,87 +82,87 @@ bool VirtualModPlayerObject::collidedWithObjectInternal(const float dt, GameObje
     return false;
 }
 
-// SPEED HANDLING
-
-void VirtualModEffectGameObject::updateSpeedModType() {
-    CUSTOM_IMPLEMENT(this, if (custom->isTrigger() && custom->isSpeedObject()) {
-        m_speedModType = custom->getSpeedMod();
-
-        return;
-    });
-
-    EffectGameObject::updateSpeedModType();
-}
-
-void VirtualModPlayLayer::addObject(GameObject* object) {
-    CUSTOM_IMPLEMENT(object, {
-        if (custom->isSettingsObject()) return;
-
-        PlayLayer::addObject(object);
-
-        if (custom->isTrigger() && custom->isSpeedObject()) {
-            EffectGameObject* effectObject = typeinfo_cast<EffectGameObject*>(custom);
-
-            if (effectObject->m_cameraDisableGridSnap) {
-                effectObject->updateSpeedModType();
-                this->m_speedObjects->addObject(effectObject);
-            }
-        }
-
-        return;
-    });
-
-    PlayLayer::addObject(object);
-}
-
-bool VirtualModLevelEditorLayer::tryUpdateSpeedObject(EffectGameObject* object, const bool noPreview) {
-    CUSTOM_IMPLEMENT(object, if (custom->isTrigger() && custom->isSpeedObject()) {
-        EffectGameObject* effectObject = typeinfo_cast<EffectGameObject*>(custom);
-
-        if (effectObject->m_shouldPreview && !noPreview) {
-            m_drawGridLayer->addToSpeedObjects(effectObject);
-        } else {
-            m_drawGridLayer->removeFromSpeedObjects(effectObject);
-        }
-    });
-
-    return LevelEditorLayer::tryUpdateSpeedObject(object, noPreview);
-}
-
 void VirtualModPlayerObject::collidedWithSlopeInternal(const float dt, GameObject* object, const bool forced) {
     PlayerObject::collidedWithSlopeInternal(dt, object, forced);
 
     CUSTOM_IMPLEMENT(object, custom->collidedByPlayer(this));
 }
 
-void VirtualModEditorUI::moveObject(GameObject* object, cocos2d::CCPoint offset) {
-    EditorUI::moveObject(object, std::move(offset));
+// SPEED HANDLING
 
-    if (!m_speedObjectsUpdated) {
-        CUSTOM_IMPLEMENT(object, if (custom->isTrigger() && custom->isSpeedObject()) {
-            m_speedObjectsUpdated = true;
-        });
-    }
-}
+// void VirtualModEffectGameObject::updateSpeedModType() {
+//     CUSTOM_IMPLEMENT(this, if (custom->isTrigger() && custom->isSpeedObject()) {
+//         m_speedModType = custom->getSpeedMod();
 
-void VirtualModEditorUI::onCreateObject(const int id) {
-    GameObject* object;
+//         return;
+//     });
 
-    EditorUI::onCreateObject(id);
+//     EffectGameObject::updateSpeedModType();
+// }
 
-    if (m_selectedObject) {
-        object = m_selectedObject;
-    } else if (m_selectedObjects->count()) {
-        object = reinterpret_cast<GameObject*>(m_selectedObjects->objectAtIndex(m_selectedObjects->count() - 1));
-    } else {
-        return;
-    }
+void VirtualModPlayLayer::addObject(GameObject* object) {
+    CUSTOM_IMPLEMENT(object, {
+        if (custom->isSettingsObject()) return;
 
-    CUSTOM_IMPLEMENT(object, if (custom->isTrigger() && custom->isSpeedObject()) {
-        EffectGameObject* effectObject = reinterpret_cast<EffectGameObject*>(custom->getGameObject());
-        effectObject->m_cameraDisableGridSnap = true;
+        // PlayLayer::addObject(object);
 
-        m_editorLayer->m_drawGridLayer->addToSpeedObjects(effectObject);
-        this->updateSlider();
+        // if (custom->isTrigger() && custom->isSpeedObject()) {
+        //     EffectGameObject* effectObject = typeinfo_cast<EffectGameObject*>(custom->getGameObject());
+
+        //     if (effectObject->m_cameraDisableGridSnap) {
+        //         effectObject->updateSpeedModType();
+        //         this->m_speedObjects->addObject(effectObject);
+        //     }
+        // }
+
+        // return;
     });
+
+    PlayLayer::addObject(object);
 }
+
+// bool VirtualModLevelEditorLayer::tryUpdateSpeedObject(EffectGameObject* object, const bool noPreview) {
+//     CUSTOM_IMPLEMENT(object, if (custom->isTrigger() && custom->isSpeedObject()) {
+//         EffectGameObject* effectObject = typeinfo_cast<EffectGameObject*>(custom->getGameObject());
+
+//         if (effectObject->m_shouldPreview && !noPreview) {
+//             m_drawGridLayer->addToSpeedObjects(effectObject);
+//         } else {
+//             m_drawGridLayer->removeFromSpeedObjects(effectObject);
+//         }
+//     });
+
+//     return LevelEditorLayer::tryUpdateSpeedObject(object, noPreview);
+// }
+
+// void VirtualModEditorUI::moveObject(GameObject* object, cocos2d::CCPoint offset) {
+//     EditorUI::moveObject(object, std::move(offset));
+
+//     if (!m_speedObjectsUpdated) {
+//         CUSTOM_IMPLEMENT(object, if (custom->isTrigger() && custom->isSpeedObject()) {
+//             m_speedObjectsUpdated = true;
+//         });
+//     }
+// }
+
+// void VirtualModEditorUI::onCreateObject(const int id) {
+//     GameObject* object = nullptr;
+
+//     EditorUI::onCreateObject(id);
+
+//     if (m_selectedObject) {
+//         object = m_selectedObject;
+//     } else if (m_selectedObjects->count()) {
+//         object = reinterpret_cast<GameObject*>(m_selectedObjects->objectAtIndex(m_selectedObjects->count() - 1));
+//     } else {
+//         return;
+//     }
+
+//     CUSTOM_IMPLEMENT(object, if (custom->isTrigger() && custom->isSpeedObject()) {
+//         EffectGameObject* effectObject = typeinfo_cast<EffectGameObject*>(custom->getGameObject());
+//         effectObject->m_cameraDisableGridSnap = true;
+
+//         m_editorLayer->m_drawGridLayer->addToSpeedObjects(effectObject);
+//         this->updateSlider();
+//     });
+// }
