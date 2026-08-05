@@ -1,5 +1,15 @@
 # Object-Collab Changelog
 
+## v0.3.0-beta.1
+
+- Added scaling options for editor popup config
+- Added collision handling
+- Added back frame support
+- Added speed object support
+- Added playShineEffect virtual support
+- Added a force swap for coin game object types
+- Fixed speed portals being invisible
+
 ## v0.2.0-beta.1
 
 - Added an optional API
