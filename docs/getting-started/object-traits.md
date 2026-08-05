@@ -70,7 +70,7 @@ These are methods which can either be inherited or statically define behavior de
 | Method                     | Behavior                                                                                  | Base Class           | Game Object Type | Can Be Inherited |
 |----------------------------|-------------------------------------------------------------------------------------------|----------------------|------------------|------------------|
 | `getDefaultMainColorID`    | Gets the default main color ID given when the object is created, 0 = color disabled.      | `GameObject`         | N.A.             | Yes              |
-| `getSpeedMod`              | Gets the speed mod of the object to apply to the gameplay.                                | `GameObject`         | N.A.             | No               |
+| `getSpeedMod`              | Gets the speed mod of the object to apply to the gameplay.                                | `GameObject`         | N.A.             | Yes              |
 | `canRotateFree`            | If the object can be rotated without 90deg snapping (Unsupported).                        | `GameObject`         | N.A.             | No               |
 | `ignoreEditorDuration`     | If the trigger duration handling should be removed.                                       | `EffectGameObject`   | `Modifier`       | Yes              |
 | `isColorTrigger`           | If the trigger can affect color channels.                                                 | `EffectGameObject`   | `Modifier`       | Yes              |
