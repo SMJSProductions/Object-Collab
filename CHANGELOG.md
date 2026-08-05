@@ -1,5 +1,9 @@
 # Object-Collab Changelog
 
+## v0.3.4-beta.1
+
+- Disable speed object support due to instability.
+
 ## v0.3.3-beta.1
 
 - Fixed a bug with placing objects.
