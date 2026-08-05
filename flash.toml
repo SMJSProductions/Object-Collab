@@ -8,7 +8,27 @@ icon = "logo.png"
 dir = "docs"
 
 [templates]
-head = "docs/head.html"
+head = "docs/templates/head.html"
+
+[[scripts.css]]
+name = "custom.css"
+content = "docs/templates/custom.css"
+
+[[scripts.css]]
+name = "default.css"
+content = "docs/templates/flash/default.css"
+
+[[scripts.css]]
+name = "content.css"
+content = "docs/templates/flash/content.css"
+
+[[scripts.css]]
+name = "nav.css"
+content = "docs/templates/flash/nav.css"
+
+[[scripts.css]]
+name = "themes.css"
+content = "docs/templates/flash/themes.css"
 
 [include]
 patterns-full = [

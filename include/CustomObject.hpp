@@ -365,7 +365,7 @@ namespace object_collab {
         /// If the object can be rotated without 90deg snapping.
         /// @warning This feature is currently unimplemented due to too much inlining.
         /// @see GameObject::canRotateFree
-        [[nodiscard]] virtual bool canRotateFree() {
+        [[nodiscard]] bool canRotateFree() {
             return T::canRotateFree();
         }
 
@@ -426,7 +426,11 @@ namespace object_collab {
         /// If the object should be considered a trigger.
         /// @see GameObject::isTrigger
         [[nodiscard]] bool isTrigger() override {
-            return this->m_classType == GameObjectClassType::Effect && this->m_objectType == GameObjectType::Modifier;
+            if constexpr (std::derived_from<T, EffectGameObject>) {
+                return this->m_objectType == GameObjectType::Modifier;
+            } else {
+                return false;
+            }
         }
 
         /// If the object can be affected by move triggers on the X axis.
@@ -435,19 +439,22 @@ namespace object_collab {
             return false;
         }
 
-        /// If the object should end the animation dirty.
+        /// If the object should disable once the animation freezes.
+        /// @warning This only works when the custom object is templated with EnhancedGameObject or an inheritor of.
         /// @see GameObject::shouldNotHideAnimFreeze
         [[nodiscard]] virtual bool shouldNotHideAnimFreeze() override {
             return false;
         }
 
         /// If the object uses an animation with a delayed start.
+        /// @warning This only works when the custom object is templated with EnhancedGameObject or an inheritor of.
         /// @see GameObject::usesFreezeAnimation
         [[nodiscard]] virtual bool usesFreezeAnimation() override {
             return false;
         }
 
         /// If the object is animated.
+        /// @warning This only works when the custom object is templated with EnhancedGameObject or an inheritor of.
         /// @see GameObject::usesSpecialAnimation
         [[nodiscard]] virtual bool usesSpecialAnimation() override {
             return false;

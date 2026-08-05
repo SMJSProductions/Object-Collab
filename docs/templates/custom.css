@@ -1,0 +1,49 @@
+::-webkit-scrollbar {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--flash-gray-darkest);
+}
+
+::-webkit-scrollbar-thumb {
+    border: 0.4em solid var(--flash-gray-darkest);
+    background: var(--flash-less-dark);
+    border-radius: 0.75em;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--flash-less-light);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: var(--flash-light);
+}
+
+pre::-webkit-scrollbar-track {
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+tr {
+    background-color: var(--flash-gray-dark);
+}
+
+thead > tr, tr:nth-child(even) {
+    background-color: var(--flash-gray-darker);
+}
+
+th,td {
+    padding: 10px;
+}
+
+td > code:not(pre>code) {
+    font-size: 1.3em;
+}
+
+@media only screen and (min-device-width: 1500px) {
+    /* for legibility, limit maximum width */
+    main > * {
+        max-width: 1500px;
+    }
+}

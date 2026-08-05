@@ -14,8 +14,8 @@ If you want a complex object where you can add custom behavior you can create on
 using namespace geode::prelude;
 using namespace object_collab::prelude;
 
-// Extends CustomObject with traits of EnhancedGameObject
-class $object(AutoJumpUfoPortal, EnhancedGameObject) {
+// Extends CustomObject with traits of EffectGameObject
+class $object(AutoJumpUfoPortal, EffectGameObject) {
 public:
     static AutoJumpUfoPortal* create(ObjectInfo* info) {
         // The mod will internally handle auto releasing and calling init.
@@ -71,12 +71,12 @@ public:
 $on_mod(Loaded) {
     ObjectAPI::registerObject(ObjectInfo::builder()
         .id("id"_spr)
-        .sprite("portal"_spr)
+        .sprite("portal.png"_spr)
         // Put the portal between the modifier objects (e.g. Other portals, pads & rings).
         .editorTab(EditorTab::Modifiers)
         .construction(ComplexObject::builder()
             .factory(AutoJumpUfoPortal::create)
-            // Sets the custom property on key 150 (Which is not by default saved by EnhancedGameObject) with a default value of true.
+            // Sets the custom property on key 150 (Which is not by default saved by EffectGameObject) with a default value of true.
             // These properties will automate saving, loading & updating values and handling their defaults when no common value can be found in a selection.
             .customProperties({
                 PropertyInterface::from(150, &AutoJumpUfoPortal::m_active, true)
@@ -95,17 +95,17 @@ The object is being registered using `"id"_spr`. Internally the string is being 
 
 In this setup you also define sprite used by the object and the custom properties which gets used to automate value saving, loading & updating inside the object.
 
-> :warning: Sprites must always be part of a spritesheet
+> :warning: Sprites must always be part of a spritesheet.
 
 ### Initialization
 
-The object gets initialized as a `CustomObject<EnhancedGameObject>`. This means it's a custom object with the inherited traits of an `EnhancedGameObject` and will thus allow features like being activated by the player. It also sets the `GameObjectType` to `UfoPortal` which means it inherits the collision handling of a UFO portal object.
+The object gets initialized as a `CustomObject<EffectGameObject>`. This means it's a custom object with the inherited traits of an `EffectGameObject` and will thus allow features like being activated by the player. It also sets the `GameObjectType` to `UfoPortal` which means it inherits the collision handling of a UFO portal object.
 
 > :information_source: Note that all auto release and initialization handling is left to the internal API. It is not recommended to do so yourself.
 
 ### Activating
 
-When the player touches an `EnhancedGameObject` with a compatible `GameObjectType`, it will trigger the `activatedByPlayer` method. Here it checks if our portal is active using our custom property and based on that run the original along with boosting the player either negatively or positively depending on the flip state of the player.
+When the player touches an `EffectGameObject` with a compatible `GameObjectType`, it will trigger the `activatedByPlayer` method. Here it checks if our portal is active using our custom property and based on that run the original along with boosting the player either negatively or positively depending on the flip state of the player.
 
 ### Getting Details
 

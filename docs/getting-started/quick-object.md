@@ -35,4 +35,4 @@ The object is being registered using `"id"_spr`. Internally the string is being 
 
 In this setup you also define some variables used to initialize the object and position it inside the editor UI.
 
-> :warning: Sprites must always be part of a spritesheet
+> :warning: Sprites must always be part of a spritesheet.
