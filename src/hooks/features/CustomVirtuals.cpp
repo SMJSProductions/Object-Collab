@@ -146,10 +146,20 @@ void VirtualModEditorUI::moveObject(GameObject* object, cocos2d::CCPoint offset)
 }
 
 void VirtualModEditorUI::onCreateObject(const int id) {
+    GameObject* object;
+
     EditorUI::onCreateObject(id);
 
-    CUSTOM_IMPLEMENT(reinterpret_cast<GameObject*>(m_selectedObjects->objectAtIndex(m_selectedObjects->count() - 1)), if (custom->isTrigger() && custom->isSpeedObject()) {
-        EffectGameObject* effectObject = typeinfo_cast<EffectGameObject*>(custom);
+    if (m_selectedObject) {
+        object = m_selectedObject;
+    } else if (m_selectedObjects->count()) {
+        object = reinterpret_cast<GameObject*>(m_selectedObjects->objectAtIndex(m_selectedObjects->count() - 1));
+    } else {
+        return;
+    }
+
+    CUSTOM_IMPLEMENT(object, if (custom->isTrigger() && custom->isSpeedObject()) {
+        EffectGameObject* effectObject = reinterpret_cast<EffectGameObject*>(custom->getGameObject());
         effectObject->m_cameraDisableGridSnap = true;
 
         m_editorLayer->m_drawGridLayer->addToSpeedObjects(effectObject);
