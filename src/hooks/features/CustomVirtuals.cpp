@@ -84,11 +84,21 @@ bool VirtualModPlayerObject::collidedWithObjectInternal(const float dt, GameObje
 
 // SPEED HANDLING
 
-void VirtualModPlayLayer::addObject(GameObject* object) {
-    PlayLayer::addObject(object);
+void VirtualModEffectGameObject::updateSpeedModType() {
+    CUSTOM_IMPLEMENT(this, if (custom->isTrigger() && custom->isSpeedObject()) {
+        m_speedModType = custom->getSpeedMod();
 
+        return;
+    });
+
+    EffectGameObject::updateSpeedModType();
+}
+
+void VirtualModPlayLayer::addObject(GameObject* object) {
     CUSTOM_IMPLEMENT(object, {
         if (custom->isSettingsObject()) return;
+
+        PlayLayer::addObject(object);
 
         if (custom->isTrigger() && custom->isSpeedObject()) {
             EffectGameObject* effectObject = typeinfo_cast<EffectGameObject*>(custom);
@@ -98,7 +108,11 @@ void VirtualModPlayLayer::addObject(GameObject* object) {
                 this->m_speedObjects->addObject(effectObject);
             }
         }
+
+        return;
     });
+
+    PlayLayer::addObject(object);
 }
 
 bool VirtualModLevelEditorLayer::tryUpdateSpeedObject(EffectGameObject* object, const bool noPreview) {

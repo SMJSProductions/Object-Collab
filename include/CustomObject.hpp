@@ -50,6 +50,7 @@ namespace object_collab {
         virtual bool updateProperty(size_t property, std::string_view value) = 0;
         [[nodiscard]] virtual std::vector<std::string> getObjectDetails() = 0;
         [[nodiscard]] virtual GameObject* getGameObject() = 0;
+        [[nodiscard]] virtual short getSpeedMod() = 0;
         [[nodiscard]] virtual bool isColorTrigger() = 0;
         [[nodiscard]] virtual bool isSettingsObject() = 0;
         [[nodiscard]] virtual bool isSpawnableTrigger() = 0;
@@ -360,6 +361,13 @@ namespace object_collab {
         /// @note Returning 0 will deactivate colors.
         [[nodiscard]] virtual int getDefaultMainColorID() {
             return this->isTrigger() ? 0 : 1004;
+        }
+
+        /// Gets the speed mod of the object to apply to the gameplay.
+        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of, is a object type of Modifier and returns isSpeedObject to true.
+        /// @see EffectGameObject::updateSpeedModType
+        [[nodiscard]] virtual short getSpeedMod() override {
+            return 0;
         }
 
         /// If the object can be rotated without 90deg snapping.

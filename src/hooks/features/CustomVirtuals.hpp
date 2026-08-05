@@ -6,6 +6,7 @@
 #include <Geode/modify/GameObject.hpp>
 #include <Geode/modify/PlayerObject.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
+#include <Geode/modify/EffectGameObject.hpp>
 #include <Geode/modify/EnhancedGameObject.hpp>
 
 class $modify(VirtualModGameObject, GameObject) {
@@ -18,6 +19,10 @@ class $modify(VirtualModGameObject, GameObject) {
 
 class $modify(VirtualModEnhancedGameObject, EnhancedGameObject) {
     $override void setupAnimationVariables();
+};
+
+class $modify(VirtualModEffectGameObject, EffectGameObject) {
+    $override void updateSpeedModType();
 };
 
 class $modify(VirtualModPlayLayer, PlayLayer) {
