@@ -5,7 +5,7 @@ order: 4
 
 # Object Traits
 
-An object has 2 different kinds of trait systems. Property traits and general behavior traits. The latter was already showcased in the [previous chapter](/Object-Collab/getting-started/complex-object) as `GameObjectType`. Besides this Object-Collab provides a bunch of virtual methods which allows you to set property traits.
+An object has 2 different kinds of trait systems. method traits and general behavior traits. The latter was already showcased in the [previous chapter](/Object-Collab/getting-started/complex-object) as `GameObjectType`. Besides this Object-Collab provides a bunch of virtual methods which allows you to set method traits.
 
 ## Game Object Type
 
@@ -63,7 +63,7 @@ An object has 2 different kinds of trait systems. Property traits and general be
 | `TeleportOrb`          | An object which teleports the player to a targeted object using the target group ID.   | `TeleportPortalObject` | `activatedByPlayer`                |
 | `AnimatedHazard`       | An object which is lethal to touch.                                                    | `AnimatedGameObject`   | `collidedByPlayer`                 |
 
-## Property Traits
+## Method Traits
 
 These are methods which can either be inherited or statically define behavior depending on the return state. These should all be filled in correctly to ensure that the game handles the object correctly.
 
