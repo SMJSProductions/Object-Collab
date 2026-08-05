@@ -1,8 +1,12 @@
 # Object-Collab Changelog
 
+## v0.3.3-beta.1
+
+- Fixed a bug with placing objects.
+
 ## v0.3.2-beta.1
 
-- Removed a test object
+- Removed a test object.
 
 ## v0.3.1-beta.1
 
