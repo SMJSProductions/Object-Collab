@@ -21,7 +21,7 @@ An object has 2 different kinds of trait systems. Property traits and general be
 | `NormalGravityPortal`  | An object which sets the gravity back to normal on touch.                              | `EffectGameObject`     | `activatedByPlayer`                |
 | `ShipPortal`           | An object which turns the player into a ship on touch.                                 | `EffectGameObject`     | `activatedByPlayer`                |
 | `CubePortal`           | An object which turns the player into a cube on touch.                                 | `EffectGameObject`     | `activatedByPlayer`                |
-| `Decoration`           | An object with no hitbox.                                                              | `GameObject`           | N/A.                               | 
+| `Decoration`           | An object with no hitbox.                                                              | `GameObject`           | N.A.                               | 
 | `YellowJumpPad`        | An object which gives the player a medium boost on touch.                              | `EffectGameObject`     | `activatedByPlayer`                |
 | `PinkJumpPad`          | An object which gives the player a small boost on touch.                               | `EffectGameObject`     | `activatedByPlayer`                |
 | `GravityPad`           | An object which flips the gravity on touch.                                            | `EffectGameObject`     | `activatedByPlayer`                |
@@ -34,7 +34,7 @@ An object has 2 different kinds of trait systems. Property traits and general be
 | `RegularSizePortal`    | An object which turns the player into the regular size on touch.                       | `EffectGameObject`     | `activatedByPlayer`                |
 | `MiniSizePortal`       | An object which turns the player into the mini size on touch.                          | `EffectGameObject`     | `activatedByPlayer`                |
 | `UfoPortal`            | An object which turns the player into a UFO on touch.                                  | `EffectGameObject`     | `activatedByPlayer`                |
-| `Modifier`             | An object which functions as a trigger.                                                | `EffectGameObject`     | `triggerActivated`/`triggerObject` |
+| `Modifier`             | An object which functions as a trigger or speed portal.                                | `EffectGameObject`     | `triggerActivated`/`triggerObject` |
 | `Breakable`            | An object which is solid on the top, breakable on touch from any other size.           | `GameObject`           | `collidedByPlayer`                 |
 | `SecretCoin`           | An object which counts as a secret coin (It's not recommended to use this).            | `EffectGameObject`     | `triggerActivated`/`triggerObject` |
 | `DualPortal`           | An object which turns the player into a dual on touch.                                 | `EffectGameObject`     | `triggerActivated`                 |
@@ -53,8 +53,8 @@ An object has 2 different kinds of trait systems. Property traits and general be
 | `CustomRing`           | An object which can be jumped on to trigger.                                           | `RingObject`           | `activatedByPlayer`                |
 | `DashRing`             | An object which makes the player dash into a direction on hold.                        | `DashRingObject`       | `activatedByPlayer`                |
 | `GravityDashRing`      | An object which makes the player dash into a direction while swapping gravity on hold. | `DashRingObject`       | `activatedByPlayer`                |
-| `CollisionObject`      | An object which reports a collision from a given block ID (Unsupported).               | `EffectGameObject`     | N/A.                               |
-| `Special`              | An object which triggers when touched (Unsupported).                                   | `EffectGameObject`     | N/A.                               |
+| `CollisionObject`      | An object which reports a collision from a given block ID (Unsupported).               | `EffectGameObject`     | N.A.                               |
+| `Special`              | An object which triggers when touched (Unsupported).                                   | `EffectGameObject`     | N.A.                               |
 | `SwingPortal`          | An object which turns the player into a swing on touch.                                | `EffectGameObject`     | `activatedByPlayer`                |
 | `GravityTogglePortal`  | An object which flips gravity on touch.                                                | `EffectGameObject`     | `activatedByPlayer`                |
 | `SpiderOrb`            | An object which teleports the player to the nearest surface on click.                  | `RingObject`           | `activatedByPlayer`                |
@@ -67,20 +67,20 @@ An object has 2 different kinds of trait systems. Property traits and general be
 
 These are methods which can either be inherited or statically define behavior depending on the return state. These should all be filled in correctly to ensure that the game handles the object correctly.
 
-| Method                     | Behavior                                                                                  | Base Class          | Can Be Inherited |
-|----------------------------|-------------------------------------------------------------------------------------------|---------------------|------------------|
-| `getDefaultMainColorID`    | Gets the default main color ID given when the object is created, 0 = color disabled.      | `GameObject`        | Yes              |
-| `canRotateFree`            | If the object can be rotated without 90deg snapping (Unsupported).                        | `GameObject`        | No               |
-| `ignoreEditorDuration`     | If the trigger duration handling should be removed.                                       | `EffectGameObject`  | Yes              |
-| `isColorTrigger`           | If the trigger can affect color channels.                                                 | `EffectGameObject`  | Yes              |
-| `isEditorSpawnableTrigger` | If the trigger should be simulated in the editor.                                         | `EffectGameObject`  | Yes              |
-| `isSettingsObject`         | If the play layer should ignore this object as its reserved for the editor.               | `GameObject`        | Yes              |
-| `isSpawnableTrigger`       | If the trigger can be spawned.                                                            | `EffectGameObject`  | Yes              |
-| `isSpecialObject`          | If the object should be omitted from rendering in the custom delete & delete all buttons. | `GameObject`        | Yes              |
-| `isSpeedObject`            | If the object can change the gameplay speed.                                              | `EffectGameObject`  | Yes              |
-| `isStoppableTrigger`       | If the trigger can be manipulated by a stop trigger.                                      | `EffectGameObject`  | Yes              |
-| `isTrigger`                | If the object should be considered a trigger.                                             | `EffectGameObject`  | No               |
-| `shouldLockX`              | If the object can be affected by move triggers on the X axis.                             | `GameObject`        | Yes              |
-| `shouldNotHideAnimFreeze`  | If the object should disable once the animation freezes.                                  | `EnhancedGameObject`| Yes              |
-| `usesFreezeAnimation`      | If the object uses an animation with a delayed start.                                     | `EnhancedGameObject`| Yes              |
-| `usesSpecialAnimation`     | If the object is animated.                                                                | `EnhancedGameObject`| Yes              |
+| Method                     | Behavior                                                                                  | Base Class           | Game Object Type | Can Be Inherited |
+|----------------------------|-------------------------------------------------------------------------------------------|----------------------|------------------|------------------|
+| `getDefaultMainColorID`    | Gets the default main color ID given when the object is created, 0 = color disabled.      | `GameObject`         | N.A.             | Yes              |
+| `canRotateFree`            | If the object can be rotated without 90deg snapping (Unsupported).                        | `GameObject`         | N.A.             | No               |
+| `ignoreEditorDuration`     | If the trigger duration handling should be removed.                                       | `EffectGameObject`   | `Modifier`       | Yes              |
+| `isColorTrigger`           | If the trigger can affect color channels.                                                 | `EffectGameObject`   | `Modifier`       | Yes              |
+| `isEditorSpawnableTrigger` | If the trigger should be simulated in the editor.                                         | `EffectGameObject`   | `Modifier`       | Yes              |
+| `isSettingsObject`         | If the play layer should ignore this object as its reserved for the editor.               | `GameObject`         | N.A.             | Yes              |
+| `isSpawnableTrigger`       | If the trigger can be spawned.                                                            | `EffectGameObject`   | `Modifier`       | Yes              |
+| `isSpecialObject`          | If the object should be omitted from rendering in the custom delete & delete all buttons. | `GameObject`         | N.A.             | Yes              |
+| `isSpeedObject`            | If the object can change the gameplay speed.                                              | `EffectGameObject`   | `Modifier`       | Yes              |
+| `isStoppableTrigger`       | If the trigger can be manipulated by a stop trigger.                                      | `EffectGameObject`   | `Modifier`       | Yes              |
+| `isTrigger`                | If the object should be considered a trigger.                                             | `EffectGameObject`   | `Modifier`       | No               |
+| `shouldLockX`              | If the object can be affected by move triggers on the X axis.                             | `GameObject`         | N.A.             | Yes              |
+| `shouldNotHideAnimFreeze`  | If the object should disable once the animation freezes.                                  | `EnhancedGameObject` | N.A.             | Yes              |
+| `usesFreezeAnimation`      | If the object uses an animation with a delayed start.                                     | `EnhancedGameObject` | N.A.             | Yes              |
+| `usesSpecialAnimation`     | If the object is animated.                                                                | `EnhancedGameObject` | N.A.             | Yes              |
