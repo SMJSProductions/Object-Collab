@@ -1,5 +1,9 @@
 # Object-Collab Changelog
 
+## v0.3.2-beta.1
+
+- Removed a test object
+
 ## v0.3.1-beta.1
 
 - Added speed mod support.
