@@ -5,6 +5,7 @@
 #include <Geode/modify/PlayLayer.hpp>
 #include <Geode/modify/GameObject.hpp>
 #include <Geode/modify/PlayerObject.hpp>
+#include <Geode/modify/GJEffectManager.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/EffectGameObject.hpp>
 #include <Geode/modify/EnhancedGameObject.hpp>
@@ -45,4 +46,9 @@ class $modify(VirtualModPlayerObject, PlayerObject) {
 class $modify(VirtualModEditorUI, EditorUI) {
     // $override void moveObject(GameObject* object, cocos2d::CCPoint offset);
     // $override void onCreateObject(const int id);
+};
+
+class $modify(VirtualModGJEffectManager, GJEffectManager) {
+    // $override void controlActionsForControlID(int id, GJActionCommand command);
+    // $override void controlActionsForTrigger(EffectGameObject* object, GJActionCommand command);
 };

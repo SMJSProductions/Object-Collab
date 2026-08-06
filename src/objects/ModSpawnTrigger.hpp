@@ -21,6 +21,5 @@ public:
     void postEditorInit() override;
     void triggerObject(GJBaseGameLayer* layer, const int uniqueID, const gd::vector<int>* remapKeys) override;
     std::vector<std::string> getObjectDetails() override;
-    bool ignoreEditorDuration() override;
     void checkMod();
 };

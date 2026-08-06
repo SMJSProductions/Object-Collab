@@ -3,37 +3,52 @@
 using namespace object_collab::prelude;
 using namespace geode::prelude;
 
-#define CUSTOM_IMPLEMENT(source, ...) \
-    if (source && source->m_objectID >= ObjectAPI::getBaseCustomObjectID()) { \
-        if (CustomObjectInterface* custom = typeinfo_cast<CustomObjectInterface*>(source)) __VA_ARGS__; \
-    }
-#define ARTIFICIAL_VIRTUAL(type, method) \
-    type VirtualModGameObject::method() { \
-        CUSTOM_IMPLEMENT(this, return custom->method()); \
-        return GameObject::method(); \
-    }
+bool VirtualModGameObject::isSpawnableTrigger() {
+    CUSTOM_IMPLEMENT(this, custom, return custom->isTriggerObject() && custom->getTraits().isSpawnableTrigger());
 
-ARTIFICIAL_VIRTUAL(bool, isSpawnableTrigger);
-ARTIFICIAL_VIRTUAL(bool, isSpecialObject);
-ARTIFICIAL_VIRTUAL(bool, isTrigger);
-ARTIFICIAL_VIRTUAL(bool, shouldLockX);
-ARTIFICIAL_VIRTUAL(void, playShineEffect);
+    return GameObject::isSpawnableTrigger();
+}
+
+bool VirtualModGameObject::isSpecialObject() {
+    CUSTOM_IMPLEMENT(this, custom, return custom->getTraits().omitTrashTexture());
+
+    return GameObject::isSpecialObject();
+}
+
+bool VirtualModGameObject::isTrigger() {
+    CUSTOM_IMPLEMENT(this, custom, return custom->isTriggerObject());
+
+    return GameObject::isTrigger();
+}
+
+bool VirtualModGameObject::shouldLockX() {
+    CUSTOM_IMPLEMENT(this, custom, return custom->getTraits().shouldLockX());
+
+    return GameObject::shouldLockX();
+}
+
+void VirtualModGameObject::playShineEffect() {
+    CUSTOM_IMPLEMENT(this, custom, return custom->getTraits().playShineEffect([this]() { GameObject::playShineEffect(); }));
+
+    GameObject::playShineEffect();
+}
+
+// ARTIFICIAL_VIRTUAL(void, playShineEffect);
 
 void VirtualModEnhancedGameObject::setupAnimationVariables() {
     EnhancedGameObject::setupAnimationVariables();
 
-    CUSTOM_IMPLEMENT(this, {
-        const bool isFrozen = custom->usesFreezeAnimation();
+    CUSTOM_IMPLEMENT(this, custom, {
+        const ObjectTraits& traits = custom->getTraits();
+        const bool isFrozen = traits.usesFreezeAnimation();
 
         if (!isFrozen || m_disableDelayedLoop) {
             m_isDisabled2 = false;
         }
 
         m_visible = isFrozen;
-        m_shouldNotHideAnimFreeze = custom->shouldNotHideAnimFreeze();
-        m_usesSpecialAnimation = custom->usesSpecialAnimation();
-
-        return;
+        m_shouldNotHideAnimFreeze = traits.shouldNotHideAnimFreeze();
+        m_usesSpecialAnimation = traits.usesSpecialAnimation();
     });
 }
 
@@ -42,7 +57,7 @@ void VirtualModEnhancedGameObject::setupAnimationVariables() {
 void VirtualModLevelEditorLayer::addSpecial(GameObject* object) {
     LevelEditorLayer::addSpecial(object);
 
-    CUSTOM_IMPLEMENT(object, if (custom->isTrigger() && custom->isColorTrigger()) {
+    CUSTOM_IMPLEMENT(object, custom, if (custom->isTriggerObject() && custom->getTraits().isColorTrigger()) {
         m_colorTriggers->addObject(object);
         m_colorTriggersChanged = true;
     });
@@ -51,7 +66,7 @@ void VirtualModLevelEditorLayer::addSpecial(GameObject* object) {
 void VirtualModLevelEditorLayer::removeSpecial(GameObject* object) {
     LevelEditorLayer::removeSpecial(object);
 
-    CUSTOM_IMPLEMENT(object, if (custom->isTrigger() && custom->isColorTrigger()) {
+    CUSTOM_IMPLEMENT(object, custom, if (custom->isTriggerObject() && custom->getTraits().isColorTrigger()) {
         m_colorTriggers->removeObject(object);
     });
 }
@@ -61,20 +76,20 @@ void VirtualModLevelEditorLayer::removeSpecial(GameObject* object) {
 void VirtualModPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
     PlayLayer::destroyPlayer(player, object);
 
-    CUSTOM_IMPLEMENT(object, custom->collidedByPlayer(player));
+    CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(player));
 }
 
 void VirtualModLevelEditorLayer::playerTookDamage(PlayerObject* player) {
     LevelEditorLayer::playerTookDamage(player);
 
     for (GameObject* object : m_hazardCollisionObjects) {
-        CUSTOM_IMPLEMENT(object, custom->collidedByPlayer(player));
+        CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(player));
     }
 }
 
 bool VirtualModPlayerObject::collidedWithObjectInternal(const float dt, GameObject* object, CCRect rect, const bool skipCheck) {
     if (PlayerObject::collidedWithObjectInternal(dt, object, std::move(rect), skipCheck)) {
-        CUSTOM_IMPLEMENT(object, custom->collidedByPlayer(this));
+        CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(this));
 
         return true;
     }
@@ -85,7 +100,7 @@ bool VirtualModPlayerObject::collidedWithObjectInternal(const float dt, GameObje
 void VirtualModPlayerObject::collidedWithSlopeInternal(const float dt, GameObject* object, const bool forced) {
     PlayerObject::collidedWithSlopeInternal(dt, object, forced);
 
-    CUSTOM_IMPLEMENT(object, custom->collidedByPlayer(this));
+    CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(this));
 }
 
 // SPEED HANDLING
@@ -101,8 +116,8 @@ void VirtualModPlayerObject::collidedWithSlopeInternal(const float dt, GameObjec
 // }
 
 void VirtualModPlayLayer::addObject(GameObject* object) {
-    CUSTOM_IMPLEMENT(object, {
-        if (custom->isSettingsObject()) return;
+    CUSTOM_IMPLEMENT(object, custom, {
+        if (custom->getTraits().isEditorReserved()) return;
 
         // PlayLayer::addObject(object);
 
@@ -165,4 +180,22 @@ void VirtualModPlayLayer::addObject(GameObject* object) {
 //         m_editorLayer->m_drawGridLayer->addToSpeedObjects(effectObject);
 //         this->updateSlider();
 //     });
+// }
+
+// ACTION COMMANDS
+
+// void VirtualModGJEffectManager::controlActionsForControlID(int id, GJActionCommand command) {
+//     GJEffectManager::controlActionsForControlID(id, command);
+
+//     for (const GroupCommandObject2& command : m_unkVector560) {
+//         if (command.m_controlID != id) continue;
+
+//         CUSTOM_IMPLEMENT(command.m_gameObject, custom, {
+            
+//         })
+//     }
+// }
+
+// void VirtualModGJEffectManager::controlActionsForTrigger(EffectGameObject* object, GJActionCommand command) {
+//     GJEffectManager::controlActionsForTrigger(object, command);
 // }

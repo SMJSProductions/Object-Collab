@@ -123,7 +123,10 @@ std::string ModSpawnTrigger::getModName(std::string modID) {
     }
 }
 
-ModSpawnTrigger::ModSpawnTrigger(ObjectInfo* info): CustomObject(info, GameObjectType::Modifier) { }
+ModSpawnTrigger::ModSpawnTrigger(ObjectInfo* info): CustomObject(info, ObjectTraits::builder()
+    .gameObjectType(GameObjectType::Modifier)
+    .ignoreEditorDuration(true)
+    .build()) { }
 
 void ModSpawnTrigger::postInit() {
     this->setHitbox({ 1, 1 });
@@ -150,10 +153,6 @@ std::vector<std::string> ModSpawnTrigger::getObjectDetails() {
         .field("Preview disabled", m_previewDisable)
         .field("Active", m_active)
         .build();
-}
-
-bool ModSpawnTrigger::ignoreEditorDuration() {
-    return true;
 }
 
 void ModSpawnTrigger::checkMod() {

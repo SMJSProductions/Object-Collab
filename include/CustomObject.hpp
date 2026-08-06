@@ -2,6 +2,7 @@
 
 #include "dll.hpp"
 #include "Property.hpp"
+#include "ObjectTraits.hpp"
 
 template<typename T>
 concept GameObjectHasBasicInit = requires(T& object) {
@@ -39,29 +40,26 @@ namespace object_collab {
         CustomObjectInterface(CustomObjectInterface&& other) noexcept;
         CustomObjectInterface(const CustomObjectInterface& other) noexcept = delete;
     protected:
-        CustomObjectInterface(ObjectInfo* info);
+        CustomObjectInterface(ObjectInfo* info, ObjectTraits&& traits, bool isEffect);
     public:
         virtual ~CustomObjectInterface();
         [[nodiscard]] virtual bool init(const char* frame) = 0;
         virtual void postInit() = 0;
         virtual void postEditorInit() = 0;
-        virtual void playShineEffect() = 0;
+        virtual void postPlayLayerInit() = 0;
         virtual void collidedByPlayer(PlayerObject* player) = 0;
         virtual bool updateProperty(size_t property, std::string_view value) = 0;
+        virtual GameObject* getGameObject() = 0;
         [[nodiscard]] virtual std::vector<std::string> getObjectDetails() = 0;
-        [[nodiscard]] virtual GameObject* getGameObject() = 0;
-        [[nodiscard]] virtual short getSpeedMod() = 0;
-        [[nodiscard]] virtual bool isColorTrigger() = 0;
-        [[nodiscard]] virtual bool isSettingsObject() = 0;
-        [[nodiscard]] virtual bool isSpawnableTrigger() = 0;
-        [[nodiscard]] virtual bool isSpecialObject() = 0;
-        [[nodiscard]] virtual bool isSpeedObject() = 0;
-        [[nodiscard]] virtual bool isTrigger() = 0;
-        [[nodiscard]] virtual bool shouldLockX() = 0;
-        [[nodiscard]] virtual bool shouldNotHideAnimFreeze() = 0;
-        [[nodiscard]] virtual bool usesFreezeAnimation() = 0;
-        [[nodiscard]] virtual bool usesSpecialAnimation() = 0;
+        // ---- WARNING! DO NOT ADD ANY NEW VIRTUALS BETWEEN MAJOR RELEASES ----
+
+        /// Gets the custom properties used for loading, saving & updating.
         [[nodiscard]] const CustomProperties& getCustomProperties();
+        /// Gets the object traits of the object.
+        [[nodiscard]] const ObjectTraits& getTraits();
+        /// If the object should be considered a trigger.
+        /// @see GameObject::isTrigger
+        [[nodiscard]] bool isTriggerObject();
     private:
         std::optional<size_t> getTriggerTextProperty();
         void setTriggerTextProperty(std::optional<size_t> property);
@@ -86,17 +84,20 @@ namespace object_collab {
         /// @param objectType The type of object, this copies some standard properties of the specified type.
         /// @param defaultZLayer The default z layer given when the object is created.
         /// @param defaultZOrder The default z order given when the object is created.
-        CustomObject(ObjectInfo* info, GameObjectType objectType = GameObjectType::Solid, ZLayer defaultZLayer = ZLayer::Default, int defaultZOrder = 2): CustomObjectInterface(info) {
-            if (objectType == GameObjectType::SecretCoin || objectType == GameObjectType::UserCoin) {
+        CustomObject(ObjectInfo* info, ObjectTraits&& traits): CustomObjectInterface(info, std::forward<ObjectTraits>(traits), std::derived_from<T, EffectGameObject>) {
+            const ObjectTraits& objectTraits = this->getTraits();
+            const GameObjectType type = objectTraits.getGameObjectType();
+
+            if (type == GameObjectType::SecretCoin || type == GameObjectType::UserCoin) {
                 geode::log::error("Force swapped the object type to prevent anti cheat triggering.");
 
                 this->m_objectType = GameObjectType::Collectible;
             } else {
-                this->m_objectType = objectType;
+                this->m_objectType = type;
             }
 
-            this->m_defaultZLayer = defaultZLayer;
-            this->m_defaultZOrder = defaultZOrder;
+            this->m_defaultZLayer = objectTraits.getDefaultZLayer();
+            this->m_defaultZOrder = objectTraits.getDefaultZOrder();
         }
 
         /// @see GameObject::init
@@ -126,18 +127,19 @@ namespace object_collab {
 
         /// @see GameObject::customSetup
         virtual void customSetup() override {
+            const ObjectTraits& traits = this->getTraits();
+
             T::customSetup();
+            T::setDefaultMainColorMode(traits.getDefaultMainColorID());
 
-            GameObject::setDefaultMainColorMode(this->getDefaultMainColorID());
-
-            this->m_dontIgnoreDuration = !this->ignoreEditorDuration();
-            this->m_activateTriggerInEditor = this->isEditorSpawnableTrigger();
-            this->m_canBeControlled = this->isStoppableTrigger();
-            this->m_isInvisible = !this->m_editorEnabled && !this->isSpeedObject() && this->isTrigger();
+            this->m_dontIgnoreDuration = this->isTriggerObject() && !traits.isSpeedObject() && !traits.isIgnoreEditorDuration();
+            this->m_activateTriggerInEditor = this->isTriggerObject() && traits.isEditorSpawnableTrigger();
+            this->m_canBeControlled = this->isTriggerObject() && traits.isStoppableTrigger();
+            this->m_isInvisible = !this->m_editorEnabled && this->isTriggerObject() && !traits.isSpeedObject();
 
             if constexpr (std::derived_from<T, EffectGameObject>) {
-                this->m_isTouchTriggered = this->m_isTouchTriggered || (this->isTrigger() && this->isSpeedObject());
-                // this->m_cameraDisableGridSnap = this->isTrigger() && this->isSpeedObject();
+                this->m_isTouchTriggered = this->m_isTouchTriggered || (this->isTriggerObject() && traits.isSpeedObject());
+                this->m_cameraDisableGridSnap = this->isTriggerObject() && traits.isSpeedObject();
             }
         }
 
@@ -148,6 +150,10 @@ namespace object_collab {
         /// Runs after the object has fully generated in the editor.
         /// @note It's highly recommended to use this if you want to alter default GameObject properties in the editor.
         virtual void postEditorInit() override { }
+
+        /// Runs after the object has fully generated in the play layer.
+        /// @note It's highly recommended to use this if you want to alter default GameObject properties in the editor.
+        virtual void postPlayLayerInit() override { }
 
         /// Provides any custom details shown when the object is selected.
         /// @returns A list of custom lines shown, the default implement is none.
@@ -357,121 +363,6 @@ namespace object_collab {
         virtual void activateObject() override {
             T::activateObject();
         }
-
-        /// Gets the default main color ID given when the object is created.
-        /// @note Returning 0 will deactivate colors.
-        [[nodiscard]] virtual int getDefaultMainColorID() {
-            return this->isTrigger() ? 0 : 1004;
-        }
-
-        /// Gets the speed mod of the object to apply to the gameplay.
-        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of, is a object type of Modifier and returns isSpeedObject to true.
-        /// @see EffectGameObject::updateSpeedModType
-        [[nodiscard]] virtual short getSpeedMod() override {
-            return 0;
-        }
-
-        /// If the object can be rotated without 90deg snapping.
-        /// @warning This feature is currently unimplemented due to too much inlining.
-        /// @see GameObject::canRotateFree
-        [[nodiscard]] bool canRotateFree() {
-            return T::canRotateFree();
-        }
-
-        /// If the trigger duration handling should be removed.
-        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
-        /// @see GameObject::ignoreEditorDuration
-        [[nodiscard]] virtual bool ignoreEditorDuration() {
-            return !this->isTrigger() || this->isSpeedObject();
-        }
-
-        /// If the trigger can affect color channels.
-        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
-        /// @see GameObject::isColorTrigger
-        [[nodiscard]] virtual bool isColorTrigger() override {
-            return false;
-        }
-
-        /// If the trigger should be simulated in the editor.
-        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
-        /// @see GameObject::isEditorSpawnableTrigger
-        [[nodiscard]] virtual bool isEditorSpawnableTrigger() {
-            return this->isTrigger();
-        }
-
-        /// If the play layer should ignore this object as its reserved for the editor.
-        /// @see GameObject::isSettingsObject
-        [[nodiscard]] virtual bool isSettingsObject() override {
-            return false;
-        }
-
-        /// If the trigger can be spawned.
-        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
-        /// @see GameObject::isSpawnableTrigger
-        [[nodiscard]] virtual bool isSpawnableTrigger() override {
-            return this->isTrigger();
-        }
-
-        /// If the object should be omitted from rendering in the custom delete & delete all buttons.
-        /// @see GameObject::isSpecialObject
-        [[nodiscard]] virtual bool isSpecialObject() override {
-            return false;
-        }
-
-        /// If the object can change the gameplay speed.
-        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
-        /// @see GameObject::isSpeedObject
-        [[nodiscard]] virtual bool isSpeedObject() override {
-            return false;
-        }
-
-        /// If the trigger can be manipulated by a stop trigger.
-        /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
-        /// @see GameObject::isStoppableTrigger
-        [[nodiscard]] virtual bool isStoppableTrigger() {
-            return this->isTrigger();
-        }
-
-        /// If the object should be considered a trigger.
-        /// @see GameObject::isTrigger
-        [[nodiscard]] bool isTrigger() override {
-            if constexpr (std::derived_from<T, EffectGameObject>) {
-                return this->m_objectType == GameObjectType::Modifier;
-            } else {
-                return false;
-            }
-        }
-
-        /// If the object can be affected by move triggers on the X axis.
-        /// @see GameObject::shouldLockX
-        [[nodiscard]] virtual bool shouldLockX() override {
-            return false;
-        }
-
-        /// If the object should disable once the animation freezes.
-        /// @warning This only works when the custom object is templated with EnhancedGameObject or an inheritor of.
-        /// @see GameObject::shouldNotHideAnimFreeze
-        [[nodiscard]] virtual bool shouldNotHideAnimFreeze() override {
-            return false;
-        }
-
-        /// If the object uses an animation with a delayed start.
-        /// @warning This only works when the custom object is templated with EnhancedGameObject or an inheritor of.
-        /// @see GameObject::usesFreezeAnimation
-        [[nodiscard]] virtual bool usesFreezeAnimation() override {
-            return false;
-        }
-
-        /// If the object is animated.
-        /// @warning This only works when the custom object is templated with EnhancedGameObject or an inheritor of.
-        /// @see GameObject::usesSpecialAnimation
-        [[nodiscard]] virtual bool usesSpecialAnimation() override {
-            return false;
-        }
-
-        /// Plays an effect on activation of the object if the GameObjectType supports it.
-        /// @see GameObject::playShineEffect
-        virtual void playShineEffect() override { }
 
         /// Initializes the object with the custom variables inside a (really strange) vector/map structure.
         /// @see GameObject::customObjectSetup

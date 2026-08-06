@@ -6,6 +6,8 @@ using namespace geode::prelude;
 
 struct CustomObjectInterface::Impl {
     const CustomProperties& customProperties;
+    const ObjectTraits traits;
+    const bool trigger;
     std::optional<size_t> triggerTextProperty;
     CCPoint triggerTextPropertyOffset;
     float triggerTextPropertyScale = 0;
@@ -73,8 +75,9 @@ CustomObjectInterface& CustomObjectInterface::operator=(CustomObjectInterface&& 
 
 CustomObjectInterface::CustomObjectInterface(CustomObjectInterface&& other) noexcept = default;
 
-CustomObjectInterface::CustomObjectInterface(ObjectInfo* info) {
+CustomObjectInterface::CustomObjectInterface(ObjectInfo* info, ObjectTraits&& traits, bool isEffect) {
     static const CustomProperties DEFAULT_PROPERTIES = CustomProperties();
+    const bool isTrigger = isEffect && traits.getGameObjectType() == GameObjectType::Modifier;
 
     m_impl = std::make_unique<Impl>(std::visit(makeVisitor{
         [](const QuickObject& object) -> const CustomProperties& {
@@ -83,13 +86,21 @@ CustomObjectInterface::CustomObjectInterface(ObjectInfo* info) {
         [](const ComplexObject& object) -> const CustomProperties& {
             return object.getCustomProperties();
         }
-    }, info->getConstruction()));
+    }, info->getConstruction()), std::forward<ObjectTraits>(traits), isTrigger);
 }
 
 CustomObjectInterface::~CustomObjectInterface() = default;
 
 const CustomProperties& CustomObjectInterface::getCustomProperties() {
     return m_impl->customProperties;
+}
+
+const ObjectTraits& CustomObjectInterface::getTraits() {
+    return m_impl->traits;
+}
+
+bool CustomObjectInterface::isTriggerObject() {
+    return m_impl->trigger;
 }
 
 std::optional<size_t> CustomObjectInterface::getTriggerTextProperty() {

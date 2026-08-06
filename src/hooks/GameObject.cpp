@@ -9,12 +9,11 @@ GameObject* ModGameObject::createWithKey(const int key) {
     } else if (ObjectInfo* info = ObjectAPI::getCustomObject(key)) {
         CustomObjectInterface* object = std::visit<CustomObjectInterface*>(makeVisitor{
             [info](const QuickObject& object) {
-                return new CustomObject<GameObject>(
-                    info,
-                    object.getObjectType(),
-                    object.getDefaultZLayer(),
-                    object.getDefaultZOrder()
-                );
+                return new CustomObject<GameObject>(info, ObjectTraits::builder()
+                    .gameObjectType(object.getObjectType())
+                    .defaultZLayer(object.getDefaultZLayer())
+                    .defaultZOrder(object.getDefaultZOrder())
+                    .build());
             },
             [info](const ComplexObject& object) {
                 return object.hasFactory() ? object.factory(info) : nullptr;

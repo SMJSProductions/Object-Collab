@@ -18,6 +18,7 @@ void ModPlayLayer::prepareCreateObjectsFromSetup(gd::string& levelString) {
             ))) {
                 this->addObject(customObject->getGameObject());
                 customObject->postInit();
+                customObject->postPlayLayerInit();
             } else {
                 log::warn("Failed to initialize object");
             }
