@@ -1,10 +1,13 @@
 # Object-Collab Changelog
 
+## v0.4.1-beta.1
+
+- Fixed back frames not rendering due to not being in the node container.
+
 ## v0.4.0-beta.1
 
 - Added a builder based trait system for better ABI.
 - Added a play layer post init.
-- 
 
 ## v0.3.4-beta.1
 

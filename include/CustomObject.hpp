@@ -198,6 +198,7 @@ namespace object_collab {
             backFrame->m_objectID = 38;
             backFrame->m_objectType = GameObjectType::Decoration;
             backFrame->m_isDecoration2 = true;
+            backFrame->m_addToNodeContainer = true;
 
             backFrame->customSetup();
             backFrame->setStartPos(this->getPosition() + offset);
