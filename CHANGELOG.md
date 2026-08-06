@@ -3,6 +3,7 @@
 ## v0.4.1-beta.1
 
 - Fixed back frames not rendering due to not being in the node container.
+- Added padding support for AxisLayoutMenu.
 
 ## v0.4.0-beta.1
 

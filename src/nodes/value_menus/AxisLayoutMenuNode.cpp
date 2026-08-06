@@ -46,7 +46,8 @@ bool AxisLayoutMenuNode::init(const Selected& selected, Popup* popup, AxisLayout
         ->setGap(axisLayoutMenu.getGap())
         ->setMinRelativeScale(axisLayoutMenu.getMinScale())
         ->setMaxRelativeScale(axisLayoutMenu.getMaxScale())
-        ->ignoreInvisibleChildren(axisLayoutMenu.getIgnoreInvisibleChildren()));
+        ->ignoreInvisibleChildren(axisLayoutMenu.getIgnoreInvisibleChildren())
+        ->setPadding(axisLayoutMenu.getPadding()));
 
     return this->initBaseMenuInverted(axisLayoutMenu.getID(), axisLayoutMenu.getTitle(), nullptr, {
         menuContainer

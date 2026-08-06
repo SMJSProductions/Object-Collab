@@ -400,6 +400,9 @@ namespace object_collab::editor_popup {
             /// @see geode::SimpleAxisLayout::ignoreInvisibleChildren
             /// @param enabled If invisible children should be ignored in the layout.
             [[nodiscard]] Builder&& ignoreInvisibleChildren(bool enabled) &&;
+            /// @see geode::SimpleAxisLayout::setPadding
+            /// @param padding The layout padding.
+            [[nodiscard]] Builder&& padding(geode::Padding padding) &&;
             /// @param menu A value menu shown in the layout.
             [[nodiscard]] Builder&& menu(std::unique_ptr<ValueMenu> menu) &&;
             /// @param menus A list of value menus shown in the layout.
@@ -428,6 +431,7 @@ namespace object_collab::editor_popup {
         [[nodiscard]] geode::CrossAxisAlignment getCrossAxisAlignment() const;
         [[nodiscard]] geode::AxisScaling getCrossAxisScaling() const;
         [[nodiscard]] bool getIgnoreInvisibleChildren() const;
+        [[nodiscard]] const geode::Padding& getPadding() const;
         [[nodiscard]] std::span<std::unique_ptr<ValueMenu>> getMenus() const;
         [[nodiscard]] std::vector<std::unique_ptr<ValueMenu>> releaseMenus();
     };

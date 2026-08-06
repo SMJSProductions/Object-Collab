@@ -171,6 +171,7 @@ struct AxisLayoutMenu::Impl {
     CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment::Center;
     AxisScaling crossAxisScaling = AxisScaling::Fit;
     bool ignoreInvisibleChildren = true;
+    Padding padding;
 };
 
 CONFIG_IMPL(AxisLayoutMenu);
@@ -187,6 +188,7 @@ PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, AxisDirection, crossAxisDirection, CrossA
 PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, CrossAxisAlignment, crossAxisAlignment, CrossAxisAlignment);
 PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, AxisScaling, crossAxisScaling, CrossAxisScaling);
 PRIMITIVE_CONFIG_VALUE(AxisLayoutMenu, bool, ignoreInvisibleChildren, IgnoreInvisibleChildren);
+CONFIG_VALUE(AxisLayoutMenu, Padding, const Padding&, padding, Padding);
 
 struct PopupConfig::Impl {
     IMPL_VALUES();
