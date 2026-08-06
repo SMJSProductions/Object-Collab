@@ -132,7 +132,7 @@ namespace object_collab {
             T::customSetup();
             T::setDefaultMainColorMode(traits.getDefaultMainColorID());
 
-            this->m_dontIgnoreDuration = this->isTriggerObject() && !traits.isSpeedObject() && !traits.isIgnoreEditorDuration();
+            this->m_dontIgnoreDuration = this->isTriggerObject() && !traits.isSpeedObject() && !traits.ignoreEditorDuration();
             this->m_activateTriggerInEditor = this->isTriggerObject() && traits.isEditorSpawnableTrigger();
             this->m_canBeControlled = this->isTriggerObject() && traits.isStoppableTrigger();
             this->m_isInvisible = !this->m_editorEnabled && this->isTriggerObject() && !traits.isSpeedObject();

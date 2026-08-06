@@ -133,7 +133,7 @@ void CompatPopup::closeWithEnabled() {
         if (Mod* mod = loader->getInstalledMod(modID); mod->isOrWillBeEnabled()) {
             geode::createQuickPopup(
                 "Restart GD?",
-                "To load the now enabled mods you must restart Geometry Dash.",
+                "To load the now enabled mods, you must restart Geometry Dash.",
                 "cancel",
                 "restart",
                 [this](FLAlertLayer*, const bool state) {

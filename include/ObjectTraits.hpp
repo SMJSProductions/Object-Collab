@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Geode/Geode.hpp>
 #include "dll.hpp"
 
 namespace object_collab {
@@ -52,32 +53,32 @@ namespace object_collab {
             /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
             /// @see GameObject::isColorTrigger
             /// @param toggle If the trigger can affect color channels.
-            [[nodiscard]] Builder&& colorTrigger(bool toggle) &&;
+            [[nodiscard]] Builder&& isColorTrigger(bool toggle) &&;
             /// @note Default is true.
             /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
             /// @see GameObject::isSpawnableTrigger
             /// @param toggle If the trigger can be spawned.
-            [[nodiscard]] Builder&& spawnableTrigger(bool toggle) &&;
+            [[nodiscard]] Builder&& isSpawnableTrigger(bool toggle) &&;
             /// @note Default is true.
             /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
             /// @see GameObject::isStoppableTrigger
             /// @param toggle If the trigger can be manipulated by a stop trigger.
-            [[nodiscard]] Builder&& stoppableTrigger(bool toggle) &&;
+            [[nodiscard]] Builder&& isStoppableTrigger(bool toggle) &&;
             /// @note Default is true.
             /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
             /// @see GameObject::isEditorSpawnableTrigger
             /// @param toggle If the trigger should be simulated in the editor.
-            [[nodiscard]] Builder&& editorSpawnableTrigger(bool toggle) &&;
+            [[nodiscard]] Builder&& isEditorSpawnableTrigger(bool toggle) &&;
             /// @note Default is false.
             /// @warning This only works when the custom object is templated with EffectGameObject or an inheritor of and is a object type of Modifier.
             /// @warning This feature is currently unimplemented due to too much inlining.
             /// @see GameObject::isSpeedObject
             //// @param toggle If the object can change the gameplay speed.
-            [[nodiscard]] Builder&& speedObject(bool toggle) &&;
+            [[nodiscard]] Builder&& isSpeedObject(bool toggle) &&;
             /// @note Default is false.
             /// @see GameObject::isSettingsObject
             /// @param toggle If the play layer should ignore this object as its reserved for the editor.
-            [[nodiscard]] Builder&& editorReserved(bool toggle) &&;
+            [[nodiscard]] Builder&& isEditorReserved(bool toggle) &&;
             /// @note Default is false.
             /// @see GameObject::isSpecialObject
             /// @param toggle If the object should be omitted from rendering in the custom delete & delete all buttons.
@@ -125,7 +126,7 @@ namespace object_collab {
         [[nodiscard]] int getDefaultZOrder() const;
         [[nodiscard]] short getSpeedMod() const;
         [[nodiscard]] bool canRotateFree() const;
-        [[nodiscard]] bool isIgnoreEditorDuration() const;
+        [[nodiscard]] bool ignoreEditorDuration() const;
         [[nodiscard]] bool isColorTrigger() const;
         [[nodiscard]] bool isSpawnableTrigger() const;
         [[nodiscard]] bool isStoppableTrigger() const;
@@ -140,7 +141,7 @@ namespace object_collab {
         void playShineEffect(geode::Function<void()> original) const;
     };
 
-    #define CUSTOM_IMPLEMENT(source, custom, ...) \
+    #define OBJECT_CUSTOM_IMPLEMENT(source, custom, ...) \
         if (source && source->m_objectID >= object_collab::ObjectAPI::getBaseCustomObjectID()) { \
             if (object_collab::CustomObjectInterface* custom = geode::cast::typeinfo_cast<object_collab::CustomObjectInterface*>(source)) __VA_ARGS__; \
         }

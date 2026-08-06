@@ -5,7 +5,7 @@ order: 3
 
 # A Complex Object
 
-If you want a complex object where you can add custom behavior you can create one by doing something comparable to the following example:
+If you want a complex object where you can add custom behavior, you can create one by doing something comparable to the following example:
 
 ```cpp
 #include <Geode/Geode.hpp>
@@ -50,7 +50,9 @@ public:
 
     bool m_active;
 
-    AutoJumpUfoPortal(ObjectInfo* info): CustomObject(info, GameObjectType::UfoPortal) { }
+    AutoJumpUfoPortal(ObjectInfo* info): CustomObject(info, ObjectTraits::builder()
+        .gameObjectType(GameObjectType::UfoPortal)
+        .build()) { }
 
     std::vector<std::string> getObjectDetails() override {
         return DetailsBuilder::builder()
@@ -91,25 +93,25 @@ $on_mod(Loaded) {
 
 ### Registration
 
-The object is being registered using `"id"_spr`. Internally the string is being associated with a numeric object ID compatible with how GD handles object identification. Whenever you save the level the numeric IDs get optimized to whatever is in the level and get linked to the string ID provided here. For this reason you must keep your IDs the same to allow loading old level data. The identifier must also be suffixed by `_spr` to make sure that IDs between mods never overlap.
+The object is being registered using `"id"_spr`. Internally the string is bound with a numeric object ID, compatible with the GD identification system. Whenever you save the level, the numeric IDs get optimized to whatever is in the level and get linked to the string ID provided here. For this reason you must keep your IDs the same, to allow loading old level data. The identifier must also be suffixed by `_spr` to make sure that IDs between mods never overlap.
 
-In this setup you also define sprite used by the object and the custom properties which gets used to automate value saving, loading & updating inside the object.
+In this setup you also define the sprite and the custom properties which gets used to automate value saving, loading & updating inside the object.
 
 > :warning: Sprites must always be part of a spritesheet.
 
 ### Initialization
 
-The object gets initialized as a `CustomObject<EffectGameObject>`. This means it's a custom object with the inherited traits of an `EffectGameObject` and will thus allow features like being activated by the player. It also sets the `GameObjectType` to `UfoPortal` which means it inherits the collision handling of a UFO portal object.
+The object gets initialized as a `CustomObject<EffectGameObject>`. This means it's a custom object with the inherited traits of an `EffectGameObject` and will thus enable features like being activated by the player. It also sets the `GameObjectType` to `UfoPortal` which means it inherits the collision handling of a UFO portal object.
 
 > :information_source: Note that all auto release and initialization handling is left to the internal API. It is not recommended to do so yourself.
 
 ### Activating
 
-When the player touches an `EffectGameObject` with a compatible `GameObjectType`, it will trigger the `activatedByPlayer` method. Here it checks if our portal is active using our custom property and based on that run the original along with boosting the player either negatively or positively depending on the flip state of the player.
+When the player touches an `EffectGameObject` with a compatible `GameObjectType`, it will trigger the `activatedByPlayer` method. Here it checks if our portal is active using our custom property. Based on that it runs the original along with boosting the player either negatively or positively depending on the flip state of the player.
 
 ### Getting Details
 
-When you're in the editor and select an object. Given you have the option enabled you can see details about an object. Object Collab allows you to extend this block with your own information. Using the `DetailsBuilder` you can easily add standard formatted strings to this block. In this example it will turn the property into either `Active: Yes` or `Active: No`.
+When you're in the editor and select an object, given you have the option enabled, you can see details about an object. Object Collab allows you to extend this block with your own information. Using the `DetailsBuilder` you can easily add standard formatted strings to this block. In this example it will turn the property into either `Active: Yes` or `Active: No`.
 
 > :information_source: Note that DetailsBuilder is not required. It's just a QOL feature.
 

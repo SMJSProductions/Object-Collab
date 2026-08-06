@@ -10,12 +10,12 @@ struct ObjectTraits::Impl {
     short speedMod = 0;
     bool canRotateFree = false;
     bool ignoreEditorDuration = false;
-    bool colorTrigger = false;
-    bool spawnableTrigger = true;
-    bool stoppableTrigger = true;
-    bool editorSpawnableTrigger = true;
-    bool speedObject = false;
-    bool editorReserved = false;
+    bool isColorTrigger = false;
+    bool isSpawnableTrigger = true;
+    bool isStoppableTrigger = true;
+    bool isEditorSpawnableTrigger = true;
+    bool isSpeedObject = false;
+    bool isEditorReserved = false;
     bool omitTrashTexture = false;
     bool shouldLockX = false;
     bool shouldNotHideAnimFreeze = false;
@@ -68,38 +68,38 @@ ObjectTraits::Builder&& ObjectTraits::Builder::ignoreEditorDuration(bool toggle)
     return std::forward<ObjectTraits::Builder>(*this);
 }
 
-ObjectTraits::Builder&& ObjectTraits::Builder::colorTrigger(bool toggle) && {
-    m_config->m_impl->colorTrigger = toggle;
+ObjectTraits::Builder&& ObjectTraits::Builder::isColorTrigger(bool toggle) && {
+    m_config->m_impl->isColorTrigger = toggle;
 
     return std::forward<ObjectTraits::Builder>(*this);
 }
 
-ObjectTraits::Builder&& ObjectTraits::Builder::spawnableTrigger(bool toggle) && {
-    m_config->m_impl->spawnableTrigger = toggle;
+ObjectTraits::Builder&& ObjectTraits::Builder::isSpawnableTrigger(bool toggle) && {
+    m_config->m_impl->isSpawnableTrigger = toggle;
 
     return std::forward<ObjectTraits::Builder>(*this);
 }
 
-ObjectTraits::Builder&& ObjectTraits::Builder::stoppableTrigger(bool toggle) && {
-    m_config->m_impl->stoppableTrigger = toggle;
+ObjectTraits::Builder&& ObjectTraits::Builder::isStoppableTrigger(bool toggle) && {
+    m_config->m_impl->isStoppableTrigger = toggle;
 
     return std::forward<ObjectTraits::Builder>(*this);
 }
 
-ObjectTraits::Builder&& ObjectTraits::Builder::editorSpawnableTrigger(bool toggle) && {
-    m_config->m_impl->editorSpawnableTrigger = toggle;
+ObjectTraits::Builder&& ObjectTraits::Builder::isEditorSpawnableTrigger(bool toggle) && {
+    m_config->m_impl->isEditorSpawnableTrigger = toggle;
 
     return std::forward<ObjectTraits::Builder>(*this);
 }
 
-ObjectTraits::Builder&& ObjectTraits::Builder::speedObject(bool toggle) && {
-    m_config->m_impl->speedObject = toggle;
+ObjectTraits::Builder&& ObjectTraits::Builder::isSpeedObject(bool toggle) && {
+    m_config->m_impl->isSpeedObject = toggle;
 
     return std::forward<ObjectTraits::Builder>(*this);
 }
 
-ObjectTraits::Builder&& ObjectTraits::Builder::editorReserved(bool toggle) && {
-    m_config->m_impl->editorReserved = toggle;
+ObjectTraits::Builder&& ObjectTraits::Builder::isEditorReserved(bool toggle) && {
+    m_config->m_impl->isEditorReserved = toggle;
 
     return std::forward<ObjectTraits::Builder>(*this);
 }
@@ -170,32 +170,32 @@ bool ObjectTraits::canRotateFree() const {
     return m_impl->canRotateFree;
 }
 
-bool ObjectTraits::isIgnoreEditorDuration() const {
+bool ObjectTraits::ignoreEditorDuration() const {
     return m_impl->ignoreEditorDuration;
 }
 
 bool ObjectTraits::isColorTrigger() const {
-    return m_impl->colorTrigger;
+    return m_impl->isColorTrigger;
 }
 
 bool ObjectTraits::isSpawnableTrigger() const {
-    return m_impl->spawnableTrigger;
+    return m_impl->isSpawnableTrigger;
 }
 
 bool ObjectTraits::isStoppableTrigger() const {
-    return m_impl->stoppableTrigger;
+    return m_impl->isStoppableTrigger;
 }
 
 bool ObjectTraits::isEditorSpawnableTrigger() const {
-    return m_impl->editorSpawnableTrigger;
+    return m_impl->isEditorSpawnableTrigger;
 }
 
 bool ObjectTraits::isSpeedObject() const {
-    return m_impl->speedObject;
+    return m_impl->isSpeedObject;
 }
 
 bool ObjectTraits::isEditorReserved() const {
-    return m_impl->editorReserved;
+    return m_impl->isEditorReserved;
 }
 
 bool ObjectTraits::omitTrashTexture() const {

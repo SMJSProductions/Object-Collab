@@ -4,31 +4,31 @@ using namespace object_collab::prelude;
 using namespace geode::prelude;
 
 bool VirtualModGameObject::isSpawnableTrigger() {
-    CUSTOM_IMPLEMENT(this, custom, return custom->isTriggerObject() && custom->getTraits().isSpawnableTrigger());
+    OBJECT_CUSTOM_IMPLEMENT(this, custom, return custom->isTriggerObject() && custom->getTraits().isSpawnableTrigger());
 
     return GameObject::isSpawnableTrigger();
 }
 
 bool VirtualModGameObject::isSpecialObject() {
-    CUSTOM_IMPLEMENT(this, custom, return custom->getTraits().omitTrashTexture());
+    OBJECT_CUSTOM_IMPLEMENT(this, custom, return custom->getTraits().omitTrashTexture());
 
     return GameObject::isSpecialObject();
 }
 
 bool VirtualModGameObject::isTrigger() {
-    CUSTOM_IMPLEMENT(this, custom, return custom->isTriggerObject());
+    OBJECT_CUSTOM_IMPLEMENT(this, custom, return custom->isTriggerObject());
 
     return GameObject::isTrigger();
 }
 
 bool VirtualModGameObject::shouldLockX() {
-    CUSTOM_IMPLEMENT(this, custom, return custom->getTraits().shouldLockX());
+    OBJECT_CUSTOM_IMPLEMENT(this, custom, return custom->getTraits().shouldLockX());
 
     return GameObject::shouldLockX();
 }
 
 void VirtualModGameObject::playShineEffect() {
-    CUSTOM_IMPLEMENT(this, custom, return custom->getTraits().playShineEffect([this]() { GameObject::playShineEffect(); }));
+    OBJECT_CUSTOM_IMPLEMENT(this, custom, return custom->getTraits().playShineEffect([this]() { GameObject::playShineEffect(); }));
 
     GameObject::playShineEffect();
 }
@@ -38,7 +38,7 @@ void VirtualModGameObject::playShineEffect() {
 void VirtualModEnhancedGameObject::setupAnimationVariables() {
     EnhancedGameObject::setupAnimationVariables();
 
-    CUSTOM_IMPLEMENT(this, custom, {
+    OBJECT_CUSTOM_IMPLEMENT(this, custom, {
         const ObjectTraits& traits = custom->getTraits();
         const bool isFrozen = traits.usesFreezeAnimation();
 
@@ -57,7 +57,7 @@ void VirtualModEnhancedGameObject::setupAnimationVariables() {
 void VirtualModLevelEditorLayer::addSpecial(GameObject* object) {
     LevelEditorLayer::addSpecial(object);
 
-    CUSTOM_IMPLEMENT(object, custom, if (custom->isTriggerObject() && custom->getTraits().isColorTrigger()) {
+    OBJECT_CUSTOM_IMPLEMENT(object, custom, if (custom->isTriggerObject() && custom->getTraits().isColorTrigger()) {
         m_colorTriggers->addObject(object);
         m_colorTriggersChanged = true;
     });
@@ -66,7 +66,7 @@ void VirtualModLevelEditorLayer::addSpecial(GameObject* object) {
 void VirtualModLevelEditorLayer::removeSpecial(GameObject* object) {
     LevelEditorLayer::removeSpecial(object);
 
-    CUSTOM_IMPLEMENT(object, custom, if (custom->isTriggerObject() && custom->getTraits().isColorTrigger()) {
+    OBJECT_CUSTOM_IMPLEMENT(object, custom, if (custom->isTriggerObject() && custom->getTraits().isColorTrigger()) {
         m_colorTriggers->removeObject(object);
     });
 }
@@ -76,20 +76,20 @@ void VirtualModLevelEditorLayer::removeSpecial(GameObject* object) {
 void VirtualModPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
     PlayLayer::destroyPlayer(player, object);
 
-    CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(player));
+    OBJECT_CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(player));
 }
 
 void VirtualModLevelEditorLayer::playerTookDamage(PlayerObject* player) {
     LevelEditorLayer::playerTookDamage(player);
 
     for (GameObject* object : m_hazardCollisionObjects) {
-        CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(player));
+        OBJECT_CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(player));
     }
 }
 
 bool VirtualModPlayerObject::collidedWithObjectInternal(const float dt, GameObject* object, CCRect rect, const bool skipCheck) {
     if (PlayerObject::collidedWithObjectInternal(dt, object, std::move(rect), skipCheck)) {
-        CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(this));
+        OBJECT_CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(this));
 
         return true;
     }
@@ -100,7 +100,7 @@ bool VirtualModPlayerObject::collidedWithObjectInternal(const float dt, GameObje
 void VirtualModPlayerObject::collidedWithSlopeInternal(const float dt, GameObject* object, const bool forced) {
     PlayerObject::collidedWithSlopeInternal(dt, object, forced);
 
-    CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(this));
+    OBJECT_CUSTOM_IMPLEMENT(object, custom, custom->collidedByPlayer(this));
 }
 
 // SPEED HANDLING
@@ -116,7 +116,7 @@ void VirtualModPlayerObject::collidedWithSlopeInternal(const float dt, GameObjec
 // }
 
 void VirtualModPlayLayer::addObject(GameObject* object) {
-    CUSTOM_IMPLEMENT(object, custom, {
+    OBJECT_CUSTOM_IMPLEMENT(object, custom, {
         if (custom->getTraits().isEditorReserved()) return;
 
         // PlayLayer::addObject(object);
