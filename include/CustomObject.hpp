@@ -260,16 +260,29 @@ namespace object_collab {
             }
         }
 
-        /// Sets the shown on triggers based on the value of a property.
+        /// Sets the text shown on triggers based on the value of a property. This will be updated as the property changes.
         /// @warning This method is only functional when the custom object is templated with EffectGameObject or an inheritor of.
         /// @param property The property ID to use.
         /// @param offset The offset of the label.
         /// @param scale The scale of the label.
         void setTriggerTextProperty(size_t property, cocos2d::CCPoint offset = { 0, 0 }, float scale = 0.5f) requires std::derived_from<T, EffectGameObject> {
-            CustomObjectInterface::setTriggerTextProperty(property);
-            this->setTriggerTextPropertyOffset(std::move(offset));
-            this->setTriggerTextPropertyScale(scale);
-            this->updateTriggerText();
+            const CustomProperties& properties = this->getCustomProperties();
+
+            if (auto entry = properties.find(property); entry != properties.end()) {
+                CustomObjectInterface::setTriggerTextProperty(property);
+                this->updateTriggerText(entry->second->getStringValue(this), offset, scale);
+                this->setTriggerTextPropertyOffset(std::move(offset));
+                this->setTriggerTextPropertyScale(scale);
+            }
+        }
+
+        /// Sets the text shown on triggers.
+        /// @warning This method is only functional when the custom object is templated with EffectGameObject or an inheritor of.
+        /// @param text The string to apply.
+        /// @param offset The offset of the label.
+        /// @param scale The scale of the label.
+        void setTriggerText(geode::ZStringView text, const cocos2d::CCPoint& offset = { 0, 0 }, float scale = 0.5f) requires std::derived_from<T, EffectGameObject> {
+            this->updateTriggerText(text, offset, scale);
         }
 
         /// Removes the detail sprite.
@@ -287,7 +300,8 @@ namespace object_collab {
         /// Removes the text shown on a trigger.
         void removeTriggerTextProperty() requires std::derived_from<T, EffectGameObject> {
             CustomObjectInterface::setTriggerTextProperty(std::nullopt);
-            this->updateTriggerText();
+            this->getObjectLabel()->removeFromParent();
+            this->setObjectLabel(nullptr);
         }
 
         /// Sets the hitbox of the object based on the size and offset.
@@ -445,45 +459,38 @@ namespace object_collab {
                 entry->second->applyFromString(this, value);
 
                 if constexpr (std::derived_from<T, EffectGameObject>) {
-                    if (property == this->getTriggerTextProperty()) this->updateTriggerText();
+                    if (property == this->getTriggerTextProperty()) {
+                        this->updateTriggerText(entry->second->getStringValue(this), this->getTriggerTextPropertyOffset(), this->getTriggerTextPropertyScale());
+                    }
                 }
 
                 return true;
             }
         }
 
+        /// @note This exists for simplified use of the templated class internally.
+        /// @returns The instance as a game object.
+        [[nodiscard]] inline GameObject* getGameObject() override {
+            return this;
+        }
+    private:
         /// Updates the trigger text with the new property value.
         /// @warning This method is only functional when the custom object is templated with EffectGameObject or an inheritor of.
-        void updateTriggerText() requires std::derived_from<T, EffectGameObject> {
-            const CustomProperties& properties = this->getCustomProperties();
-            std::optional<size_t> property = this->getTriggerTextProperty();
+        void updateTriggerText(geode::ZStringView text, const cocos2d::CCPoint& offset, float scale) requires std::derived_from<T, EffectGameObject> {
             cocos2d::CCLabelBMFont* label = this->getObjectLabel();
 
-            if (!property || !properties.contains(*property)) {
-                label->removeFromParent();
-                this->setObjectLabel(nullptr);
-
-                return;
-            }
-
             if (label) {
-                label->setString(properties.at(*property)->getStringValue(this).c_str());
+                label->setString(text.c_str());
             } else {
-                label = cocos2d::CCLabelBMFont::create(properties.at(*property)->getStringValue(this).c_str(), "bigFont.fnt");
+                label = cocos2d::CCLabelBMFont::create(text.c_str(), "bigFont.fnt");
 
                 this->addChild(label, 1);
                 this->setObjectLabel(label);
             }
 
-            label->setScale(this->getTriggerTextPropertyScale());
-            label->setPosition(this->getContentSize() * 0.5f + this->getTriggerTextPropertyOffset());
+            label->setScale(scale);
+            label->setPosition(this->getContentSize() * 0.5f + offset);
             label->limitLabelWidth(30, 0.5f, 0);
-        }
-
-        /// @note This exists for simplified use of the templated class internally.
-        /// @returns The instance as a game object.
-        [[nodiscard]] inline GameObject* getGameObject() override {
-            return this;
         }
     };
 

@@ -2,6 +2,7 @@
 
 ## v0.5.0-beta.1
 
+- Added a way to set raw trigger text.
 - Added command traits based on Alphalaneous' implementation.
 - Fixed the compatibility popup not cancelling.
 - Fixed onPlayShineEffect not being correctly implemented.
