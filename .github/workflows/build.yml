@@ -65,6 +65,7 @@ jobs:
 
   deploy-pages:
     name: Deploy pages
+    if: github.event.inputs.deploy == 'true'
     runs-on: windows-latest
     needs: build
     environment:
