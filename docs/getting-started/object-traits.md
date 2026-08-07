@@ -80,7 +80,7 @@ These are options in the `ObjectTraits` which can be set during the construction
 | `isSpawnableTrigger`       | If the trigger can be spawned.                                                            | `EffectGameObject`   | `Modifier`       | `true`                  |
 | `isStoppableTrigger`       | If the trigger can be manipulated by a stop trigger.                                      | `EffectGameObject`   | `Modifier`       | `true`                  |
 | `isEditorSpawnableTrigger` | If the trigger should be simulated in the editor.                                         | `EffectGameObject`   | `Modifier`       | `true`                  |
-| `isSpeedObject`            | If the object can change the gameplay speed.                                              | `EffectGameObject`   | `Modifier`       | `false`                 |
+| `isSpeedObject`            | If the object can change the gameplay speed  (Unsupported).                               | `EffectGameObject`   | `Modifier`       | `false`                 |
 | `isEditorReserved`         | If the play layer should ignore this object as its reserved for the editor.               | `GameObject`         | N.A.             | `false`                 |
 | `omitTrashTexture`         | If the object should be omitted from rendering in the custom delete & delete all buttons. | `GameObject`         | N.A.             | `false`                 |
 | `shouldLockX`              | If the object can be affected by move triggers on the X axis.                             | `GameObject`         | N.A.             | `false`                 |

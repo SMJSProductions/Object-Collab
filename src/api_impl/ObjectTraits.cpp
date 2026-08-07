@@ -211,7 +211,7 @@ bool ObjectTraits::isEditorSpawnableTrigger() const {
 }
 
 bool ObjectTraits::isSpeedObject() const {
-    return m_impl->isSpeedObject;
+    return false && m_impl->isSpeedObject;
 }
 
 bool ObjectTraits::isEditorReserved() const {
