@@ -4,11 +4,17 @@ using namespace object_collab::prelude;
 using namespace geode::prelude;
 
 void ModLevelInfoLayer::onPlay(CCObject* sender) {
-    if (CCDirector::get()->m_bIsTransitioning) return ModLevelInfoLayer::onPlay(sender);
+    static bool skipCheck = false;
 
-    if (CustomLevelData::load(this).getMissingMods().size()) {
-        CompatPopup::create([this, sender]() { LevelInfoLayer::onPlay(sender); })->show();
-    } else {
+    if (skipCheck || CCDirector::get()->m_bIsTransitioning || CustomLevelData::load(this).getMissingMods().empty()) {
+        skipCheck = false;
+
         LevelInfoLayer::onPlay(sender);
+    } else {
+        CompatPopup::create([this, sender]() {
+            skipCheck = true;
+
+            LevelInfoLayer::onPlay(sender);
+        })->show();
     }
 }

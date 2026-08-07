@@ -4,21 +4,33 @@ using namespace object_collab::prelude;
 using namespace geode::prelude;
 
 void ModEditLevelLayer::onEdit(CCObject* sender) {
-    if (CCDirector::get()->m_bIsTransitioning) return EditLevelLayer::onEdit(sender);
+    static bool skipCheck = false;
 
-    if (CustomLevelData::load(this).getMissingMods().size()) {
-        CompatPopup::create([this, sender]() { EditLevelLayer::onEdit(sender); })->show();
-    } else {
+    if (skipCheck || CCDirector::get()->m_bIsTransitioning || CustomLevelData::load(this).getMissingMods().empty()) {
+        skipCheck = false;
+
         EditLevelLayer::onEdit(sender);
+    } else {
+        CompatPopup::create([this, sender]() {
+            skipCheck = true;
+
+            EditLevelLayer::onEdit(sender);
+        })->show();
     }
 }
 
 void ModEditLevelLayer::onPlay(CCObject* sender) {
-    if (CCDirector::get()->m_bIsTransitioning) return EditLevelLayer::onPlay(sender);
+    static bool skipCheck = false;
 
-    if (CustomLevelData::load(this).getMissingMods().size()) {
-        CompatPopup::create([this, sender]() { EditLevelLayer::onPlay(sender); })->show();
-    } else {
+    if (skipCheck || CCDirector::get()->m_bIsTransitioning || CustomLevelData::load(this).getMissingMods().empty()) {
+        skipCheck = false;
+
         EditLevelLayer::onPlay(sender);
+    } else {
+        CompatPopup::create([this, sender]() {
+            skipCheck = true;
+
+            EditLevelLayer::onPlay(sender);
+        })->show();
     }
 }
