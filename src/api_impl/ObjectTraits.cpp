@@ -21,7 +21,9 @@ struct ObjectTraits::Impl {
     bool shouldNotHideAnimFreeze = false;
     bool usesFreezeAnimation = false;
     bool usesSpecialAnimation = false;
-    PlayShineEffect onPlayShineEffect = nullptr;
+    OnPlayShineEffect onPlayShineEffect = nullptr;
+    OnActionCommand onControlIDCommand = nullptr;
+    OnActionCommand onObjectGroupCommand = nullptr;
 };
 
 ObjectTraits::Builder::Builder(): m_config(std::unique_ptr<ObjectTraits>(new ObjectTraits())) { }
@@ -134,8 +136,20 @@ ObjectTraits::Builder&& ObjectTraits::Builder::usesSpecialAnimation(bool toggle)
     return std::forward<ObjectTraits::Builder>(*this);
 }
 
-ObjectTraits::Builder&& ObjectTraits::Builder::onPlayShineEffect(PlayShineEffect onPlayShineEffect) && {
+ObjectTraits::Builder&& ObjectTraits::Builder::onPlayShineEffect(OnPlayShineEffect onPlayShineEffect) && {
     m_config->m_impl->onPlayShineEffect = std::move(onPlayShineEffect);
+
+    return std::forward<ObjectTraits::Builder>(*this);
+}
+
+ObjectTraits::Builder&& ObjectTraits::Builder::onControlIDCommand(OnActionCommand onControlIDCommand) && {
+    m_config->m_impl->onControlIDCommand = std::move(onControlIDCommand);
+
+    return std::forward<ObjectTraits::Builder>(*this);
+}
+
+ObjectTraits::Builder&& ObjectTraits::Builder::onObjectGroupCommand(OnActionCommand onObjectGroupCommand) && {
+    m_config->m_impl->onObjectGroupCommand = std::move(onObjectGroupCommand);
 
     return std::forward<ObjectTraits::Builder>(*this);
 }
@@ -229,5 +243,17 @@ void ObjectTraits::playShineEffect(geode::Function<void()> original) const {
         m_impl->onPlayShineEffect(std::move(original));
     } else {
         original();
+    }
+}
+
+void ObjectTraits::controlIDCommand(GJActionCommand command) const {
+    if (m_impl->onControlIDCommand) {
+        m_impl->onControlIDCommand(command);
+    }
+}
+
+void ObjectTraits::objectGroupCommand(GJActionCommand command) const {
+    if (m_impl->onObjectGroupCommand) {
+        m_impl->onObjectGroupCommand(command);
     }
 }

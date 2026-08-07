@@ -5,7 +5,9 @@
 
 namespace object_collab {
     /// @param original A callback to the original method.
-    using PlayShineEffect = geode::Function<void(geode::Function<void()> original)>;
+    using OnPlayShineEffect = geode::Function<void(geode::Function<void()> original)>;
+    /// @param command The action command sent to the object.
+    using OnActionCommand = geode::Function<void(GJActionCommand command)>;
 
     class OBJC_API_DLL ObjectTraits {
         struct Impl;
@@ -104,7 +106,11 @@ namespace object_collab {
             [[nodiscard]] Builder&& usesSpecialAnimation(bool toggle) &&;
             /// @see GameObject::playShineEffect
             /// @param onPlayShineEffect Plays an effect on activation of the object if the GameObjectType supports it.
-            [[nodiscard]] Builder&& onPlayShineEffect(PlayShineEffect onPlayShineEffect) &&;
+            [[nodiscard]] Builder&& onPlayShineEffect(OnPlayShineEffect onPlayShineEffect) &&;
+            /// @param onActionCommand Executes when a command was sent to the owned control ID (e.g. Stop).
+            [[nodiscard]] Builder&& onControlIDCommand(OnActionCommand onActionCommand) &&;
+            /// @param onActionCommand Executes when a command was sent to the owned object group (e.g. Stop).
+            [[nodiscard]] Builder&& onObjectGroupCommand(OnActionCommand onActionCommand) &&;
             [[nodiscard]] ObjectTraits build() &&;
 
         };
@@ -139,6 +145,8 @@ namespace object_collab {
         [[nodiscard]] bool usesFreezeAnimation() const;
         [[nodiscard]] bool usesSpecialAnimation() const;
         void playShineEffect(geode::Function<void()> original) const;
+        void controlIDCommand(GJActionCommand command) const;
+        void objectGroupCommand(GJActionCommand command) const;
     };
 
     #define OBJECT_CUSTOM_IMPLEMENT(source, custom, ...) \

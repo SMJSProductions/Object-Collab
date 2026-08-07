@@ -37,6 +37,7 @@ This way you can run on completely different mod setups & versions without runni
 
 ## Credits
 
+- [Alphalaneous](https://github.com/Alphalaneous) for general help with the editor & the object command system.
 - [Undefined06855](https://github.com/undefined06855) for the GD web decomp.
 - [Flow](https://github.com/FlowVix) for the object properties documentation.
 - [Dankmeme](https://github.com/dankmeme01) for pointing out some missed issues.
