@@ -1,9 +1,17 @@
 # Object-Collab Changelog
 
+## v0.5.0-beta.1
+
+- Added command traits based on Alphalaneous' implementation.
+- Fixed the compatibility popup not cancelling.
+- Fixed onPlayShineEffect not being correctly implemented.
+- Fixed the portal back ZLayer not working as intended.
+- Full unsupported speed objects.
+
 ## v0.4.1-beta.1
 
-- Fixed back frames not rendering due to not being in the node container.
 - Added padding support for AxisLayoutMenu.
+- Fixed back frames not rendering due to not being in the node container.
 
 ## v0.4.0-beta.1
 
