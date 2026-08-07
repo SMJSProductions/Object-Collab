@@ -104,7 +104,7 @@ namespace object_collab {
             [[nodiscard]] Builder&& usesSpecialAnimation(bool toggle) &&;
             /// @see GameObject::playShineEffect
             /// @param onPlayShineEffect Plays an effect on activation of the object if the GameObjectType supports it.
-            [[nodiscard]] Builder&& onPlayShineEffect(PlayShineEffect onPlayShineEffect);
+            [[nodiscard]] Builder&& onPlayShineEffect(PlayShineEffect onPlayShineEffect) &&;
             [[nodiscard]] ObjectTraits build() &&;
 
         };

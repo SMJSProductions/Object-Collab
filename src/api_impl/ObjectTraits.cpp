@@ -134,6 +134,12 @@ ObjectTraits::Builder&& ObjectTraits::Builder::usesSpecialAnimation(bool toggle)
     return std::forward<ObjectTraits::Builder>(*this);
 }
 
+ObjectTraits::Builder&& ObjectTraits::Builder::onPlayShineEffect(PlayShineEffect onPlayShineEffect) && {
+    m_config->m_impl->onPlayShineEffect = std::move(onPlayShineEffect);
+
+    return std::forward<ObjectTraits::Builder>(*this);
+}
+
 ObjectTraits ObjectTraits::Builder::build() && {
     return std::move(*m_config);
 }
