@@ -67,23 +67,23 @@ An object has 2 different kinds of trait systems. general behavior traits and ge
 
 These are options in the `ObjectTraits` which can be set during the construction of the object to define behavior depending on the value. These should all be filled correctly to ensure that the game handles the object correctly.
 
-| Method                     | Behavior                                                                                  | Base Class           | Game Object Type | Default               |
-|----------------------------|-------------------------------------------------------------------------------------------|----------------------|------------------|-----------------------|
-| `gameObjectType`           | The type of object, this copies some standard properties of the specified object type.    | `GameObject`         | N.A.             | GameObjectType::Solid |
-| `defaultMainColorID`       | Gets the default main color ID given when the object is created, 0 = color disabled.      | `GameObject`         | N.A.             | 1004                  |
-| `defaultZLayer`            | The default z layer given when the object is created.                                     | `GameObject`         | N.A.             | ZLayer::Default       |
-| `defaultZOrder`            | The default z order given when the object is created.                                     | `GameObject`         | N.A.             | 2                     |
-| `speedMod`                 | Gets the speed mod of the object to apply to the gameplay.                                | `EffectGameObject`   | `Modifier`       | 0                     |
-| `canRotateFree`            | If the object can be rotated without 90deg snapping (Unsupported).                        | `GameObject`         | N.A.             | false                 |
-| `ignoreEditorDuration`     | If the trigger duration handling should be removed.                                       | `EffectGameObject`   | `Modifier`       | false                 |
-| `isColorTrigger`           | If the trigger can affect color channels.                                                 | `EffectGameObject`   | `Modifier`       | false                 |
-| `isSpawnableTrigger`       | If the trigger can be spawned.                                                            | `EffectGameObject`   | `Modifier`       | true                  |
-| `isStoppableTrigger`       | If the trigger can be manipulated by a stop trigger.                                      | `EffectGameObject`   | `Modifier`       | true                  |
-| `isEditorSpawnableTrigger` | If the trigger should be simulated in the editor.                                         | `EffectGameObject`   | `Modifier`       | true                  |
-| `isSpeedObject`            | If the object can change the gameplay speed.                                              | `EffectGameObject`   | `Modifier`       | false                 |
-| `isEditorReserved`         | If the play layer should ignore this object as its reserved for the editor.               | `GameObject`         | N.A.             | false                 |
-| `omitTrashTexture`         | If the object should be omitted from rendering in the custom delete & delete all buttons. | `GameObject`         | N.A.             | false                 |
-| `shouldLockX`              | If the object can be affected by move triggers on the X axis.                             | `GameObject`         | N.A.             | false                 |
-| `shouldNotHideAnimFreeze`  | If the object should disable once the animation freezes.                                  | `EnhancedGameObject` | N.A.             | false                 |
-| `usesFreezeAnimation`      | If the object uses an animation with a delayed start.                                     | `EnhancedGameObject` | N.A.             | false                 |
-| `usesSpecialAnimation`     | If the object is animated.                                                                | `EnhancedGameObject` | N.A.             | false                 |
+| Method                     | Behavior                                                                                  | Base Class           | Game Object Type | Default                 |
+|----------------------------|-------------------------------------------------------------------------------------------|----------------------|------------------|-------------------------|
+| `gameObjectType`           | The type of object, this copies some standard properties of the specified object type.    | `GameObject`         | N.A.             | `GameObjectType::Solid` |
+| `defaultMainColorID`       | Gets the default main color ID given when the object is created, 0 = color disabled.      | `GameObject`         | N.A.             | `1004`                  |
+| `defaultZLayer`            | The default z layer given when the object is created.                                     | `GameObject`         | N.A.             | `ZLayer::Default`       |
+| `defaultZOrder`            | The default z order given when the object is created.                                     | `GameObject`         | N.A.             | `2`                     |
+| `speedMod`                 | Gets the speed mod of the object to apply to the gameplay.                                | `EffectGameObject`   | `Modifier`       | `0`                     |
+| `canRotateFree`            | If the object can be rotated without 90deg snapping (Unsupported).                        | `GameObject`         | N.A.             | `false`                 |
+| `ignoreEditorDuration`     | If the trigger duration handling should be removed.                                       | `EffectGameObject`   | `Modifier`       | `false`                 |
+| `isColorTrigger`           | If the trigger can affect color channels.                                                 | `EffectGameObject`   | `Modifier`       | `false`                 |
+| `isSpawnableTrigger`       | If the trigger can be spawned.                                                            | `EffectGameObject`   | `Modifier`       | `true`                  |
+| `isStoppableTrigger`       | If the trigger can be manipulated by a stop trigger.                                      | `EffectGameObject`   | `Modifier`       | `true`                  |
+| `isEditorSpawnableTrigger` | If the trigger should be simulated in the editor.                                         | `EffectGameObject`   | `Modifier`       | `true`                  |
+| `isSpeedObject`            | If the object can change the gameplay speed.                                              | `EffectGameObject`   | `Modifier`       | `false`                 |
+| `isEditorReserved`         | If the play layer should ignore this object as its reserved for the editor.               | `GameObject`         | N.A.             | `false`                 |
+| `omitTrashTexture`         | If the object should be omitted from rendering in the custom delete & delete all buttons. | `GameObject`         | N.A.             | `false`                 |
+| `shouldLockX`              | If the object can be affected by move triggers on the X axis.                             | `GameObject`         | N.A.             | `false`                 |
+| `shouldNotHideAnimFreeze`  | If the object should disable once the animation freezes.                                  | `EnhancedGameObject` | N.A.             | `false`                 |
+| `usesFreezeAnimation`      | If the object uses an animation with a delayed start.                                     | `EnhancedGameObject` | N.A.             | `false`                 |
+| `usesSpecialAnimation`     | If the object is animated.                                                                | `EnhancedGameObject` | N.A.             | `false`                 |
