@@ -149,7 +149,7 @@ namespace object_collab {
         void objectGroupCommand(GJActionCommand command) const;
     };
 
-    #define OBJECT_CUSTOM_IMPLEMENT(source, custom, ...) \
+    #define CUSTOM_OBJECT_IMPLEMENT(source, custom, ...) \
         if (source && source->m_objectID >= object_collab::ObjectAPI::getBaseCustomObjectID()) { \
             if (object_collab::CustomObjectInterface* custom = geode::cast::typeinfo_cast<object_collab::CustomObjectInterface*>(source)) __VA_ARGS__; \
         }
