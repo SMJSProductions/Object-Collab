@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CustomObject.hpp"
 #include "EditorPopupConfig.hpp"
 
 namespace object_collab {
@@ -15,6 +14,8 @@ namespace object_collab {
     using ObjectFactory = geode::Function<CustomObjectInterface*(ObjectInfo* info)>;
 
     enum class EditorTab {
+        /// Omits the entry entirely from the vanilla tabs. Good if you want to add it to a custom editor tab.
+        None = -1,
         Solids = 0,
         TransparentSolids = 1,
         Slopes = 2,
@@ -179,5 +180,8 @@ namespace object_collab {
         [[nodiscard]] PopupOptions editObject(const Selected& selected) const;
         [[nodiscard]] bool hasEditSpecial() const;
         [[nodiscard]] PopupOptions editSpecial(const Selected& selected) const;
+        /// Creates a create menu item which can be used for custom editor tabs.
+        /// @note Returns null if the EditorUI create hasn't been called yet or the object isn't registered yet.
+        [[nodiscard]] CreateMenuItem* setupCreateMenuItem() const;
     };
 }

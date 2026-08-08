@@ -1,5 +1,9 @@
 # Object-Collab Changelog
 
+## v0.5.2-beta.1
+
+- Added custom editor tab support.
+
 ## v0.5.1-beta.1
 
 - Added editor button color support.

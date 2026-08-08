@@ -1,4 +1,5 @@
 #include <ObjectInfo.hpp>
+#include "../hooks/editor/EditorUI.hpp"
 
 using namespace object_collab;
 using namespace geode::prelude;
@@ -214,4 +215,16 @@ bool ObjectInfo::hasEditSpecial() const {
 
 PopupOptions ObjectInfo::editSpecial(const Selected& selected) const {
     return m_impl->editSpecial(selected);
+}
+
+CreateMenuItem* ObjectInfo::setupCreateMenuItem() const {
+    EditorUI* editorUI = ModEditorUI::getEarly();
+
+    if (!editorUI) return nullptr;
+
+    if (std::optional<uint32_t> id = ObjectAPI::getCustomObjectNumericID(m_impl->id)) {
+        return editorUI->getCreateBtn(*id, static_cast<int>(m_impl->editorButtonColor));
+    } else {
+        return nullptr;
+    }
 }
