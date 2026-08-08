@@ -1,10 +1,10 @@
-# Object Collab
+# Object-Collab
 
-This site documents the workings of Object Collab. A mod which aims to add easy to setup custom objects to GD while allowing compatibility between gameplay mods.
+This site documents the workings of Object-Collab. A mod which aims to add easy to setup custom objects to GD while allowing compatibility between gameplay mods.
 
 ## Getting Started
 
-See [Getting Started](getting-started) for a by step tutorial on getting started with Object Collab.
+See [Getting Started](getting-started) for a by step tutorial on getting started with Object-Collab.
 
 ## How it works
 

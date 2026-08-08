@@ -21,7 +21,7 @@ You can enable the edit special button by providing a callback to `editObject` i
 
 ## Popup Config
 
-To simplify the creation of popups, Object Collab comes with a builder based popup config system. This system lets you set different kinds of menu templates and automatically positions them using the provided settings.
+To simplify the creation of popups, Object-Collab comes with a builder based popup config system. This system lets you set different kinds of menu templates and automatically positions them using the provided settings.
 
 ### Info Popup
 

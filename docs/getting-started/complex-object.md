@@ -111,12 +111,12 @@ When the player touches an `EffectGameObject` with a compatible `GameObjectType`
 
 ### Getting Details
 
-When you're in the editor and select an object, given you have the option enabled, you can see details about an object. Object Collab allows you to extend this block with your own information. Using the `DetailsBuilder` you can easily add standard formatted strings to this block. In this example it will turn the property into either `Active: Yes` or `Active: No`.
+When you're in the editor and select an object, given you have the option enabled, you can see details about an object. Object-Collab allows you to extend this block with your own information. Using the `DetailsBuilder` you can easily add standard formatted strings to this block. In this example it will turn the property into either `Active: Yes` or `Active: No`.
 
 > :information_source: Note that DetailsBuilder is not required. It's just a QOL feature.
 
 ### Edit Special Config
 
-Object Collab allows you to configure the popup shown when you click either edit special or edit object inside the editor. You can either return a raw Popup pointer or in the case of the example a UI completely auto generated using builder patterns.
+Object-Collab allows you to configure the popup shown when you click either edit special or edit object inside the editor. You can either return a raw Popup pointer or in the case of the example a UI completely auto generated using builder patterns.
 
 Here we define the dimensions, title, info button content, menus & toggles. It also supports adding standard toggles GD often uses for triggers and modifiers.
