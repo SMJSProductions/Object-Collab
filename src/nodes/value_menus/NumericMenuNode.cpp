@@ -33,11 +33,26 @@ bool NumericMenuNode::init(const Selected& selected, Popup* popup, NumericMenu& 
     } else {
         input->setString(std::move(currentStringValue));
         input->setCallbackEnabled(true);
-        input->setCallback([selected, popup, onValue = numericMenu.releaseOnValue()](const std::string& strValue) mutable {
+        input->setCallback([
+            input,
+            selected,
+            popup,
+            min = numericMenu.getMin(),
+            max = numericMenu.getMax(),
+            onValue = numericMenu.releaseOnValue()
+        ](const std::string& strValue) mutable {
             float value;
 
             if (!onValue) return;
-            if (GEODE_UNWRAP_INTO_IF_OK(value, utils::numFromString<float>(strValue))) onValue(value, selected, popup);
+            if (GEODE_UNWRAP_INTO_IF_OK(value, utils::numFromString<float>(strValue))) {
+                if (min && value < min.value()) {
+                    input->setString(utils::numToString(value = min.value()));
+                } else if (max && value > max.value()) {
+                    input->setString(utils::numToString(value = max.value()));
+                }
+                
+                onValue(value, selected, popup);
+            }
         });
     }
 
