@@ -25,15 +25,20 @@ bool InputMenuNode::init(const Selected& selected, Popup* popup, InputMenu& inpu
     CCMenuItemSpriteExtra* clearButton = CCMenuItemExt::createSpriteExtra(clearSprite, [input](CCMenuItemSpriteExtra* sender) {
         input->setString("", true);
     });
+    std::string allowedChars = inputMenu.getAllowedChars();
 
     this->registerValue(input);
     input->setString(std::move(currentValue));
-    input->setFilter(inputMenu.getAllowedChars());
     input->setMaxCharCount(inputMenu.getMaxSize());
     input->setCallbackEnabled(true);
     input->setCallback([selected, popup, onValue = inputMenu.releaseOnValue()](const std::string& value) mutable {
         if (onValue) onValue(value, selected, popup);
     });
+
+    if (allowedChars.size()) {
+        input->setFilter(inputMenu.getAllowedChars());
+    }
+
     clearButton->setID("clear");
 
     return this->initBaseMenuInverted(inputMenu.getID(), inputMenu.getTitle(), clearButton, { input });

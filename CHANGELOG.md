@@ -1,5 +1,9 @@
 # Object-Collab Changelog
 
+## v0.5.3-beta.1
+
+- Fixed input menus default allowed characters blocking all inputs.
+
 ## v0.5.2-beta.1
 
 - Added custom editor tab support.
