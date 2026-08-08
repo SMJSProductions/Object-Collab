@@ -149,7 +149,7 @@ void ModEditorUI::updateObjectInfoLabel() {
             info.append("{}\n", customInfoEntry);
         }
 
-        info.append("Object Mod: {}", objectID.substr(0, objectID.find('/')));
+        info.append("Object Mod: {}", Loader::get()->getLoadedMod(objectID.substr(0, objectID.find('/')))->getName());
         info.append('\n');
         m_objectInfoLabel->setString(info.c_str());
     }
