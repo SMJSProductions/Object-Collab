@@ -493,6 +493,4 @@ namespace object_collab {
             label->limitLabelWidth(30, 0.5f, 0);
         }
     };
-
-    #define $object(name, inheritance) name : public object_collab::CustomObject<inheritance>
 }

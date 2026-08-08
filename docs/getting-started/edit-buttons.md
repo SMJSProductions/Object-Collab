@@ -37,7 +37,7 @@ A menu allows you to easily configure arguments using a template. They can be se
 - `currentValue(CurrentValueCallback<type> callback)`: This gets the currently used value from the selections. It has the following utility method to replicate vanilla behavior:
   - `getCommonValueOrDefault(const Selected& selected, V T::* member)`: Gets the currently set value if all the objects in the selection have an equal value. Otherwise take the object property default if applicable or the type default.
 
-| Menu Type       | Description                                                                                       | Value Type    |
+| Menu Type       | Behavior                                                                                          | Value Type    |
 |-----------------|----------------------------------------------------------------------------------------- ---------|---------------|
 | ToggleMenu      | Configures a toggle menu which allows you to set a boolean value.                                 | `bool`        |
 | NumericMenu     | Configures a menu which handles any number input. This can be using arrows, a slider or an input. | `float`       |
