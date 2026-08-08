@@ -1,5 +1,13 @@
 # Object-Collab Changelog
 
+## v0.5.1-beta.1
+
+- Added editor button color support.
+- Added official support for CUSTOM_OBJECT_IMPLEMENT.
+- Added an object ID swap to semi safely simulate hardcoded behavior.
+- Made the object mod info show the mod name rather than the ID.
+- Fixed min, max being ignored for numeric text inputs.
+
 ## v0.5.0-beta.1
 
 - Added a way to set raw trigger text.
