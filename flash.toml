@@ -6,6 +6,9 @@ icon = "logo.png"
 
 [tutorials]
 dir = "docs"
+assets = [
+    "docs/assets/*.png"
+]
 
 [templates]
 head = "docs/templates/head.html"

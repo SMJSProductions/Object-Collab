@@ -31,6 +31,8 @@ A mod which provides a complete framework for custom objects while solving compa
 
 ## How it works
 
+For documentations go to [the documentations page on GitHub](https://smjsproductions.github.io/Object-Collab/).
+
 All objects are registered under a given ID with the mod name as a prefix. This way it avoids double registrations. The mod will then internally assign it a numeric object ID compatible with the GD object ID system. Once a level is edited and saved it will then create a minimal reference sheet which instructs the mod for others how to rebind the object IDs in the level with their environment.
 
 This way you can run on completely different mod setups & versions without running into conflicts as long as the mods which were used for the level are installed.

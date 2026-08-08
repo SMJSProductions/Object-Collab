@@ -2,8 +2,14 @@
 .vscode/
 build*/
 vscode/
-Object-Collab/
 .clangd
+# Documentation dist
+Object-Collab/
+# A local file to keep track of TODO items
 TODO
+# Test object which exists as a sandbox for worked on features
 Test*.*
+# Deprecated feature which might be worked on later
 SpeedHandling*
+# Exists for documentation purposes
+Outline.hpp

@@ -63,7 +63,7 @@ An object has 2 different kinds of trait systems. general behavior traits and ge
 | `TeleportOrb`          | An object which teleports the player to a targeted object using the target group ID.   | `TeleportPortalObject` | `activatedByPlayer`                |
 | `AnimatedHazard`       | An object which is lethal to touch.                                                    | `AnimatedGameObject`   | `collidedByPlayer`                 |
 
-## General Traits
+## Traits
 
 These are options in the `ObjectTraits` which can be set during the construction of the object to define behavior depending on the value. These should all be filled correctly to ensure that the game handles the object correctly.
 
