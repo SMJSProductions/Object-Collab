@@ -19,6 +19,7 @@ struct ObjectInfo::Impl {
     std::string sprite;
     ObjectConstruction construction = QuickObject::builder().build();
     EditorTab editorTab = EditorTab::Solids;
+    EditorButtonColor editorButtonColor = EditorButtonColor::Aqua;
     ObjectPopupFactory editObject = nullptr;
     ObjectPopupFactory editSpecial = nullptr;
 };
@@ -145,6 +146,12 @@ ObjectInfo::Builder&& ObjectInfo::Builder::editorTab(EditorTab editorTab) && {
     return std::forward<ObjectInfo::Builder>(*this);
 }
 
+ObjectInfo::Builder&& ObjectInfo::Builder::editorButtonColor(EditorButtonColor color) && {
+    m_config->m_impl->editorButtonColor = color;
+
+    return std::forward<ObjectInfo::Builder>(*this);
+}
+
 ObjectInfo::Builder&& ObjectInfo::Builder::editObject(ObjectPopupFactory editObject) && {
     m_config->m_impl->editObject = std::move(editObject);
 
@@ -187,6 +194,10 @@ const ObjectConstruction& ObjectInfo::getConstruction() const {
 
 EditorTab ObjectInfo::getEditorTab() const {
     return m_impl->editorTab;
+}
+
+EditorButtonColor ObjectInfo::getEditorButtonColor() const {
+    return m_impl->editorButtonColor;
 }
 
 bool ObjectInfo::hasEditObject() const {

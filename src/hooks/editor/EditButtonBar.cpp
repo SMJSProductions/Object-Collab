@@ -12,7 +12,7 @@ EditButtonBar* ModEditButtonBar::create(CCArray* objects, CCPoint position, cons
 
     for (const auto& [key, info] : objectRegister) {
         if (static_cast<int>(info.getEditorTab()) == tab) {
-            newObjects->addObject(ModEditorUI::getEarly()->getCreateBtn(key, 2));
+            newObjects->addObject(ModEditorUI::getEarly()->getCreateBtn(key, static_cast<int>(info.getEditorButtonColor())));
         }
     }
 

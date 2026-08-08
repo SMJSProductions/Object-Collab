@@ -20,7 +20,7 @@ namespace object_collab {
         Slopes = 2,
         Hazards = 3,
         ThreeDimensionals = 4,
-        Modifiers = 5,
+        PlayerModifiers = 5,
         Animated = 6,
         Pixels = 7,
         Collectables = 8,
@@ -28,6 +28,15 @@ namespace object_collab {
         Decorations = 10,
         Saws = 11,
         Triggers = 12
+    };
+
+    enum class EditorButtonColor {
+        Green = 1,
+        Aqua = 2,
+        Pink = 3,
+        LightGray = 4,
+        DarkGray = 5,
+        Red = 6
     };
 
     class OBJC_API_DLL QuickObject {
@@ -138,6 +147,9 @@ namespace object_collab {
             /// @note Default is EditorTab::Solids.
             /// @param editorTab The editor tab the object will be shown in.
             [[nodiscard]] Builder&& editorTab(EditorTab editorTab) &&;
+            /// @note Default is EditorButtonColor::Aqua
+            /// @param color The color to use as the background for the editor bar button.
+            [[nodiscard]] Builder&& editorButtonColor(EditorButtonColor color) &&;
             /// @note Without it will default the edit object button.
             /// @param editObject The popup factory for the edit object button.
             [[nodiscard]] Builder&& editObject(ObjectPopupFactory editObject) &&;
@@ -162,6 +174,7 @@ namespace object_collab {
         [[nodiscard]] geode::ZStringView getSprite() const;
         [[nodiscard]] const ObjectConstruction& getConstruction() const;
         [[nodiscard]] EditorTab getEditorTab() const;
+        [[nodiscard]] EditorButtonColor getEditorButtonColor() const;
         [[nodiscard]] bool hasEditObject() const;
         [[nodiscard]] PopupOptions editObject(const Selected& selected) const;
         [[nodiscard]] bool hasEditSpecial() const;
