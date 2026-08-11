@@ -16,7 +16,7 @@ All information provided by this method is made as minimal as possible to avoid 
 ```json
 {
   "dependencies": {
-		"smjs.object-collab": {
+    "smjs.object-collab": {
       "version": ">={the latest version}",
       "required": false
     }
@@ -32,10 +32,17 @@ All information provided by this method is made as minimal as possible to avoid 
 using namespace object_collab::prelude;
 
 void MyObjectHandling::handleCustomObjects() {
-    object_collab::getOptionalRegister().listen([](OptionalRegister objectRegister) {
-        for (auto& [numericID, info] : objectRegister) {
-            // Do whatever you want with the object.
-        }
-    });
+    // Returns Ok if Object-Collab is present, Err if not.
+    geode::Result<OptionalRegister> result = object_collab::getOptionalRegister();
+
+    if (result.isErr()) {
+        geode::log::debug("Object Collab is missing");
+
+        return;
+    }
+
+    for (auto& [numericID, info] : std::move(result).unwrap()) {
+        // Handle object logic.
+    }
 }
 ```

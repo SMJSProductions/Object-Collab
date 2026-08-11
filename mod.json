@@ -1,19 +1,19 @@
 {
-	"geode": "5.9.0",
-	"gd": {
-		"win": "2.2081",
-		"android": "2.2081",
-		"mac": "2.2081",
-		"ios": "2.2081"
-	},
-	"id": "smjs.object-collab",
-	"name": "Object Collab",
-	"version": "v0.5.3-beta.1",
-	"developer": "SMJS",
-	"description": "A framework for custom objects & object mod compatibility.",
+  "geode": "5.9.0",
+  "gd": {
+    "win": "2.2081",
+    "android": "2.2081",
+    "mac": "2.2081",
+    "ios": "2.2081"
+  },
+  "id": "smjs.object-collab",
+  "name": "Object Collab",
+  "version": "v0.5.3-beta.1",
+  "developer": "SMJS",
+  "description": "A framework for custom objects & object mod compatibility.",
   "links": {
     "source": "https://github.com/SMJSProductions/Object-Collab",
-		"community": "https://discord.gg/EDkFkAv66K"
+    "community": "https://discord.gg/EDkFkAv66K"
   },
   "tags": [
     "gameplay",
@@ -26,10 +26,10 @@
     "developer",
     "api"
   ],
-	"dependencies": {
-		"geode.node-ids": ">=v1.23.3",
+  "dependencies": {
+    "geode.node-ids": ">=v1.23.3",
     "alphalaneous.level-storage-api": ">=v1.0.4"
-	},
+  },
   "resources": {
     "sprites": [
       "resources/small-logo.png"
