@@ -12,10 +12,7 @@ Add the following in your `mod.json`:
 ```json
 {
   "dependencies": {
-    "smjs.object-collab": {
-      "version": ">={the latest version}",
-      "required": true
-    }
+    "smjs.object-collab": ">={the latest version}"
   }
 }
 ```

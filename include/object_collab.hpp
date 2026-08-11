@@ -18,6 +18,7 @@
 
 namespace object_collab {
     namespace prelude {
+        using namespace object_collab;
         using namespace editor_popup;
     }
 }
