@@ -20,6 +20,7 @@ bool NewBorder::init(const CCSize& size, const ccColor4B& backgroundColor, const
     if (!this->initWithColor(backgroundColor)) return false;
 
     m_mainLayer = CCLayer::create();
+    // @geode-ignore(unknown-resource)
     m_border = NineSlice::create("geode.loader/inverseborder.png");
 
     m_mainLayer->setAnchorPoint({ 0, 0 });
