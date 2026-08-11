@@ -1,5 +1,10 @@
 # Object-Collab Changelog
 
+## v0.5.4-beta.1
+
+- Final touches for the documentation.
+- Refactored the optional API to include its own prelude and has a name consistent with the main include file.
+
 ## v0.5.3-beta.1
 
 - Fixed input menus default allowed characters blocking all inputs.
