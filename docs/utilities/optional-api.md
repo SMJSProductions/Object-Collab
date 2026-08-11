@@ -1,6 +1,6 @@
 ---
 title: Optional API
-order: 3
+order: 4
 ---
 
 # Optional API
@@ -27,16 +27,18 @@ All information provided by this method is made as minimal as possible to avoid 
 ### C++
 
 ```cpp
+#include <Geode/Geode.hpp>
 #include <smjs.object-collab/include/object_collab_optional.hpp>
 
+using namespace geode::prelude;
 using namespace object_collab::prelude;
 
 void MyObjectHandling::handleCustomObjects() {
     // Returns Ok if Object-Collab is present, Err if not.
-    geode::Result<OptionalRegister> result = object_collab::getOptionalRegister();
+    Result<OptionalRegister> result = object_collab::getOptionalRegister();
 
     if (result.isErr()) {
-        geode::log::debug("Object Collab is missing");
+        log::debug("Object Collab is missing");
 
         return;
     }
