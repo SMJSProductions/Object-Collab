@@ -11,8 +11,9 @@ public:
     static EditorPopup* create(object_collab::Selected selected, object_collab::editor_popup::PopupConfig& config);
 private:
     object_collab::Selected m_selected;
+    object_collab::editor_popup::OnCloseCallback m_onClose;
 
-    EditorPopup(object_collab::Selected selected);
+    EditorPopup(object_collab::Selected selected, object_collab::editor_popup::PopupConfig& config);
 
     bool init(object_collab::editor_popup::PopupConfig& config);
     void addInfo(const object_collab::editor_popup::InfoPopup& info);
@@ -21,4 +22,5 @@ private:
     bool addTriggerToggles(cocos2d::CCNode* container);
     void addNoMultiActivateToggle(cocos2d::CCNode* container);
     void addMultiTriggerToggle(cocos2d::CCNode* container);
+    void onClose(cocos2d::CCObject* sender) override;
 };

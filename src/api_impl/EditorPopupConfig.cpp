@@ -204,6 +204,7 @@ struct PopupConfig::Impl {
     bool noMultiActivateToggle = false;
     std::vector<std::unique_ptr<ToggleMenu>> leftToggles;
     std::vector<std::unique_ptr<ToggleMenu>> rightToggles;
+    OnCloseCallback onClose;
 };
 
 CONFIG_IMPL(PopupConfig);
@@ -228,3 +229,5 @@ PRIMITIVE_CONFIG_VALUE(PopupConfig, bool, triggerToggles, TriggerToggles);
 PRIMITIVE_CONFIG_VALUE(PopupConfig, bool, noMultiActivateToggle, NoMultiActivateToggle);
 VECTOR_VALUE(PopupConfig, std::unique_ptr<ToggleMenu>, leftToggle, LeftToggles);
 VECTOR_VALUE(PopupConfig, std::unique_ptr<ToggleMenu>, rightToggle, RightToggles);
+BUILDER_PARAM(PopupConfig, OnCloseCallback, onClose);
+VALUE_RELEASE(PopupConfig, OnCloseCallback, onClose, OnClose, nullptr);

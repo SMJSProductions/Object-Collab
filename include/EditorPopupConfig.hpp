@@ -21,6 +21,10 @@ namespace object_collab::editor_popup {
     template<typename T>
     using CurrentValueCallback = geode::Function<T(const Selected& selected, geode::Popup* popup)>;
 
+    /// @param selected The currently selected objects.
+    /// @param popup The editor popup instance.
+    using OnCloseCallback = geode::Function<void(cocos2d::CCObject* sender, const Selected& selected, geode::Popup* popup)>;
+
     class OBJC_API_DLL ValueMenu {
     public:
         virtual ~ValueMenu() = default;
@@ -498,6 +502,8 @@ namespace object_collab::editor_popup {
             [[nodiscard]] Builder&& rightToggle(std::unique_ptr<ToggleMenu> toggle) &&;
             /// @param toggles A list of toggles in the bottom right corner of the popup.
             [[nodiscard]] Builder&& rightToggles(std::vector<std::unique_ptr<ToggleMenu>> toggles) &&;
+            /// @param onClose Executes when the popup closes.
+            [[nodiscard]] Builder&& onClose(OnCloseCallback onClose) &&;
             [[nodiscard]] PopupConfig build() &&;
         };
 
@@ -526,6 +532,7 @@ namespace object_collab::editor_popup {
         [[nodiscard]] std::vector<std::unique_ptr<ToggleMenu>> releaseLeftToggles();
         [[nodiscard]] std::span<std::unique_ptr<ToggleMenu>> getRightToggles() const;
         [[nodiscard]] std::vector<std::unique_ptr<ToggleMenu>> releaseRightToggles();
+        [[nodiscard]] OnCloseCallback releaseOnClose();
     };
 
     /// Gets the property associated to the member using an object as reference.

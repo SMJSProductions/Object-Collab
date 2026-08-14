@@ -8,7 +8,7 @@
   },
   "id": "smjs.object-collab",
   "name": "Object Collab",
-  "version": "v0.5.4-beta.1",
+  "version": "v0.5.5-beta.1",
   "developer": "SMJS",
   "description": "A framework for custom objects & object mod compatibility.",
   "links": {
@@ -44,6 +44,9 @@
     "include": [
       "include/*.hpp"
     ]
+  },
+  "incompatibilities": {
+    "omgrod.lua-trigger": "*"
   },
   "settings": {
     "ui": {

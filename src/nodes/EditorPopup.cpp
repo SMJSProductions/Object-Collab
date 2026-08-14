@@ -4,7 +4,7 @@ using namespace object_collab::prelude;
 using namespace geode::prelude;
 
 EditorPopup* EditorPopup::create(Selected selected, PopupConfig& config) {
-    EditorPopup* popup = new EditorPopup(std::move(selected));
+    EditorPopup* popup = new EditorPopup(std::move(selected), config);
 
     if (popup && popup->init(config)) {
         popup->autorelease();
@@ -17,7 +17,9 @@ EditorPopup* EditorPopup::create(Selected selected, PopupConfig& config) {
     }
 }
 
-EditorPopup::EditorPopup(Selected selected): PopupExtra(PopupExtra::CloseSetup::NoButton), m_selected(std::move(selected)) { }
+EditorPopup::EditorPopup(Selected selected, PopupConfig& config): PopupExtra(PopupExtra::CloseSetup::NoButton),
+m_selected(std::move(selected)),
+m_onClose(config.releaseOnClose()) { }
 
 bool EditorPopup::init(PopupConfig& config) {
     if (!PopupExtra::init(config.getTitle(), {
@@ -207,4 +209,9 @@ void EditorPopup::addMultiTriggerToggle(CCNode* container) {
         .build()
         .get()));
     container->updateLayout();
+}
+
+void EditorPopup::onClose(CCObject* sender) {
+    m_onClose(sender, m_selected, this);
+    this->onClose(sender);
 }
