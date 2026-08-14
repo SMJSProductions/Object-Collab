@@ -46,7 +46,7 @@
     ]
   },
   "incompatibilities": {
-    "omgrod.lua-trigger": ">=1.0.0"
+    "omgrod.lua-trigger": ">=v1.0.0"
   },
   "settings": {
     "ui": {
