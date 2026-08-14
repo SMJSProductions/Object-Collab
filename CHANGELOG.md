@@ -1,5 +1,9 @@
 # Object-Collab Changelog
 
+## v0.5.5-beta.2
+
+- Small bug fix.
+
 ## v0.5.5-beta.1
 
 - Added an on close callback for editor popups.
