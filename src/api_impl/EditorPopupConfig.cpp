@@ -39,6 +39,7 @@ using namespace object_collab::editor_popup;
 #define IMPL_VALUES() \
     std::string id; \
     std::string title
+// TODO: Once I can properly test, this needs a nullptr assignment
 #define VALUE_IMPL_VALUES(type, ...) \
     IMPL_VALUES(); \
     ValueUpdateCallback<type __VA_ARGS__> onValue = [](type __VA_ARGS__ value, const Selected& selected, Popup* popup) { }; \
@@ -204,7 +205,7 @@ struct PopupConfig::Impl {
     bool noMultiActivateToggle = false;
     std::vector<std::unique_ptr<ToggleMenu>> leftToggles;
     std::vector<std::unique_ptr<ToggleMenu>> rightToggles;
-    OnCloseCallback onClose;
+    OnCloseCallback onClose = nullptr;
 };
 
 CONFIG_IMPL(PopupConfig);

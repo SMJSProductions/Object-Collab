@@ -1,5 +1,3 @@
-#pragma once
-
 #include "LayerFixes.hpp"
 
 using namespace geode::prelude;

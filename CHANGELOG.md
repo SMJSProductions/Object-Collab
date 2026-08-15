@@ -1,5 +1,9 @@
 # Object-Collab Changelog
 
+## v0.5.5-beta.3
+
+- Fixed on close callbacks not being nullptr checked.
+
 ## v0.5.5-beta.2
 
 - Small bug fix.

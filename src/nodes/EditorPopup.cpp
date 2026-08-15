@@ -212,6 +212,6 @@ void EditorPopup::addMultiTriggerToggle(CCNode* container) {
 }
 
 void EditorPopup::onClose(CCObject* sender) {
-    m_onClose(sender, m_selected, this);
-    this->onClose(sender);
+    if (m_onClose) m_onClose(sender, m_selected, this);
+    PopupExtra::onClose(sender);
 }

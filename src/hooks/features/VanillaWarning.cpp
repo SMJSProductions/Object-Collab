@@ -3,7 +3,7 @@
 using namespace object_collab;
 
 // Text object with the string: "This level contains\nmodded objects" on { x: 200, y: 45 } which is high detail
-static const std::string VANILLA_PLACEHOLDER = "1,914,2,200,3,45,103,1,31,VGhpcyBsZXZlbCBjb250YWlucwptb2RkZWQgb2JqZWN0cw==;";
+static const std::string_view VANILLA_PLACEHOLDER = "1,914,2,200,3,45,103,1,31,VGhpcyBsZXZlbCBjb250YWlucwptb2RkZWQgb2JqZWN0cw==;";
 
 // This mostly exists for Android support
 bool endsWithPlaceholder(const std::string_view levelString) {
