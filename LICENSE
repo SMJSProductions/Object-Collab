@@ -4,14 +4,16 @@ Copyright (c) 2026 Sjoerd Teijgeler
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction on the following subjects:
+in the Software on the following subjects:
 
 - The rights to use.
-- The rights to copy.
-- The rights to modify the Software for the purpose of fixing bugs, improving functionality or otherwise improving the Software.
+- The rights to copy the original distribution.
+- The rights to modify the Software for the purpose of fixing bugs, improving
+  functionality or otherwise improving the Software without any redistribution.
 
-The following acts using the Software is considered a breanch of license:
+The following acts using the Software are considered a breach of license:
 
 - Unauthorized redistributions.
-- Sublicenses.
+- Granting sublicenses.
 - Selling the Software.
+- Discrediting the author from the Software.
